@@ -31,6 +31,17 @@ public class Main extends Application {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        
+        /* First step : create the cache folder and file */
+        CacheDb cacheDb = new CacheDb();
+        // If DB file (for cache) doesn't exists, we will create one
+        if(!cacheDb.exists()) {
+            cacheDb.create();
+        }else{
+            System.out.println("The cache file already exists.");
+        }
+        
+        /* After : Launch the window */
         launch(args);
     }
     
