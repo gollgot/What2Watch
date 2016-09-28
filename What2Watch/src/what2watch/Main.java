@@ -15,7 +15,7 @@ import javafx.stage.Stage;
  *
  * @author Raphael.BAZZARI
  */
-public class What2Watch extends Application {
+public class Main extends Application {
     
     @Override
     public void start(Stage stage) throws Exception {
