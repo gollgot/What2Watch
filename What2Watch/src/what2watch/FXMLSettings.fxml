@@ -6,13 +6,13 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-
-<AnchorPane id="AnchorPane" prefHeight="201.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" fx:controller="what2watch.FXMLSettingsController">
+<AnchorPane id="AnchorPane" prefHeight="201.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="what2watch.FXMLSettingsController">
    <children>
       <Label fx:id="instructionLabel" layoutX="197.0" layoutY="24.0" text="Sélectionnez le dossier contenant vos films" />
       <Button fx:id="cancelButton" layoutX="235.0" layoutY="152.0" mnemonicParsing="false" onAction="#closeWindow" text="Annuler" />
       <Button fx:id="pathButton" layoutX="306.0" layoutY="152.0" mnemonicParsing="false" onAction="#setPath" text="Définir le dossier" />
       <Button fx:id="browseButton" layoutX="459.0" layoutY="80.0" mnemonicParsing="false" onAction="#browseFolders" prefHeight="25.0" prefWidth="113.0" text="Parcourir..." />
       <TextField fx:id="pathTextField" editable="false" layoutX="29.0" layoutY="80.0" prefHeight="25.0" prefWidth="399.0" />
+      <Label fx:id="emptyPathErrorLabel" layoutX="177.0" layoutY="119.0" text="Veuillez sélectionner le dossier contenant vos films." textFill="RED" visible="false" />
    </children>
 </AnchorPane>
