@@ -6,6 +6,9 @@
 package what2watch;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -45,8 +48,8 @@ public class Main extends Application {
         }
         
         
-        /*TEST*/
-        Movie movie = new Movie();
+        /* TEST JSON */
+        /*Movie movie = new Movie();
         // Fetch the JSON and add data into movie object
         try {
             // Get a JSON from an URL
@@ -67,7 +70,24 @@ public class Main extends Application {
             System.out.println("ERROR on parsingJSON (IO exception) : "+ex.getMessage() + "\nVeuillez vérifier votre connexion internet");
         }
         System.out.println("Title of movie : "+movie.getTitle());
+        */
         
+        /* TEST ParsingFiles */
+        UserPreferences userPref = new UserPreferences();
+        FileBrowser fileBrowser = new FileBrowser();
+        ParsingFiles parsingFiles = new ParsingFiles();
+        ArrayList<String> originalListFiles = new ArrayList<>(); 
+        
+        // get path saved on the UserPreferences
+        String path = userPref.getPath();
+        
+        try {
+            fileBrowser.fetchMoviesFileNames(path);
+            originalListFiles = fileBrowser.getMovieFileNames();
+        } catch (IOException ex) {
+            System.out.println("Error on Main : getFilesNames. Ex : "+ex);
+        }
+        ArrayList<String> finalListFiles = parsingFiles.parse(originalListFiles);
         
         /* After : Launch the window */
         launch(args);
