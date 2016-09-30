@@ -13,6 +13,9 @@ import java.util.prefs.Preferences;
 public class UserPreferences {
     private Preferences prefs = Preferences.userRoot().node(this.getClass().getName());
 
+    public UserPreferences() {
+    }
+    
     public void savePath(String path) {
         prefs.put("MovieFolderPath", path);
         System.out.println("The following path has been saved: " + path);

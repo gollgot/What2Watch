@@ -8,6 +8,7 @@
 
 <AnchorPane id="AnchorPane" prefHeight="200" prefWidth="320" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="what2watch.FXMLDocumentController">
     <children>
-      <Button fx:id="settingsButton" layoutX="132.0" layoutY="89.0" mnemonicParsing="false" onAction="#showSettings" text="Set path" />
+      <Button fx:id="settingsButton" layoutX="83.0" layoutY="89.0" mnemonicParsing="false" onAction="#showSettings" text="Set path" />
+      <Button fx:id="scanFolder" layoutX="170.0" layoutY="89.0" onAction="#browseFiles" text="Scan directory" />
     </children>
 </AnchorPane>

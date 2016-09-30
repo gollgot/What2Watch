@@ -25,9 +25,12 @@ import javafx.stage.Stage;
 public class FXMLDocumentController implements Initializable {
     
     @FXML
-    private Button button;
-    @FXML
     private Button settingsButton;
+    @FXML
+    private Button scanFolder;
+    
+    private UserPreferences prefs = new UserPreferences();
+    private FileBrowser browser = new FileBrowser();
     
     
     @Override
@@ -50,6 +53,12 @@ public class FXMLDocumentController implements Initializable {
         settingStage.setScene(scene);
         
         settingStage.showAndWait();
+    }
+
+    @FXML
+    private void browseFiles(ActionEvent event) throws IOException {
+        String path = this.prefs.getPath();
+        browser.fetchMoviesFileNames(path);
     }
     
 }
