@@ -36,6 +36,7 @@ public class FileBrowser {
         this.movieFileNames = movieFileNames;
     }
     
+    
     // Custom methods
     
     // Fectches the movie file names contained within the folder specified by the path parameter
@@ -50,7 +51,7 @@ public class FileBrowser {
                         for (int i = 0; i < this.extensions.length; i++) {
                             if (source.getFileName().toString().endsWith(this.extensions[i])) {
                                 movieFileNames.add(source.getFileName().toString());
-                                System.out.println(source.getFileName().toString());
+                                //System.out.println(source.getFileName().toString());
                                 //System.out.println(source);
                                 break;
                             }

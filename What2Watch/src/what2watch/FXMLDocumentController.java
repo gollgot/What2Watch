@@ -10,6 +10,8 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -17,6 +19,13 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -30,10 +39,49 @@ public class FXMLDocumentController implements Initializable {
     private Button settingsButton;
     @FXML
     private Button scanFolder;
+    @FXML
+    private TextArea synopsisTextArea;
+    @FXML
+    private ListView<?> movieListView;
+    @FXML
+    private TextField searchTextField;
+    @FXML
+    private Button searchButton;
+    @FXML
+    private ComboBox<String> searchCriteriasComboBox;
+    @FXML
+    private ImageView movieImageView;
+    @FXML
+    private TextField startingYearTextField;
+    @FXML
+    private TextField endingYearTextField;
+    @FXML
+    private Label titleLabel;
+    @FXML
+    private Label titleValueLabel;
+    @FXML
+    private Label yearLabel;
+    @FXML
+    private Label yearValueLabel;
+    @FXML
+    private Label genreLabel;
+    @FXML
+    private Label genreValueLabel;
+    @FXML
+    private Label ActorsLabel;
+    @FXML
+    private Label actorsValueLabel;
+    @FXML
+    private Label synopsisLabel;
+    @FXML
+    private Label startingYearLabel;
+    @FXML
+    private Label endingYearLabel;
     
     private UserPreferences prefs = new UserPreferences();
     private FileBrowser browser = new FileBrowser();
-    
+    private ObservableList movieFileNames = 
+        FXCollections.observableArrayList();
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -45,6 +93,13 @@ public class FXMLDocumentController implements Initializable {
                 Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+        
+        // Combobox search criterias configuration
+        this.searchCriteriasComboBox.getItems().addAll(
+            "Titre",
+            "Acteur",
+            "Année"
+        );
     }    
 
     @FXML
@@ -68,6 +123,46 @@ public class FXMLDocumentController implements Initializable {
     private void browseFiles(ActionEvent event) throws IOException {
         String path = this.prefs.getPath();
         browser.fetchMoviesFileNames(path);
+        
+        // Filing the listView with movie file names
+        this.movieFileNames.addAll(browser.getMovieFileNames());
+        this.movieListView.setItems(movieFileNames);
+    }
+
+    @FXML
+    private void updateSearchMode(ActionEvent event) {
+        String searchCriteria = this.searchCriteriasComboBox.getValue();
+
+        switch (searchCriteria) {
+            case "Titre":
+                // TODO limit the scope to movie title informations
+                setYearSearchMode(false);
+                break;
+            case "Acteur":
+                // TODO limit the scope to actors informations  
+                setYearSearchMode(false);
+                break;
+            case "Année":
+                setYearSearchMode(true);
+                break;
+            default:
+                break;
+        }
+    }
+    
+    // Displays/hides textfields according to the selected combobox search criteria
+    private void setYearSearchMode(boolean on) {
+        startingYearLabel.setVisible(on);
+        startingYearTextField.setVisible(on);
+        endingYearLabel.setVisible(on);
+        endingYearTextField.setVisible(on);
+        searchTextField.setVisible(!on);
+    }
+
+    @FXML
+    private void getMovieInformations(MouseEvent event) {
+        // TODO: Fetch + display data according to the selected movie
+        System.out.println("Fetching data for: " + movieListView.getSelectionModel().getSelectedItem());
     }
     
 }
