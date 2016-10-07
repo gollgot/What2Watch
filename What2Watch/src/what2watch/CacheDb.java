@@ -138,31 +138,54 @@ public class CacheDb {
 
         
         // All the SQL queries for create the tables
-        String sqlCreateTableMovies = " CREATE TABLE movies(\n"
+        String sqlCreateTableMovie = " CREATE TABLE movie(\n"
                 +"id INTEGER PRIMARY KEY NOT NULL,\n"
                 +"title VARCHAR(150) NOT NULL,\n"
                 +"year YEAR NOT NULL,\n"
-                +"genre VARCHAR(50) NOT NULL,\n"
-                +"director VARCHAR(50) NOT NULL,\n"
                 +"image_link VARCHAR(300) NOT NULL,\n"
-                + "  TEXT NOT NULL);";
+                +"synopsis TEXT NOT NULL);";
         
-        String sqlCreateTableActors = " CREATE TABLE actors(\n"
+        String sqlCreateTableActor = " CREATE TABLE actor(\n"
                 +"id INTEGER PRIMARY KEY NOT NULL,\n"
-                +"name VARCHAR(50) NOT NULL,\n"
-                +"last_name VARCHAR(50) NOT NULL);";
+                +"name VARCHAR(45) NOT NULL,\n"
+                +"last_name VARCHAR(45) NOT NULL);";
         
-        String sqlCreateTableMoviesHasActors = "CREATE TABLE movies_has_actors(\n"
-                +"movies_id INTEGER NOT NULL,"
-                +"actors_id INTEGER NOT NULL,"
-                +"FOREIGN KEY(movies_id) REFERENCES movies(id),"
-                +"FOREIGN KEY(actors_id) REFERENCES actors(id));";
+        String sqlCreateTableGenre = " CREATE TABLE genre(\n"
+                +"id INTEGER PRIMARY KEY NOT NULL,\n"
+                +"type VARCHAR(45) NOT NULL);";
+        
+        String sqlCreateTableDirector = " CREATE TABLE director(\n"
+                +"id INTEGER PRIMARY KEY NOT NULL,\n"
+                +"name VARCHAR(45) NOT NULL,\n"
+                +"last_name VARCHAR(45) NOT NULL);";
+        
+        String sqlCreateTableMovieHasActor = "CREATE TABLE movie_has_actor(\n"
+                +"movie_id INTEGER NOT NULL,"
+                +"actor_id INTEGER NOT NULL,"
+                +"FOREIGN KEY(movie_id) REFERENCES movie(id),"
+                +"FOREIGN KEY(actor_id) REFERENCES actor(id));";
+        
+        String sqlCreateTableMovieHasGenre = "CREATE TABLE movie_has_genre(\n"
+                +"movie_id INTEGER NOT NULL,"
+                +"genre_id INTEGER NOT NULL,"
+                +"FOREIGN KEY(movie_id) REFERENCES movie(id),"
+                +"FOREIGN KEY(genre_id) REFERENCES genre(id));";
+        
+        String sqlCreateTableMovieHasDirector = "CREATE TABLE movie_has_director(\n"
+                +"movie_id INTEGER NOT NULL,"
+                +"director_id INTEGER NOT NULL,"
+                +"FOREIGN KEY(movie_id) REFERENCES movie(id),"
+                +"FOREIGN KEY(director_id) REFERENCES director(id));";
         
         
         // Add SQL queries to the arrayList
-        queries.add(sqlCreateTableActors);
-        queries.add(sqlCreateTableMovies);
-        queries.add(sqlCreateTableMoviesHasActors);
+        queries.add(sqlCreateTableMovie);
+        queries.add(sqlCreateTableActor);
+        queries.add(sqlCreateTableGenre);
+        queries.add(sqlCreateTableDirector);
+        queries.add(sqlCreateTableMovieHasActor);
+        queries.add(sqlCreateTableMovieHasGenre);
+        queries.add(sqlCreateTableMovieHasDirector);
            
         // Return the arrayList
         return queries; 
@@ -175,23 +198,55 @@ public class CacheDb {
         ArrayList<String> queries = new ArrayList<String>();
  
         // All the SQL queries for insert the datas
-        String sqlInsertIntoActors = "INSERT INTO `actors`"
-                + "VALUES (NULL,'Leonardo','DiCaprio'),"
-                + "(NULL,'Kate','Winslet'),"
-                + "(NULL,'Billy','Zane');";
+        String sqlInsertIntoActor = "INSERT INTO 'actor'"
+                + "VALUES"
+                + "(NULL,'Orlando','Bloom'),"
+                + "(NULL,'Leonardo','DiCaprio');";
         
-        String sqlInsertIntoMovies = "INSERT INTO `movies`"
-                + "VALUES (NULL,'titanic 2','1997','Action & Adventure','James Cameron','http://is2.mzstatic.com/image/thumb/Video/v4/7c/78/e4/7c78e482-f2e5-f2ce-83b6-188b26c3706d/source/100x100bb.jpg','So how did a ship that was apparently built to be impregnable sink on its maiden voyage? The genuine'),"
-                + "(NULL,'titanic','2002','Action & Adventure','Peter Jackson','http://is5.mzstatic.com/image/thumb/Video41/v4/5d/18/48/5d184891-f937-2513-7cea-e1b0878af529/source/100x100bb.jpg','One ring to rule them all. One ring to find them. One ring to bring them all and in the darkness bind them.');";
+        String sqlInsertIntoMovie = "INSERT INTO 'movie'"
+                + "VALUES"
+                + "(NULL,'The Lord of the Rings: The Fellowship of the Ring','2001','https://images-na.ssl-images-amazon.com/images/M/MV5BNTEyMjAwMDU1OV5BMl5BanBnXkFtZTcwNDQyNTkxMw@@._V1_SX300.jpg','An ancient Ring thought lost for centuries has been found, and through a strange twist in fate has been given to a small Hobbit named Frodo. When Gandalf discovers the Ring is in fact the One Ring of the Dark Lord Sauron, Frodo must make an epic quest to the Cracks of Doom in order to destroy it! However he does not go alone. He is joined by Gandalf, Legolas the elf, Gimli the Dwarf, Aragorn, Boromir and his three Hobbit friends Merry, Pippin and Samwise. Through mountains, snow, darkness, forests, rivers and plains, facing evil and danger at every corner the Fellowship of the Ring must go. Their quest to destroy the One Ring is the only hope for the end of the Dark Lords reign!'),"
+                + "(NULL,'Titanic','1997','https://images-na.ssl-images-amazon.com/images/M/MV5BZDNiMjE0NDgtZWRhNC00YTlhLTk2ZjItZTQzNTU2NjAzNWNkXkEyXkFqcGdeQXVyNjUwNzk3NDc@._V1_SX300.jpg','84 years later, a 101-year-old woman named Rose DeWitt Bukater tells the story to her granddaughter Lizzy Calvert, Brock Lovett, Lewis Bodine, Bobby Buell and Anatoly Mikailavich on the Keldysh about her life set in April 10th 1912, on a ship called Titanic when young Rose boards the departing ship with the upper-class passengers and her mother, Ruth DeWitt Bukater, and her fiancé, Caledon Hockley. Meanwhile, a drifter and artist named Jack Dawson and his best friend Fabrizio De Rossi win third-class tickets to the ship in a game. And she explains the whole story from departure until the death of Titanic on its first and last voyage April 15th, 1912 at 2:20 in the morning.');";
+               
+        String sqlInsertIntoGenre = "INSERT INTO 'genre'"
+                + "VALUES "
+                + "(NULL,'Drama'),"
+                + "(NULL,'Romance'),"
+                + "(NULL,'Action'),"
+                + "(NULL,'Adventure');";
         
+        String sqlInsertIntoDirector = "INSERT INTO 'director'"
+                + "VALUES "
+                + "(NULL,'Peter','Jackson'),"
+                + "(NULL,'James','Cameron');";
         
-        String sqlInsertIntoMoviesHasActors = "INSERT INTO `movies_has_actors`"
-                + "VALUES ('1','2'),"
+        String sqlInsertIntoMovieHasActor = "INSERT INTO 'movie_has_actor'"
+                + "VALUES "
+                + "('1','1'),"
                 + "('2','2');";
+        
+        String sqlInsertIntoMovieHasGenre = "INSERT INTO 'movie_has_genre'"
+                + "VALUES "
+                + "('1','1'),"
+                + "('1','3'),"
+                + "('1','4'),"
+                + "('2','1'),"
+                + "('2','2');";
+        
+        String sqlInsertIntoMovieHasDirector = "INSERT INTO 'movie_has_director'"
+                + "VALUES "
+                + "('1','1'),"
+                + "('2','2');";
+        
+        
         // Add SQL queries to the arrayList
-        queries.add(sqlInsertIntoActors);
-        queries.add(sqlInsertIntoMovies);
-        queries.add(sqlInsertIntoMoviesHasActors);
+        queries.add(sqlInsertIntoActor);
+        queries.add(sqlInsertIntoMovie);
+        queries.add(sqlInsertIntoGenre);
+        queries.add(sqlInsertIntoDirector);
+        queries.add(sqlInsertIntoMovieHasActor);
+        queries.add(sqlInsertIntoMovieHasGenre);
+        queries.add(sqlInsertIntoMovieHasDirector);
 
            
         // Return the arrayList

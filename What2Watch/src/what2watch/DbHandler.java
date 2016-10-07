@@ -30,7 +30,7 @@ public class DbHandler {
         // I get the movieName in lower case and I check in the DB on a LOWER(title)
         // like that we don't have any conflict with sensitiveCase
         String movieNameLower = movieName.toLowerCase();
-        String query = "SELECT LOWER(title) AS title FROM movies WHERE title LIKE \""+movieNameLower+"\"";
+        String query = "SELECT LOWER(title) AS title FROM movie WHERE title LIKE \""+movieNameLower+"\"";
         
         String result = dataBase.doSqlQuerry(query);       
         System.out.println("Resultat : "+result);
