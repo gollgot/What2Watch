@@ -48,14 +48,35 @@ public class Main extends Application {
             System.out.println("The cache file already exists.");
         }
         
+         
+        /* TEST ParsingFiles */
+        /*UserPreferences userPref = new UserPreferences();
+        FileBrowser fileBrowser = new FileBrowser();
+        ParsingFiles parsingFiles = new ParsingFiles();
+        ArrayList<String> originalListFiles = new ArrayList<>(); 
+        
+        // get path saved on the UserPreferences
+        String path = userPref.getPath();
+        
+        try {
+            fileBrowser.fetchMoviesFileNames(path);
+            originalListFiles = fileBrowser.getMovieFileNames();
+        } catch (IOException ex) {
+            System.out.println("Error on Main : getFilesNames. Ex : "+ex);
+        }
+        ArrayList<String> finalListFiles = parsingFiles.parse(originalListFiles);*/
         
         /* TEST JSON */
-        /*Movie movie = new Movie();
+        /*String filmTest = finalListFiles.get(20);
+        filmTest = filmTest.replaceAll(" ", "%20");
+        
+        Movie movie = new Movie();
         // Fetch the JSON and add data into movie object
+        System.out.println("http://www.omdbapi.com/?t="+filmTest+"&y=&plot=full&r=json");
         try {
             // Get a JSON from an URL
             // test
-            JSONObject json = ParsingJSON.readJsonFromUrl("http://www.omdbapi.com/?t=titanic&y=&plot=full&r=json");
+            JSONObject json = ParsingJSON.readJsonFromUrl("http://www.omdbapi.com/?t="+filmTest+"&y=&plot=full&r=json");
             // Set data on a movie object
             movie.setTitle(json.get("Title").toString());
             movie.setYear(json.get("Year").toString());
@@ -70,25 +91,18 @@ public class Main extends Application {
         } catch (IOException ex) {
             System.out.println("ERROR on parsingJSON (IO exception) : "+ex.getMessage() + "\nVeuillez vérifier votre connexion internet");
         }
-        System.out.println("Title of movie : "+movie.getTitle());
+        System.out.println("Title of the movie : "+movie.getTitle());
+        System.out.println("Year : "+movie.getYear());
+        System.out.println("S : "+movie.getSynopsis());
         */
         
-        /* TEST ParsingFiles */
-        UserPreferences userPref = new UserPreferences();
-        FileBrowser fileBrowser = new FileBrowser();
-        ParsingFiles parsingFiles = new ParsingFiles();
-        ArrayList<String> originalListFiles = new ArrayList<>(); 
         
-        // get path saved on the UserPreferences
-        String path = userPref.getPath();
+        /* TEST IF MOVIE EXISTS OR NOT*/ 
+        DbHandler dbHandler = new DbHandler(cacheDb,"Titanic");
         
-        try {
-            fileBrowser.fetchMoviesFileNames(path);
-            originalListFiles = fileBrowser.getMovieFileNames();
-        } catch (IOException ex) {
-            System.out.println("Error on Main : getFilesNames. Ex : "+ex);
-        }
-        ArrayList<String> finalListFiles = parsingFiles.parse(originalListFiles);
+        
+        
+        
         
         /* After : Launch the window */
         launch(args);

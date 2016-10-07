@@ -110,27 +110,24 @@ public class CacheDb {
     }
     
     
-        public String doSqlQuerry(String sql){
+    public String doSqlQuerry(String query) {
 
     String retour = "";
 
-      try (Connection conn = this.connect();
-           Statement stmt  = conn.createStatement();
-           ResultSet rs    = stmt.executeQuery(sql)){
-           ResultSetMetaData metadata = rs.getMetaData();
-            int columnCount = metadata.getColumnCount();
-            while (rs.next()) {    
-                  for(int i=1;i<=columnCount;i++)
-                  {
-                      retour += rs.getString(i) + ";";
-                  }
-                  
-                retour = retour + "\n";     
-            }
-          
-      } catch (SQLException e) {
-          System.out.println(e.getMessage());
-      } 
+    try (Connection conn = this.connect();
+        Statement stmt  = conn.createStatement();
+        ResultSet result    = stmt.executeQuery(query)){
+        ResultSetMetaData metadata = result.getMetaData();
+        int columnCount = metadata.getColumnCount();
+        while (result.next()) {    
+            for(int i=1;i<=columnCount;i++) {
+                retour += result.getString(i) + ";";
+            }    
+        }
+
+    } catch (SQLException e) {
+        System.out.println(e.getMessage());
+    } 
         return retour;
     }
 
@@ -148,7 +145,7 @@ public class CacheDb {
                 +"genre VARCHAR(50) NOT NULL,\n"
                 +"director VARCHAR(50) NOT NULL,\n"
                 +"image_link VARCHAR(300) NOT NULL,\n"
-                + "synopsis TEXT NOT NULL);";
+                + "  TEXT NOT NULL);";
         
         String sqlCreateTableActors = " CREATE TABLE actors(\n"
                 +"id INTEGER PRIMARY KEY NOT NULL,\n"
@@ -184,8 +181,9 @@ public class CacheDb {
                 + "(NULL,'Billy','Zane');";
         
         String sqlInsertIntoMovies = "INSERT INTO `movies`"
-                + "VALUES (NULL,'Titanic','1997','Action & Adventure','James Cameron','http://is2.mzstatic.com/image/thumb/Video/v4/7c/78/e4/7c78e482-f2e5-f2ce-83b6-188b26c3706d/source/100x100bb.jpg','So how did a ship that was apparently built to be impregnable sink on its maiden voyage? The genuine'),"
-                + "(NULL,'The Lord of the Rings: The Fellowship of the Ring','2002','Action & Adventure','Peter Jackson','http://is5.mzstatic.com/image/thumb/Video41/v4/5d/18/48/5d184891-f937-2513-7cea-e1b0878af529/source/100x100bb.jpg','One ring to rule them all. One ring to find them. One ring to bring them all and in the darkness bind them.');";
+                + "VALUES (NULL,'titanic 2','1997','Action & Adventure','James Cameron','http://is2.mzstatic.com/image/thumb/Video/v4/7c/78/e4/7c78e482-f2e5-f2ce-83b6-188b26c3706d/source/100x100bb.jpg','So how did a ship that was apparently built to be impregnable sink on its maiden voyage? The genuine'),"
+                + "(NULL,'titanic','2002','Action & Adventure','Peter Jackson','http://is5.mzstatic.com/image/thumb/Video41/v4/5d/18/48/5d184891-f937-2513-7cea-e1b0878af529/source/100x100bb.jpg','One ring to rule them all. One ring to find them. One ring to bring them all and in the darkness bind them.');";
+        
         
         String sqlInsertIntoMoviesHasActors = "INSERT INTO `movies_has_actors`"
                 + "VALUES ('1','2'),"
