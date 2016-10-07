@@ -14,11 +14,11 @@ public class Movie {
     
     
     private String title;
-    private String director;
-    private String[] actors;
+    private String[] director;
+    private String[] actor;
     private String year;
     private String poster;
-    private String genre;
+    private String[] genre;
     private String synopsis;
     
 
@@ -33,12 +33,12 @@ public class Movie {
         return title;
     }
 
-    public String getDirector() {
+    public String[] getDirector() {
         return director;
     }
 
     public String[] getActors() {
-        return actors;
+        return actor;
     }
 
     public String getYear() {
@@ -49,7 +49,7 @@ public class Movie {
         return poster;
     }
 
-    public String getGenre() {
+    public String[] getGenre() {
         return genre;
     }
     
@@ -67,11 +67,11 @@ public class Movie {
     }
 
     public void setDirector(String director) {
-        this.director = director;
+        this.director = director.split(", ");
     }
 
     public void setActors(String actors) {
-        this.actors = actors.split(", ");
+        this.actor = actors.split(", ");
     }
 
     public void setYear(String year) {
@@ -83,7 +83,7 @@ public class Movie {
     }
 
     public void setGenre(String genre) {
-        this.genre = genre;
+        this.genre = genre.split(", ");
     }
     
     public void setSynopsis(String synopsis) {

@@ -98,7 +98,8 @@ public class Main extends Application {
         
         
         /* TEST IF MOVIE EXISTS OR NOT*/ 
-        DbHandler dbHandler = new DbHandler(cacheDb,"Titanic");
+        // it's an updating of cache
+        DbHandler dbHandler = new DbHandler(cacheDb,"guardians of the galaxy");
         
         
         

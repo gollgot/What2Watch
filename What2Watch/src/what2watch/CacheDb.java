@@ -14,6 +14,8 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -108,28 +110,6 @@ public class CacheDb {
         }                     
 
     }
-    
-    
-    public String doSqlQuerry(String query) {
-
-    String retour = "";
-
-    try (Connection conn = this.connect();
-        Statement stmt  = conn.createStatement();
-        ResultSet result    = stmt.executeQuery(query)){
-        ResultSetMetaData metadata = result.getMetaData();
-        int columnCount = metadata.getColumnCount();
-        while (result.next()) {    
-            for(int i=1;i<=columnCount;i++) {
-                retour += result.getString(i) + ";";
-            }    
-        }
-
-    } catch (SQLException e) {
-        System.out.println(e.getMessage());
-    } 
-        return retour;
-    }
 
     
     private ArrayList<String> getTablesQueries() {
@@ -138,40 +118,38 @@ public class CacheDb {
 
         
         // All the SQL queries for create the tables
-        String sqlCreateTableMovie = " CREATE TABLE movie(\n"
-                +"id INTEGER PRIMARY KEY NOT NULL,\n"
-                +"title VARCHAR(150) NOT NULL,\n"
-                +"year YEAR NOT NULL,\n"
-                +"image_link VARCHAR(300) NOT NULL,\n"
+        String sqlCreateTableMovie = " CREATE TABLE movie("
+                +"id INTEGER PRIMARY KEY NOT NULL,"
+                +"title VARCHAR(150) NOT NULL,"
+                +"year YEAR NOT NULL,"
+                +"image_link VARCHAR(300) NOT NULL,"
                 +"synopsis TEXT NOT NULL);";
         
-        String sqlCreateTableActor = " CREATE TABLE actor(\n"
-                +"id INTEGER PRIMARY KEY NOT NULL,\n"
-                +"name VARCHAR(45) NOT NULL,\n"
-                +"last_name VARCHAR(45) NOT NULL);";
+        String sqlCreateTableActor = " CREATE TABLE actor("
+                +"id INTEGER PRIMARY KEY NOT NULL,"
+                +"name VARCHAR(100) NOT NULL);";
         
-        String sqlCreateTableGenre = " CREATE TABLE genre(\n"
-                +"id INTEGER PRIMARY KEY NOT NULL,\n"
+        String sqlCreateTableGenre = " CREATE TABLE genre("
+                +"id INTEGER PRIMARY KEY NOT NULL,"
                 +"type VARCHAR(45) NOT NULL);";
         
-        String sqlCreateTableDirector = " CREATE TABLE director(\n"
-                +"id INTEGER PRIMARY KEY NOT NULL,\n"
-                +"name VARCHAR(45) NOT NULL,\n"
-                +"last_name VARCHAR(45) NOT NULL);";
+        String sqlCreateTableDirector = " CREATE TABLE director("
+                +"id INTEGER PRIMARY KEY NOT NULL,"
+                +"name VARCHAR(100) NOT NULL);";
         
-        String sqlCreateTableMovieHasActor = "CREATE TABLE movie_has_actor(\n"
+        String sqlCreateTableMovieHasActor = "CREATE TABLE movie_has_actor("
                 +"movie_id INTEGER NOT NULL,"
                 +"actor_id INTEGER NOT NULL,"
                 +"FOREIGN KEY(movie_id) REFERENCES movie(id),"
                 +"FOREIGN KEY(actor_id) REFERENCES actor(id));";
         
-        String sqlCreateTableMovieHasGenre = "CREATE TABLE movie_has_genre(\n"
+        String sqlCreateTableMovieHasGenre = "CREATE TABLE movie_has_genre("
                 +"movie_id INTEGER NOT NULL,"
                 +"genre_id INTEGER NOT NULL,"
                 +"FOREIGN KEY(movie_id) REFERENCES movie(id),"
                 +"FOREIGN KEY(genre_id) REFERENCES genre(id));";
         
-        String sqlCreateTableMovieHasDirector = "CREATE TABLE movie_has_director(\n"
+        String sqlCreateTableMovieHasDirector = "CREATE TABLE movie_has_director("
                 +"movie_id INTEGER NOT NULL,"
                 +"director_id INTEGER NOT NULL,"
                 +"FOREIGN KEY(movie_id) REFERENCES movie(id),"
@@ -200,8 +178,9 @@ public class CacheDb {
         // All the SQL queries for insert the datas
         String sqlInsertIntoActor = "INSERT INTO 'actor'"
                 + "VALUES"
-                + "(NULL,'Orlando','Bloom'),"
-                + "(NULL,'Leonardo','DiCaprio');";
+                + "(NULL,'Orlando Bloom'),"
+                + "(NULL,'Leonardo DiCaprio'),"
+                + "(NULL,'Chris Pratt');";
         
         String sqlInsertIntoMovie = "INSERT INTO 'movie'"
                 + "VALUES"
@@ -217,8 +196,8 @@ public class CacheDb {
         
         String sqlInsertIntoDirector = "INSERT INTO 'director'"
                 + "VALUES "
-                + "(NULL,'Peter','Jackson'),"
-                + "(NULL,'James','Cameron');";
+                + "(NULL,'Peter Jackson'),"
+                + "(NULL,'James Cameron');";
         
         String sqlInsertIntoMovieHasActor = "INSERT INTO 'movie_has_actor'"
                 + "VALUES "
@@ -251,6 +230,42 @@ public class CacheDb {
            
         // Return the arrayList
         return queries; 
+    }
+    
+    
+    public String doSelectQuery(String query) {
+
+    String retour = "";
+
+    try (Connection conn = this.connect();
+        Statement stmt  = conn.createStatement();
+        ResultSet result    = stmt.executeQuery(query)){
+        ResultSetMetaData metadata = result.getMetaData();
+        int columnCount = metadata.getColumnCount();
+        while (result.next()) {    
+            for(int i=1;i<=columnCount;i++) {
+                retour += result.getString(i) + ";";
+            }    
+        }
+
+    } catch (SQLException e) {
+        System.out.println(e.getMessage());
+    } 
+        return retour;
+    }
+    
+    
+    // (No return query is for example : Insert / Update / Delete)
+    void doNoReturnQuery(String query) {
+ 
+        Connection conn = this.connect();
+        try {
+            Statement stmt  = conn.createStatement();
+            stmt.execute(query);
+        } catch (SQLException ex) {
+            System.out.println("Error on CacheDb class / doNoReturnQuery. Exeption = "+ex.getMessage().toString());
+        }
+        
     }
     
     
