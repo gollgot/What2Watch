@@ -66,40 +66,11 @@ public class Main extends Application {
         }
         ArrayList<String> finalListFiles = parsingFiles.parse(originalListFiles);*/
         
-        /* TEST JSON */
-        /*String filmTest = finalListFiles.get(20);
-        filmTest = filmTest.replaceAll(" ", "%20");
-        
-        Movie movie = new Movie();
-        // Fetch the JSON and add data into movie object
-        System.out.println("http://www.omdbapi.com/?t="+filmTest+"&y=&plot=full&r=json");
-        try {
-            // Get a JSON from an URL
-            // test
-            JSONObject json = ParsingJSON.readJsonFromUrl("http://www.omdbapi.com/?t="+filmTest+"&y=&plot=full&r=json");
-            // Set data on a movie object
-            movie.setTitle(json.get("Title").toString());
-            movie.setYear(json.get("Year").toString());
-            movie.setDirector(json.get("Director").toString());
-            movie.setActors(json.get("Actors").toString());
-            movie.setGenre(json.get("Genre").toString());
-            movie.setPoster(json.get("Poster").toString());
-            movie.setSynopsis(json.get("Plot").toString());
-       
-        } catch (JSONException ex) {
-            System.out.println("ERROR on parsingJSON (JSON exception) : "+ex.getMessage());
-        } catch (IOException ex) {
-            System.out.println("ERROR on parsingJSON (IO exception) : "+ex.getMessage() + "\nVeuillez vérifier votre connexion internet");
-        }
-        System.out.println("Title of the movie : "+movie.getTitle());
-        System.out.println("Year : "+movie.getYear());
-        System.out.println("S : "+movie.getSynopsis());
-        */
         
         
         /* TEST IF MOVIE EXISTS OR NOT*/ 
         // it's an updating of cache
-        DbHandler dbHandler = new DbHandler(cacheDb,"guardians of the galaxy");
+        //DbHandler dbHandler = new DbHandler(cacheDb,"king kong");
         
         
         

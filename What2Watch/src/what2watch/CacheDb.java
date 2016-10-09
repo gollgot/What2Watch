@@ -235,23 +235,23 @@ public class CacheDb {
     
     public String doSelectQuery(String query) {
 
-    String retour = "";
+        String resultant = "";
 
-    try (Connection conn = this.connect();
-        Statement stmt  = conn.createStatement();
-        ResultSet result    = stmt.executeQuery(query)){
-        ResultSetMetaData metadata = result.getMetaData();
-        int columnCount = metadata.getColumnCount();
-        while (result.next()) {    
-            for(int i=1;i<=columnCount;i++) {
-                retour += result.getString(i) + ";";
-            }    
-        }
+        try (Connection conn = this.connect();
+            Statement stmt  = conn.createStatement();
+            ResultSet result    = stmt.executeQuery(query)){
+            ResultSetMetaData metadata = result.getMetaData();
+            int columnCount = metadata.getColumnCount();
+            while (result.next()) {    
+                for(int i=1;i<=columnCount;i++) {
+                    resultant += result.getString(i) + ";";
+                }    
+            }
 
-    } catch (SQLException e) {
-        System.out.println(e.getMessage());
-    } 
-        return retour;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        } 
+            return resultant;
     }
     
     
