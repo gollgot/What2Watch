@@ -77,6 +77,10 @@ public class FXMLDocumentController implements Initializable {
     private Label startingYearLabel;
     @FXML
     private Label endingYearLabel;
+    @FXML
+    private Label directorsLabel;
+    @FXML
+    private Label directorsValueLabel;
     
     private UserPreferences prefs = new UserPreferences();
     private FileBrowser browser = new FileBrowser();
@@ -125,8 +129,9 @@ public class FXMLDocumentController implements Initializable {
         browser.fetchMoviesFileNames(path);
         
         // Filing the listView with movie file names
+        this.movieFileNames.clear();
         this.movieFileNames.addAll(browser.getMovieFileNames());
-        this.movieListView.setItems(movieFileNames);
+        this.movieListView.setItems(this.movieFileNames);
     }
 
     @FXML

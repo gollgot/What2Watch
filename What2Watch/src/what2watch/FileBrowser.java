@@ -44,6 +44,7 @@ public class FileBrowser {
     public void fetchMoviesFileNames(String path) throws IOException {
         // Making sure the path isn't empty
         if (!path.equals("")) {
+            this.movieFileNames.clear();
             Files.find(Paths.get(path),
                     Integer.MAX_VALUE,
                     (filePath, fileAttr) -> fileAttr.isRegularFile())
@@ -55,7 +56,7 @@ public class FileBrowser {
                             if (videoFileName.endsWith(this.extensions[i])) {
                                 // Making sure it doesn't contain TV Shows patterns
                                 if (!fileParser.containsTVShowPattern(videoFileName)) {
-                                    movieFileNames.add(sourcePath.getFileName().toString());
+                                    this.movieFileNames.add(videoFileName);
                                     //System.out.println(sourcePath.getFileName().toString());
                                     //System.out.println(sourcePath);
                                     break;
