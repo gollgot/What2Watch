@@ -7,6 +7,7 @@ package what2watch;
  */
 
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -81,5 +82,26 @@ public class ParsingFiles {
             retour.add(name);
         }
         return retour;
+    }
+    
+    
+    // Checks whether a video file name contains patterns of a TV show
+    // Returns a boolean indicating if it does or not
+    public boolean containsTVShowPattern(String videoFileName) {
+        boolean containsPattern = false;
+        
+        // Detects "s03e9" kind of pattern
+        Pattern classic = Pattern.compile("(([^a-zA-Z](s|S)[^a-zA-Z]?[0-9]{1,3})|(([^a-zA-Z](e|E)[^a-zA-Z]?[0-9]{1,3})))");
+        // Detects "1x05" kind of pattern
+        Pattern xed = Pattern.compile("([0-9]{1,2}[^a-zA-Z]?x[^a-zA-Z]?[0-9]{1,3})");
+        // Detects "- 03 -" kind of pattern
+        Pattern numbered = Pattern.compile("-[^a-zA-Z0-9]?[0-9]{1,4}[^a-zA-Z0-9]?-");
+        
+        containsPattern = classic.matcher(videoFileName).find() || xed.matcher(videoFileName).find() || numbered.matcher(videoFileName).find();
+        
+        // for test purposes only
+        // System.out.println(videoFileName + "\nis a show? " + containsPattern);
+        
+        return containsPattern;            
     }
 }

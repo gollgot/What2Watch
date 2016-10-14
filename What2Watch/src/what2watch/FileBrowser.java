@@ -16,6 +16,7 @@ import java.util.ArrayList;
 public class FileBrowser {
     private String[] extensions = {".avi", ".mkv", ".mpeg", ".wmv", ".m4v", ".mp4", ".flv", ".mov"};
     private ArrayList<String> movieFileNames = new ArrayList<String>();
+    private ParsingFiles fileParser = new ParsingFiles();
 
     public FileBrowser() {
     }
@@ -46,14 +47,19 @@ public class FileBrowser {
             Files.find(Paths.get(path),
                     Integer.MAX_VALUE,
                     (filePath, fileAttr) -> fileAttr.isRegularFile())
-                    .forEach((Path source) -> {
+                    .forEach((Path sourcePath) -> {
                         // Get rid of this (loop complexity)
                         for (int i = 0; i < this.extensions.length; i++) {
-                            if (source.getFileName().toString().endsWith(this.extensions[i])) {
-                                movieFileNames.add(source.getFileName().toString());
-                                //System.out.println(source.getFileName().toString());
-                                //System.out.println(source);
-                                break;
+                            String videoFileName = sourcePath.getFileName().toString();
+                            // Making sure the file has a video type
+                            if (videoFileName.endsWith(this.extensions[i])) {
+                                // Making sure it doesn't contain TV Shows patterns
+                                if (!fileParser.containsTVShowPattern(videoFileName)) {
+                                    movieFileNames.add(sourcePath.getFileName().toString());
+                                    //System.out.println(sourcePath.getFileName().toString());
+                                    //System.out.println(sourcePath);
+                                    break;
+                                }
                             }
                         }
                     });
