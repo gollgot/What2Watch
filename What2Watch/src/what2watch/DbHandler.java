@@ -6,6 +6,7 @@
 package what2watch;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -16,19 +17,25 @@ import org.json.JSONObject;
 public class DbHandler {
     
     private CacheDb dataBase;
-    private String movieName;
+    private ArrayList<String> originalMovieNames;
 
-    public DbHandler(CacheDb dataBase, String movieName) {
+    public DbHandler(CacheDb dataBase, ArrayList<String> originalMovieName) {
         this.dataBase = dataBase;
-        this.movieName = movieName;
-        
-        if(movieExistsOnDb(movieName)){
-            System.out.println(movieName+" Existe !");
-            // ==> we have to created method who getInfos of mthe movie, create a Movie object etc...
-        }else{
-            System.out.println(movieName+" Existe pas !");
-            getMovieInfosFromAPI(movieName);
+        this.originalMovieNames = originalMovieName;
+    }
+    
+    public void update(){
+        // Check if the movie already exists on the DB, if not, we put on all the datas
+        for (int i = 0; i < originalMovieNames.size(); i++) {
+            if(movieExistsOnDb(originalMovieNames.get(i))){
+                System.out.println(originalMovieNames.get(i)+" Existe !");
+                // ==> we have to created method who getInfos of mthe movie, create a Movie object etc...
+            }else{
+                System.out.println(originalMovieNames.get(i)+" Existe pas !");
+                getMovieInfosFromAPI(originalMovieNames.get(i));
+            }
         }
+        
     }
     
     private boolean movieExistsOnDb(String movieName){
@@ -48,8 +55,7 @@ public class DbHandler {
     }
 
     private void getMovieInfosFromAPI(String movieName) {
-        /* TEST JSON */
-        
+
         Boolean internetError = false;
         String movieNameUrlFormat = movieName.replaceAll(" ", "%20");
         
@@ -65,7 +71,13 @@ public class DbHandler {
             movie.setActors(json.get("Actors").toString());
             movie.setGenre(json.get("Genre").toString());
             movie.setPoster(json.get("Poster").toString());
-            movie.setSynopsis(json.get("Plot").toString());
+            // Some plots have \" on their text, so we have to replace all \" with ´
+            // like that it's like a simple quote 
+            String synopsis = json.get("Plot").toString();
+            synopsis = synopsis.replaceAll("\\\"","`");
+            movie.setSynopsis(synopsis);
+            
+            
        
         } catch (JSONException ex) {
             System.out.println("ERROR on parsingJSON (JSON exception) : "+ex.getMessage());
@@ -83,14 +95,17 @@ public class DbHandler {
         }
         
     }
-
+    
+    // BE CAREFUL -> we have to replace replace ' with " for keep ' on all text
+    // on query example : INSERT INTO('description') VALUES('i'm') => so => 
+    // INSERT INTO('description') VALUES("i'm")
     private void insertMovieOnDb(Movie movie) {
-        System.out.println("**** INSERT MOVIE *****");
+        System.out.println("\n**** INSERT MOVIE *****");
         
         /* Insert Movie */
         String queryInsertMovie = "INSERT INTO 'movie' "
                 + "VALUES"
-                + "(NULL,'"+movie.getTitle()+"','"+movie.getYear()+"','"+movie.getPoster()+"','"+movie.getSynopsis()+"')";
+                + "(NULL,\""+movie.getTitle()+"\",\""+movie.getYear()+"\",\""+movie.getPoster()+"\",\""+movie.getSynopsis()+"\")";
         dataBase.doNoReturnQuery(queryInsertMovie);
         System.out.println(movie.getTitle()+" ajouté");
         
@@ -102,7 +117,7 @@ public class DbHandler {
             String result = dataBase.doSelectQuery(querySelect);
             if(result.equals("")){
                 String queryInsertActor = "INSERT INTO 'actor' "
-                        + "VALUES(NULL,'"+actors[i]+"')";
+                        + "VALUES(NULL,\""+actors[i]+"\")";
                 dataBase.doNoReturnQuery(queryInsertActor);
                 System.out.println(actors[i]+" ajouté");
             }else{
@@ -133,7 +148,7 @@ public class DbHandler {
             String result = dataBase.doSelectQuery(querySelect);
             if(result.equals("")){
                 String queryInsertDirector = "INSERT INTO 'director' "
-                        + "VALUES(NULL,'"+directors[i]+"')";
+                        + "VALUES(NULL,\""+directors[i]+"\")";
                 dataBase.doNoReturnQuery(queryInsertDirector);
                 System.out.println(directors[i]+" ajouté");
             }else{
@@ -186,8 +201,17 @@ public class DbHandler {
             System.out.println("movie_has_director add : "+idMovie+","+idDirector);
         }
         
-        System.out.println("**** MOVIE INSERTED AND DATAS UPDATED *****");
+        System.out.println("**** MOVIE INSERTED AND DATAS UPDATED *****\n");
         
+    }
+    
+    public String[] getAllTitles() {
+        
+        String query = "SELECT title FROM movie";
+        String result = dataBase.doSelectQuery(query);
+        String[] results = result.split(";");
+        
+        return results;       
     }
    
     

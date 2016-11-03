@@ -7,6 +7,7 @@ package what2watch;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -125,13 +126,23 @@ public class FXMLDocumentController implements Initializable {
 
     @FXML
     private void browseFiles(ActionEvent event) throws IOException {
+        ParsingFiles parsingFiles = new ParsingFiles();
+        CacheDb cacheDb = new CacheDb();
         String path = this.prefs.getPath();
         browser.fetchMoviesFileNames(path);
         
+        // Update the cache db (add or remove movies on DB, it depend on the
+        // browser.getMovieFileNames) and get real titles of all the movies on 
+        // the DB.
+        ArrayList<String> finalListFiles = parsingFiles.parse(browser.getMovieFileNames());
+        DbHandler dbHandler = new DbHandler(cacheDb,finalListFiles);
+        dbHandler.update();
+        String[] realTitles = dbHandler.getAllTitles();
+        
         // Filing the listView with movie file names
         this.movieFileNames.clear();
-        this.movieFileNames.addAll(browser.getMovieFileNames());
-        this.movieListView.setItems(this.movieFileNames);
+        this.movieFileNames.addAll(realTitles);
+        this.movieListView.setItems(this.movieFileNames);       
     }
 
     @FXML

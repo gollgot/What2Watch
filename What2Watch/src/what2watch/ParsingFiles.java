@@ -20,10 +20,10 @@ public class ParsingFiles {
     public static String simplify_name(String name){
         String listExcludeExtension = ".mkv|.avi|.m4v";
         String listExcludeTypeExtension = "Mkv";
-        String listExcludeLanguage = "FRENCH|VOSTA|VOSTFR|VF";
+        String listExcludeLanguage = "FRENCH|VOSTA|VOSTFR|VF|FR|EN";
         String listExcludeTeam = "Ganesh-AC3";
         String listExcludeFileResolution = "720p|1080p";        
-        String listExcludeTypeRecord = "BluRay|DVDRIP|3D|3d";
+        String listExcludeTypeRecord = "BluRay|DVDRIP|HD|3D|3d";
         String listExcludeTypePonctuation = "\\.|-|;|,";
         String listExclude = listExcludeExtension +"|" + 
                              listExcludeTypeExtension + "|" +

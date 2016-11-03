@@ -90,7 +90,7 @@ public class CacheDb {
                 
                 /* TEST */
                 // ONLY FOR TRYING (For to have on the BDD a few datas)
-                ArrayList<String> insertQueries;
+                /*ArrayList<String> insertQueries;
               
                 insertQueries = getInsertQueries();
                 for (int i=0; i < insertQueries.size(); i++) {

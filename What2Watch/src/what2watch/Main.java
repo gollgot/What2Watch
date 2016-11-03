@@ -64,13 +64,16 @@ public class Main extends Application {
         } catch (IOException ex) {
             System.out.println("Error on Main : getFilesNames. Ex : "+ex);
         }
-        ArrayList<String> finalListFiles = parsingFiles.parse(originalListFiles);*/
+        ArrayList<String> finalListFiles = parsingFiles.parse(originalListFiles);
         
         
         
         /* TEST IF MOVIE EXISTS OR NOT*/ 
         // it's an updating of cache
-        //DbHandler dbHandler = new DbHandler(cacheDb,"king kong");
+        /*for (int i = 0; i < finalListFiles.size(); i++) {
+            System.out.println("Nom : "+finalListFiles.get(i));
+        }*/
+       //DbHandler dbHandler = new DbHandler(cacheDb,finalListFiles);
         
         
         
