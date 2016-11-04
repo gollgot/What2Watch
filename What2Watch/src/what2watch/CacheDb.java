@@ -120,6 +120,7 @@ public class CacheDb {
         // All the SQL queries for create the tables
         String sqlCreateTableMovie = " CREATE TABLE movie("
                 +"id INTEGER PRIMARY KEY NOT NULL,"
+                +"raw_title VARCHAR(300) NOT NULL,"
                 +"title VARCHAR(150) NOT NULL,"
                 +"year YEAR NOT NULL,"
                 +"image_link VARCHAR(300) NOT NULL,"

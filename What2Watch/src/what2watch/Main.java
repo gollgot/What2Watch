@@ -52,7 +52,6 @@ public class Main extends Application {
         /* TEST ParsingFiles */
         /*UserPreferences userPref = new UserPreferences();
         FileBrowser fileBrowser = new FileBrowser();
-        ParsingFiles parsingFiles = new ParsingFiles();
         ArrayList<String> originalListFiles = new ArrayList<>(); 
         
         // get path saved on the UserPreferences
@@ -64,7 +63,7 @@ public class Main extends Application {
         } catch (IOException ex) {
             System.out.println("Error on Main : getFilesNames. Ex : "+ex);
         }
-        ArrayList<String> finalListFiles = parsingFiles.parse(originalListFiles);
+        ArrayList<String> finalListFiles = ParsingFiles.parse(originalListFiles);
         
         
         

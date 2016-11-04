@@ -126,7 +126,6 @@ public class FXMLDocumentController implements Initializable {
 
     @FXML
     private void browseFiles(ActionEvent event) throws IOException {
-        ParsingFiles parsingFiles = new ParsingFiles();
         CacheDb cacheDb = new CacheDb();
         String path = this.prefs.getPath();
         browser.fetchMoviesFileNames(path);
@@ -134,8 +133,9 @@ public class FXMLDocumentController implements Initializable {
         // Update the cache db (add or remove movies on DB, it depend on the
         // browser.getMovieFileNames) and get real titles of all the movies on 
         // the DB.
-        ArrayList<String> finalListFiles = parsingFiles.parse(browser.getMovieFileNames());
-        DbHandler dbHandler = new DbHandler(cacheDb,finalListFiles);
+        ArrayList<String> fileNames = ParsingFiles.parse(browser.getMovieFileNames());
+        ArrayList<String> rawFileNames = browser.getMovieFileNames();
+        DbHandler dbHandler = new DbHandler(cacheDb,fileNames,rawFileNames);
         dbHandler.update();
         String[] realTitles = dbHandler.getAllTitles();
         

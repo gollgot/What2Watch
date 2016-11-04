@@ -5,8 +5,11 @@
  */
 package what2watch;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -15,56 +18,56 @@ import org.json.JSONObject;
  * @author David.ROSAT & loic.dessaules
  */
 public class DbHandler {
-    
+
     private CacheDb dataBase;
     private ArrayList<String> originalMovieNames;
+    private ArrayList<String> rawMovieNames;
 
-    public DbHandler(CacheDb dataBase, ArrayList<String> originalMovieName) {
+    public DbHandler(CacheDb dataBase, ArrayList<String> originalMovieNames, ArrayList<String> rawMovieNames) {
         this.dataBase = dataBase;
-        this.originalMovieNames = originalMovieName;
+        this.originalMovieNames = originalMovieNames;
+        this.rawMovieNames = rawMovieNames;
     }
-    
-    public void update(){
+
+    public void update() {
         // Check if the movie already exists on the DB, if not, we put on all the datas
         for (int i = 0; i < originalMovieNames.size(); i++) {
-            if(movieExistsOnDb(originalMovieNames.get(i))){
-                System.out.println(originalMovieNames.get(i)+" Existe !");
-                // ==> we have to created method who getInfos of mthe movie, create a Movie object etc...
-            }else{
-                System.out.println(originalMovieNames.get(i)+" Existe pas !");
-                getMovieInfosFromAPI(originalMovieNames.get(i));
+            if (movieExistsOnDb(rawMovieNames.get(i))) {
+                System.out.println(originalMovieNames.get(i) + " Existe !");
+            } else {
+                System.out.println(originalMovieNames.get(i) + " Existe pas !");
+                getMovieInfosFromAPI(originalMovieNames.get(i), rawMovieNames.get(i));
             }
         }
-        
+        deleteMovieOnDb();
     }
-    
-    private boolean movieExistsOnDb(String movieName){
-        
-        // I get the movieName in lower case and I check in the DB on a LOWER(title)
-        // like that we don't have any conflict with sensitiveCase
-        String movieNameLower = movieName.toLowerCase();
-        String query = "SELECT LOWER(title) AS title FROM movie WHERE title LIKE \""+movieNameLower+"\"";
-        
-        String result = dataBase.doSelectQuery(query);       
-        
-        if(result.equals("")){
-            return false;   
-        }else{
-            return true;        
+
+    private boolean movieExistsOnDb(String rawMovieName) {
+
+        // The raw_title is the only data who is the same in the user directory and on the DB,
+        // so, if this is the same, the movie is already on the DB
+        String query = "SELECT raw_title FROM movie WHERE raw_title = \"" + rawMovieName + "\"";
+        String result = dataBase.doSelectQuery(query);
+
+        if (result.equals("")) {
+            return false;
+        } else {
+            return true;
         }
     }
 
-    private void getMovieInfosFromAPI(String movieName) {
+    private void getMovieInfosFromAPI(String movieName, String rawMovieName) {
 
         Boolean internetError = false;
         String movieNameUrlFormat = movieName.replaceAll(" ", "%20");
-        
+
         Movie movie = new Movie();
         // Fetch the JSON and add data into movie object
         try {
             // Get a JSON from an URL
-            JSONObject json = ParsingJSON.readJsonFromUrl("http://www.omdbapi.com/?t="+movieNameUrlFormat+"&y=&plot=full&r=json");
+            JSONObject json = ParsingJSON.readJsonFromUrl("http://www.omdbapi.com/?t=" + movieNameUrlFormat + "&y=&plot=full&r=json");
             // Set data on a movie object
+            movie.setRawTitle(rawMovieName);
             movie.setTitle(json.get("Title").toString());
             movie.setYear(json.get("Year").toString());
             movie.setDirector(json.get("Director").toString());
@@ -74,145 +77,199 @@ public class DbHandler {
             // Some plots have \" on their text, so we have to replace all \" with ´
             // like that it's like a simple quote 
             String synopsis = json.get("Plot").toString();
-            synopsis = synopsis.replaceAll("\\\"","`");
+            synopsis = synopsis.replaceAll("\\\"", "`");
             movie.setSynopsis(synopsis);
-            
-            
-       
+
         } catch (JSONException ex) {
-            System.out.println("ERROR on parsingJSON (JSON exception) : "+ex.getMessage());
+            System.out.println("ERROR on parsingJSON (JSON exception) : " + ex.getMessage());
         } catch (IOException ex) {
-            System.out.println("ERROR on parsingJSON (IO exception) : "+ex.getMessage() + "\nVeuillez vérifier votre connexion internet");
+            System.out.println("ERROR on parsingJSON (IO exception) : " + ex.getMessage() + "\nVeuillez vérifier votre connexion internet");
             internetError = true;
         }
-        
-        if(!internetError){
+
+        if (!internetError) {
             insertMovieOnDb(movie);
-        }else{
+        } else {
             System.out.println("Impossible de récupérer les informations du film "
-                    + "\""+movieName+"\", Veuillez vérifié votre connexion "
+                    + "\"" + movieName + "\", Veuillez vérifié votre connexion "
                     + "internet et relancer le programme.");
         }
-        
+
     }
-    
+
     // BE CAREFUL -> we have to replace replace ' with " for keep ' on all text
     // on query example : INSERT INTO('description') VALUES('i'm') => so => 
     // INSERT INTO('description') VALUES("i'm")
     private void insertMovieOnDb(Movie movie) {
         System.out.println("\n**** INSERT MOVIE *****");
-        
+
         /* Insert Movie */
         String queryInsertMovie = "INSERT INTO 'movie' "
                 + "VALUES"
-                + "(NULL,\""+movie.getTitle()+"\",\""+movie.getYear()+"\",\""+movie.getPoster()+"\",\""+movie.getSynopsis()+"\")";
+                + "(NULL,\"" + movie.getRawTitle() + "\",\"" + movie.getTitle() + "\",\"" + movie.getYear() + "\",\"" + movie.getPoster() + "\",\"" + movie.getSynopsis() + "\")";
         dataBase.doNoReturnQuery(queryInsertMovie);
-        System.out.println(movie.getTitle()+" ajouté");
-        
-        
+        System.out.println(movie.getTitle() + " ajouté");
+
         /* Insert actor if he doesn't already exists */
         String actors[] = movie.getActors();
         for (int i = 0; i < actors.length; i++) {
-            String querySelect = "SELECT name FROM actor WHERE name = \""+actors[i]+"\"";
+            String querySelect = "SELECT name FROM actor WHERE name = \"" + actors[i] + "\"";
             String result = dataBase.doSelectQuery(querySelect);
-            if(result.equals("")){
+            if (result.equals("")) {
                 String queryInsertActor = "INSERT INTO 'actor' "
-                        + "VALUES(NULL,\""+actors[i]+"\")";
+                        + "VALUES(NULL,\"" + actors[i] + "\")";
                 dataBase.doNoReturnQuery(queryInsertActor);
-                System.out.println(actors[i]+" ajouté");
-            }else{
-                System.out.println(actors[i]+" existe déjà");
+                System.out.println(actors[i] + " ajouté");
+            } else {
+                System.out.println(actors[i] + " existe déjà");
             }
         }
-        
-        
+
         /* Insert genre if he doesn't already exists */
         String genres[] = movie.getGenre();
         for (int i = 0; i < genres.length; i++) {
-            String querySelect = "SELECT type FROM genre WHERE type = \""+genres[i]+"\"";
+            String querySelect = "SELECT type FROM genre WHERE type = \"" + genres[i] + "\"";
             String result = dataBase.doSelectQuery(querySelect);
-            if(result.equals("")){
+            if (result.equals("")) {
                 String queryInsertGenre = "INSERT INTO 'genre' "
-                        + "VALUES(NULL,'"+genres[i]+"')";
+                        + "VALUES(NULL,'" + genres[i] + "')";
                 dataBase.doNoReturnQuery(queryInsertGenre);
-                System.out.println(genres[i]+" ajouté");
-            }else{
-                System.out.println(genres[i]+" existe déjà");
+                System.out.println(genres[i] + " ajouté");
+            } else {
+                System.out.println(genres[i] + " existe déjà");
             }
         }
-        
+
         /* Insert director if he doesn't already exists */
         String directors[] = movie.getDirector();
         for (int i = 0; i < directors.length; i++) {
-            String querySelect = "SELECT name FROM director WHERE name = \""+directors[i]+"\"";
+            String querySelect = "SELECT name FROM director WHERE name = \"" + directors[i] + "\"";
             String result = dataBase.doSelectQuery(querySelect);
-            if(result.equals("")){
+            if (result.equals("")) {
                 String queryInsertDirector = "INSERT INTO 'director' "
-                        + "VALUES(NULL,\""+directors[i]+"\")";
+                        + "VALUES(NULL,\"" + directors[i] + "\")";
                 dataBase.doNoReturnQuery(queryInsertDirector);
-                System.out.println(directors[i]+" ajouté");
-            }else{
-                System.out.println(directors[i]+" existe déjà");
-           
+                System.out.println(directors[i] + " ajouté");
+            } else {
+                System.out.println(directors[i] + " existe déjà");
+
             }
         }
-        
+
         /* Insert movie_has_actor*/
         // Get id of the movie
-        String querySelectIdMovie = "SELECT id FROM movie WHERE title = '"+movie.getTitle()+"'";
+        String querySelectIdMovie = "SELECT id FROM movie WHERE title = '" + movie.getTitle() + "'";
         String idMovie = dataBase.doSelectQuery(querySelectIdMovie).replace(";", "");
         // For each actors on the movie, we get their id and insert the both of
         // id on movie_has_actor table
         for (int i = 0; i < actors.length; i++) {
-            String querySelectIdActor = "SELECT id FROM actor WHERE name =\""+actors[i]+"\"";
+            String querySelectIdActor = "SELECT id FROM actor WHERE name =\"" + actors[i] + "\"";
             String idActor = dataBase.doSelectQuery(querySelectIdActor).replace(";", "");
             String queryInsertMovieHasActor = "INSERT INTO 'movie_has_actor' "
-                    +"VALUES"
-                    + "('"+idMovie+"','"+idActor+"')";
+                    + "VALUES"
+                    + "('" + idMovie + "','" + idActor + "')";
             dataBase.doNoReturnQuery(queryInsertMovieHasActor);
-            System.out.println("movie_has_actor add : "+idMovie+","+idActor);
+            System.out.println("movie_has_actor add : " + idMovie + "," + idActor);
         }
-        
-        
+
         /* Insert movies_has_genre*/
         // For each genre of the movie, we get their id and insert the both of
         // id on movie_has_genre table
         for (int i = 0; i < genres.length; i++) {
-            String querySelectIdGenre = "SELECT id FROM genre WHERE type =\""+genres[i]+"\"";
+            String querySelectIdGenre = "SELECT id FROM genre WHERE type =\"" + genres[i] + "\"";
             String idGenre = dataBase.doSelectQuery(querySelectIdGenre).replace(";", "");
             String queryInsertMovieHasGenre = "INSERT INTO 'movie_has_genre' "
-                    +"VALUES"
-                    + "('"+idMovie+"','"+idGenre+"')";
+                    + "VALUES"
+                    + "('" + idMovie + "','" + idGenre + "')";
             dataBase.doNoReturnQuery(queryInsertMovieHasGenre);
-            System.out.println("movie_has_genre add : "+idMovie+","+idGenre);
+            System.out.println("movie_has_genre add : " + idMovie + "," + idGenre);
         }
-        
-        
+
         /* Insert movies_has_director*/
         // For each director of the movie, we get their id and insert the both of
         // id on movie_has_director table
         for (int i = 0; i < directors.length; i++) {
-            String querySelectIdDirector = "SELECT id FROM director WHERE name =\""+directors[i]+"\"";
+            String querySelectIdDirector = "SELECT id FROM director WHERE name =\"" + directors[i] + "\"";
             String idDirector = dataBase.doSelectQuery(querySelectIdDirector).replace(";", "");
             String queryInsertMovieHasDirector = "INSERT INTO 'movie_has_director' "
-                    +"VALUES"
-                    + "('"+idMovie+"','"+idDirector+"')";
+                    + "VALUES"
+                    + "('" + idMovie + "','" + idDirector + "')";
             dataBase.doNoReturnQuery(queryInsertMovieHasDirector);
-            System.out.println("movie_has_director add : "+idMovie+","+idDirector);
+            System.out.println("movie_has_director add : " + idMovie + "," + idDirector);
         }
-        
+
         System.out.println("**** MOVIE INSERTED AND DATAS UPDATED *****\n");
-        
+
     }
-    
+
+    // If we have 10 movies on our folder and, further, we'll have only 5,
+    // so we have to delete the 5 non-existant movie from the DB
+    private void deleteMovieOnDb() {
+        UserPreferences prefs = new UserPreferences();
+        String path = prefs.getPath();
+        String strTotalMovies;
+        int totalMovies;
+        String[] rawTitleMoviesDb;
+        FileBrowser fileBrowser;
+
+        // Get number of movie on the DB and all their raw_title
+        String query1 = "SELECT COUNT(title) FROM movie";
+        String query2 = "SELECT raw_title FROM movie";
+
+        strTotalMovies = dataBase.doSelectQuery(query1);
+        strTotalMovies = strTotalMovies.replace(";", "");
+        totalMovies = Integer.parseInt(strTotalMovies);
+
+        rawTitleMoviesDb = dataBase.doSelectQuery(query2).split(";");
+
+        // For all the movie, we check if the file always exists on the
+        // user directory or not (with the raw_path)
+        for (int i = 0; i < totalMovies; i++) {
+            fileBrowser = new FileBrowser();
+            try {
+                String fullPath = fileBrowser.getFilePath(rawTitleMoviesDb[i]);
+                if (fullPath == "") {
+                    File movie = new File(fullPath);
+                    System.out.println("DEBUG----- " + fullPath + " -----DEBUG");
+                    if (!movie.exists()) {
+                        String query = "SELECT id FROM movie WHERE raw_title = '" + rawTitleMoviesDb[i] + "'";
+                        String idMovie = dataBase.doSelectQuery(query).replace(";", "");
+
+                        // Delete all row with foreign key and delete the movie
+                        // (We keep actors, directors and genres because they can be used by other movies)
+                        query = "DELETE FROM movie_has_actor WHERE movie_id = '" + idMovie + "'";
+                        dataBase.doNoReturnQuery(query);
+                        query = "DELETE FROM movie_has_genre WHERE movie_id = '" + idMovie + "'";
+                        dataBase.doNoReturnQuery(query);
+                        query = "DELETE FROM movie_has_director WHERE movie_id = '" + idMovie + "'";
+                        dataBase.doNoReturnQuery(query);
+
+                        //FOR DEBUG
+                        query = "SELECT title FROM movie WHERE id = '" + idMovie + "'";
+                        String title = dataBase.doSelectQuery(query).replace(";", "");
+                        // END DEBUG
+
+                        query = "DELETE FROM movie WHERE id = '" + idMovie + "'";
+                        dataBase.doNoReturnQuery(query);
+
+                        System.out.println("\"" + title + "\"" + " has been successfully deleted");
+                        System.out.println("suppression d un film");
+                    }
+                }
+            } catch (IOException ex) {
+                System.out.println("ERROR DbHandler.deleteMovieOnDb : " + ex.getMessage().toString());
+            }
+        }
+
+    }
+
     public String[] getAllTitles() {
-        
+
         String query = "SELECT title FROM movie";
         String result = dataBase.doSelectQuery(query);
         String[] results = result.split(";");
-        
-        return results;       
+
+        return results;
     }
-   
-    
+
 }

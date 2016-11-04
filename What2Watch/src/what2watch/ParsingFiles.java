@@ -68,17 +68,17 @@ public class ParsingFiles {
     }
     
     
-    public ArrayList<String> parse(ArrayList<String> listFiles)
+    public static ArrayList<String> parse(ArrayList<String> listFiles)
     {
 
         ArrayList<String> retour = new ArrayList<String>(); 
         for(int i = 0; i < listFiles.size(); i++)
         {
-            System.out.println("Oname : "+listFiles.get(i));
+            //System.out.println("Oname : "+listFiles.get(i));
             String simplifiedName = simplify_name(listFiles.get(i));
             String name = removeNameDate(simplifiedName);
             name = removeAfterDoubleSpace(name);
-            System.out.println("name : "+name);
+            //System.out.println("name : "+name);
             retour.add(name);
         }
         return retour;
@@ -87,7 +87,7 @@ public class ParsingFiles {
     
     // Checks whether a video file name contains patterns of a TV show
     // Returns a boolean indicating if it does or not
-    public boolean containsTVShowPattern(String videoFileName) {
+    public static boolean containsTVShowPattern(String videoFileName) {
         boolean containsPattern = false;
         
         // Detects "s03e9" kind of pattern

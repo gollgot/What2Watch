@@ -12,7 +12,7 @@ package what2watch;
  */
 public class Movie {
     
-    
+    private String rawTitle;
     private String title;
     private String[] director;
     private String[] actor;
@@ -28,6 +28,9 @@ public class Movie {
     
     
     // GETTERS
+    public String getRawTitle() {
+        return rawTitle;
+    }
     
     public String getTitle() {
         return title;
@@ -62,6 +65,10 @@ public class Movie {
     
     // SETTERS
 
+    public void setRawTitle(String rawTitle) {
+        this.rawTitle = rawTitle;
+    }
+    
     public void setTitle(String title) {
         this.title = title;
     }

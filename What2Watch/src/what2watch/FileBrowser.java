@@ -16,7 +16,12 @@ import java.util.ArrayList;
 public class FileBrowser {
     private String[] extensions = {".avi", ".mkv", ".mpeg", ".wmv", ".m4v", ".mp4", ".flv", ".mov"};
     private ArrayList<String> movieFileNames = new ArrayList<String>();
-    private ParsingFiles fileParser = new ParsingFiles();
+    private UserPreferences prefs = new UserPreferences();
+    
+    // To change
+    private String fullMovieNamePath;
+    private Boolean result = false;
+    
 
     public FileBrowser() {
     }
@@ -40,7 +45,7 @@ public class FileBrowser {
     
     // Custom methods
     
-    // Fectches the movie file names contained within the folder specified by the path parameter
+    // Fetches the movie file names contained within the folder specified by the path parameter
     public void fetchMoviesFileNames(String path) throws IOException {
         // Making sure the path isn't empty
         if (!path.equals("")) {
@@ -55,7 +60,7 @@ public class FileBrowser {
                             // Making sure the file has a video type
                             if (videoFileName.endsWith(this.extensions[i])) {
                                 // Making sure it doesn't contain TV Shows patterns
-                                if (!fileParser.containsTVShowPattern(videoFileName)) {
+                                if (!ParsingFiles.containsTVShowPattern(videoFileName)) {
                                     this.movieFileNames.add(videoFileName);
                                     //System.out.println(sourcePath.getFileName().toString());
                                     //System.out.println(sourcePath);
@@ -65,5 +70,28 @@ public class FileBrowser {
                         }
                     });
         }
+    }
+    
+    public String getFilePath(String rawMovieName) throws IOException {
+        String path = this.prefs.getPath();
+        // Making sure the path isn't empty
+        if (!path.equals("")) {
+            this.movieFileNames.clear();
+            Files.find(Paths.get(path),
+                    Integer.MAX_VALUE,
+                    (filePath, fileAttr) -> fileAttr.isRegularFile())
+                    .forEach((Path sourcePath) -> {
+                        if (sourcePath.getFileName().toString().contains(rawMovieName)) {
+                            this.fullMovieNamePath = sourcePath.toString();
+                            result = true;
+                        }
+                    });
+        }
+        
+        if(result == false){
+            this.fullMovieNamePath = "";
+        }
+        
+        return this.fullMovieNamePath;
     }
 }
