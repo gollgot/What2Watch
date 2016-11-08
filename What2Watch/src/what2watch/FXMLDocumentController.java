@@ -179,6 +179,49 @@ public class FXMLDocumentController implements Initializable {
     private void getMovieInformations(MouseEvent event) {
         // TODO: Fetch + display data according to the selected movie
         System.out.println("Fetching data for: " + movieListView.getSelectionModel().getSelectedItem());
+        
+        // Connect to the DB
+        CacheDb cacheDb = new CacheDb();
+        // Get title of clicked film
+        String movieTitle = movieListView.getSelectionModel().getSelectedItem().toString();
+        // Set all data of the Movie
+        String query = "SELECT * FROM movie WHERE title=\""+movieTitle+"\"";
+        String results[] = cacheDb.doSelectQuery(query).split(";");
+        String movieId = results[0];
+        String movieRawTitle = results[1];
+        movieTitle = results[2];
+        String movieYear = results[3];
+        String movieImageLink = results[4];
+        String movieSynopsis = results[5];
+        
+        query = "SELECT name FROM actor INNER JOIN movie_has_actor ON actor.id = movie_has_actor.actor_id "
+                + "INNER JOIN movie ON movie.id = movie_has_actor.movie_id "
+                + "WHERE movie.title=\""+movieTitle+"\"";
+        String movieActors = cacheDb.doSelectQuery(query).replaceAll(";", ", ");
+        // Delete last comma
+        movieActors = movieActors.replaceAll(", $", "");
+        
+        query = "SELECT type FROM genre INNER JOIN movie_has_genre ON genre.id = movie_has_genre.genre_id "
+                + "INNER JOIN movie ON movie.id = movie_has_genre.movie_id "
+                + "WHERE movie.title=\""+movieTitle+"\"";
+        String movieGenres = cacheDb.doSelectQuery(query).replaceAll(";", ", ");
+        // Delete last comma
+        movieGenres = movieGenres.replaceAll(", $", "");
+        
+        query = "SELECT name FROM director INNER JOIN movie_has_director ON director.id = movie_has_director.director_id "
+                + "INNER JOIN movie ON movie.id = movie_has_director.movie_id "
+                + "WHERE movie.title=\""+movieTitle+"\"";
+        String movieDirectors = cacheDb.doSelectQuery(query).replaceAll(";", ", ");
+        // Delete last comma
+        movieDirectors = movieDirectors.replaceAll(", $", "");
+        
+        // Set texts on the labels
+        titleValueLabel.setText(movieTitle);
+        yearValueLabel.setText(movieYear);
+        synopsisTextArea.setText(movieSynopsis);  
+        actorsValueLabel.setText(movieActors);
+        genreValueLabel.setText(movieGenres);
+        directorsValueLabel.setText(movieDirectors);
     }
     
 }
