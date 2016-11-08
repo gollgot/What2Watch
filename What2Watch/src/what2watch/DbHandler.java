@@ -68,18 +68,48 @@ public class DbHandler {
             JSONObject json = ParsingJSON.readJsonFromUrl("http://www.omdbapi.com/?t=" + movieNameUrlFormat + "&y=&plot=full&r=json");
             // Set data on a movie object
             movie.setRawTitle(rawMovieName);
-            movie.setTitle(json.get("Title").toString());
-            movie.setYear(json.get("Year").toString());
-            movie.setDirector(json.get("Director").toString());
-            movie.setActors(json.get("Actors").toString());
-            movie.setGenre(json.get("Genre").toString());
-            movie.setPoster(json.get("Poster").toString());
-            // Some plots have \" on their text, so we have to replace all \" with ´
-            // like that it's like a simple quote 
-            String synopsis = json.get("Plot").toString();
-            synopsis = synopsis.replaceAll("\\\"", "`");
-            movie.setSynopsis(synopsis);
-
+            
+            // If the json key is NULL OR N/A, we write "Inconnu" in the DB
+            if(json.isNull("Title")){
+                movie.setTitle(movieName);
+            }else{
+                movie.setTitle(json.get("Title").toString());
+            }
+            if(json.isNull("Year") || json.get("Year").equals("N/A")){
+                movie.setYear("Inconnu");
+            }else{
+                movie.setYear(json.get("Year").toString());
+            }
+            if(json.isNull("Director") || json.get("Director").equals("N/A")){
+                movie.setDirector("Inconnu");
+            }else{
+                movie.setDirector(json.get("Director").toString());
+            }
+            if(json.isNull("Actors") || json.get("Actors").equals("N/A")){
+                movie.setActors("Inconnu");
+            }else{
+               movie.setActors(json.get("Actors").toString()); 
+            }
+            if(json.isNull("Genre") || json.get("Genre").equals("N/A")){
+                movie.setGenre("Inconnu");
+            }else{
+                movie.setGenre(json.get("Genre").toString());
+            }
+            if(json.isNull("Poster") || json.get("Poster").equals("N/A")){
+                movie.setPoster("Inconnu");
+            }else{
+                movie.setPoster(json.get("Poster").toString());
+            }
+            if(json.isNull("Plot") || json.get("Plot").equals("N/A")){
+                movie.setSynopsis("Inconnu");
+            }else{
+                // Some plots have \" on their text, so we have to replace all \" with ´
+                // like that it's like a simple quote 
+                String synopsis = json.get("Plot").toString();
+                synopsis = synopsis.replaceAll("\\\"", "`");
+                movie.setSynopsis(synopsis);
+            }
+            
         } catch (JSONException ex) {
             System.out.println("ERROR on parsingJSON (JSON exception) : " + ex.getMessage());
         } catch (IOException ex) {
@@ -109,93 +139,92 @@ public class DbHandler {
                 + "(NULL,\"" + movie.getRawTitle() + "\",\"" + movie.getTitle() + "\",\"" + movie.getYear() + "\",\"" + movie.getPoster() + "\",\"" + movie.getSynopsis() + "\")";
         dataBase.doNoReturnQuery(queryInsertMovie);
         System.out.println(movie.getTitle() + " ajouté");
-
-        /* Insert actor if he doesn't already exists */
-        String actors[] = movie.getActors();
-        for (int i = 0; i < actors.length; i++) {
-            String querySelect = "SELECT name FROM actor WHERE name = \"" + actors[i] + "\"";
-            String result = dataBase.doSelectQuery(querySelect);
-            if (result.equals("")) {
-                String queryInsertActor = "INSERT INTO 'actor' "
-                        + "VALUES(NULL,\"" + actors[i] + "\")";
-                dataBase.doNoReturnQuery(queryInsertActor);
-                System.out.println(actors[i] + " ajouté");
-            } else {
-                System.out.println(actors[i] + " existe déjà");
-            }
-        }
-
-        /* Insert genre if he doesn't already exists */
-        String genres[] = movie.getGenre();
-        for (int i = 0; i < genres.length; i++) {
-            String querySelect = "SELECT type FROM genre WHERE type = \"" + genres[i] + "\"";
-            String result = dataBase.doSelectQuery(querySelect);
-            if (result.equals("")) {
-                String queryInsertGenre = "INSERT INTO 'genre' "
-                        + "VALUES(NULL,'" + genres[i] + "')";
-                dataBase.doNoReturnQuery(queryInsertGenre);
-                System.out.println(genres[i] + " ajouté");
-            } else {
-                System.out.println(genres[i] + " existe déjà");
-            }
-        }
-
-        /* Insert director if he doesn't already exists */
-        String directors[] = movie.getDirector();
-        for (int i = 0; i < directors.length; i++) {
-            String querySelect = "SELECT name FROM director WHERE name = \"" + directors[i] + "\"";
-            String result = dataBase.doSelectQuery(querySelect);
-            if (result.equals("")) {
-                String queryInsertDirector = "INSERT INTO 'director' "
-                        + "VALUES(NULL,\"" + directors[i] + "\")";
-                dataBase.doNoReturnQuery(queryInsertDirector);
-                System.out.println(directors[i] + " ajouté");
-            } else {
-                System.out.println(directors[i] + " existe déjà");
-
-            }
-        }
-
-        /* Insert movie_has_actor*/
+        
         // Get id of the movie
-        String querySelectIdMovie = "SELECT id FROM movie WHERE title = '" + movie.getTitle() + "'";
-        String idMovie = dataBase.doSelectQuery(querySelectIdMovie).replace(";", "");
-        // For each actors on the movie, we get their id and insert the both of
-        // id on movie_has_actor table
-        for (int i = 0; i < actors.length; i++) {
-            String querySelectIdActor = "SELECT id FROM actor WHERE name =\"" + actors[i] + "\"";
-            String idActor = dataBase.doSelectQuery(querySelectIdActor).replace(";", "");
-            String queryInsertMovieHasActor = "INSERT INTO 'movie_has_actor' "
-                    + "VALUES"
-                    + "('" + idMovie + "','" + idActor + "')";
-            dataBase.doNoReturnQuery(queryInsertMovieHasActor);
-            System.out.println("movie_has_actor add : " + idMovie + "," + idActor);
+        String querySelectIdMovie = "SELECT id FROM movie WHERE title = \""+movie.getTitle()+"\"";
+        String idMovie = dataBase.doSelectQuery(querySelectIdMovie).replace(";", "");  
+        
+        /* Insert actor and movie_has_actor if he doesn't already exists and if we know the name of the actors */
+        String actors[] = movie.getActors();
+        if(actors[0] != "Inconnu"){ 
+            
+            for (int i = 0; i < actors.length; i++) {
+                String querySelect = "SELECT name FROM actor WHERE name = \"" + actors[i] + "\"";
+                String result = dataBase.doSelectQuery(querySelect);
+                if (result.equals("")) {
+                    String queryInsertActor = "INSERT INTO 'actor' "
+                            + "VALUES(NULL,\"" + actors[i] + "\")";
+                    dataBase.doNoReturnQuery(queryInsertActor);
+                    System.out.println(actors[i] + " ajouté");
+                } else {
+                    System.out.println(actors[i] + " existe déjà");
+                }
+                /* Insert movie_has_actor*/
+                // For each actors on the movie, we get their id and insert the both of
+                // id on movie_has_actor table
+                String querySelectIdActor = "SELECT id FROM actor WHERE name =\"" + actors[i] + "\"";
+                String idActor = dataBase.doSelectQuery(querySelectIdActor).replace(";", "");
+                String queryInsertMovieHasActor = "INSERT INTO 'movie_has_actor' "
+                        + "VALUES"
+                        + "('" + idMovie + "','" + idActor + "')";
+                dataBase.doNoReturnQuery(queryInsertMovieHasActor);
+                System.out.println("movie_has_actor add : " + idMovie + "," + idActor);
+            }
+        }
+        
+        /* Insert genre and movie_has_genre if he doesn't already exists and if we know the name of the genres */
+        String genres[] = movie.getGenre();
+        if(genres[0] != "Inconnu"){
+            for (int i = 0; i < genres.length; i++) {
+                String querySelect = "SELECT type FROM genre WHERE type = \"" + genres[i] + "\"";
+                String result = dataBase.doSelectQuery(querySelect);
+                if (result.equals("")) {
+                    String queryInsertGenre = "INSERT INTO 'genre' "
+                            + "VALUES(NULL,'" + genres[i] + "')";
+                    dataBase.doNoReturnQuery(queryInsertGenre);
+                    System.out.println(genres[i] + " ajouté");
+                } else {
+                    System.out.println(genres[i] + " existe déjà");
+                }
+                /* Insert movie_has_genre*/
+                // For each genre of the movie, we get their id and insert the both of
+                // id on movie_has_genre table             
+                String querySelectIdGenre = "SELECT id FROM genre WHERE type =\"" + genres[i] + "\"";
+                String idGenre = dataBase.doSelectQuery(querySelectIdGenre).replace(";", "");
+                String queryInsertMovieHasGenre = "INSERT INTO 'movie_has_genre' "
+                        + "VALUES"
+                        + "('" + idMovie + "','" + idGenre + "')";
+                dataBase.doNoReturnQuery(queryInsertMovieHasGenre);
+                System.out.println("movie_has_genre add : " + idMovie + "," + idGenre);
+            }
         }
 
-        /* Insert movies_has_genre*/
-        // For each genre of the movie, we get their id and insert the both of
-        // id on movie_has_genre table
-        for (int i = 0; i < genres.length; i++) {
-            String querySelectIdGenre = "SELECT id FROM genre WHERE type =\"" + genres[i] + "\"";
-            String idGenre = dataBase.doSelectQuery(querySelectIdGenre).replace(";", "");
-            String queryInsertMovieHasGenre = "INSERT INTO 'movie_has_genre' "
-                    + "VALUES"
-                    + "('" + idMovie + "','" + idGenre + "')";
-            dataBase.doNoReturnQuery(queryInsertMovieHasGenre);
-            System.out.println("movie_has_genre add : " + idMovie + "," + idGenre);
-        }
+        /* Insert director and movie_has_director if he doesn't already exists and if we know the name of the directors*/
+        String directors[] = movie.getDirector();
+        if(directors[0] != "Inconnu"){
+            for (int i = 0; i < directors.length; i++) {
+                String querySelect = "SELECT name FROM director WHERE name = \"" + directors[i] + "\"";
+                String result = dataBase.doSelectQuery(querySelect);
+                if (result.equals("")) {
+                    String queryInsertDirector = "INSERT INTO 'director' "
+                            + "VALUES(NULL,\"" + directors[i] + "\")";
+                    dataBase.doNoReturnQuery(queryInsertDirector);
+                    System.out.println(directors[i] + " ajouté");
+                } else {
+                    System.out.println(directors[i] + " existe déjà");
 
-        /* Insert movies_has_director*/
-        // For each director of the movie, we get their id and insert the both of
-        // id on movie_has_director table
-        for (int i = 0; i < directors.length; i++) {
-            String querySelectIdDirector = "SELECT id FROM director WHERE name =\"" + directors[i] + "\"";
-            String idDirector = dataBase.doSelectQuery(querySelectIdDirector).replace(";", "");
-            String queryInsertMovieHasDirector = "INSERT INTO 'movie_has_director' "
-                    + "VALUES"
-                    + "('" + idMovie + "','" + idDirector + "')";
-            dataBase.doNoReturnQuery(queryInsertMovieHasDirector);
-            System.out.println("movie_has_director add : " + idMovie + "," + idDirector);
+                }
+                /* Insert movie_has_director*/
+                // For each director of the movie, we get their id and insert the both of
+                // id on movie_has_director table
+                String querySelectIdDirector = "SELECT id FROM director WHERE name =\"" + directors[i] + "\"";
+                String idDirector = dataBase.doSelectQuery(querySelectIdDirector).replace(";", "");
+                String queryInsertMovieHasDirector = "INSERT INTO 'movie_has_director' "
+                        + "VALUES"
+                        + "('" + idMovie + "','" + idDirector + "')";
+                dataBase.doNoReturnQuery(queryInsertMovieHasDirector);
+                System.out.println("movie_has_director add : " + idMovie + "," + idDirector);
+            }
         }
 
         System.out.println("**** MOVIE INSERTED AND DATAS UPDATED *****\n");
