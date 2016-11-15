@@ -25,6 +25,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
@@ -215,6 +216,11 @@ public class FXMLDocumentController implements Initializable {
         // Delete last comma
         movieDirectors = movieDirectors.replaceAll(", $", "");
         
+        query = "SELECT image_link FROM movie WHERE movie.title=\""+movieTitle+"\"";
+        String moviePosterURL = cacheDb.doSelectQuery(query).replaceAll(";", ", ");
+        // Delete last comma
+        moviePosterURL = moviePosterURL.replaceAll(", $", "");
+        
         // Set texts on the labels
         titleValueLabel.setText(movieTitle);
         yearValueLabel.setText(movieYear);
@@ -222,6 +228,10 @@ public class FXMLDocumentController implements Initializable {
         actorsValueLabel.setText(movieActors);
         genreValueLabel.setText(movieGenres);
         directorsValueLabel.setText(movieDirectors);
+        
+        // Movie poster handling
+        Image moviePoster = new Image(moviePosterURL);
+        movieImageView.setImage(moviePoster);
     }
     
 }
