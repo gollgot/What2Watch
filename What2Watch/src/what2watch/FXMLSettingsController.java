@@ -37,7 +37,7 @@ public class FXMLSettingsController implements Initializable {
     @FXML
     private Label emptyPathErrorLabel;
     
-    private UserPreferences prefs = new UserPreferences();
+    private static UserPreferences prefs = new UserPreferences();
 
     /**
      * Initializes the controller class.
@@ -89,8 +89,15 @@ public class FXMLSettingsController implements Initializable {
     }
     
     private static void configureDirectoryChooser(final DirectoryChooser directoryChooser) {      
+        String initialDirectory = System.getProperty("user.home");
         directoryChooser.setTitle("Select directory");
-        directoryChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+        
+        // Sets the default folder opened by directory chooser to be the one saved by the user
+        if(! prefs.getPath().equals("")) { 
+            initialDirectory = prefs.getPath();
+        }
+        
+        directoryChooser.setInitialDirectory(new File(initialDirectory));
     }
     
     private static void closeStage(Button button) {
