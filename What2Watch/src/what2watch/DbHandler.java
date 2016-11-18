@@ -30,15 +30,30 @@ public class DbHandler {
     }
 
     public void update() {
-        // Check if the movie already exists on the DB, if not, we put on all the datas
-        for (int i = 0; i < originalMovieNames.size(); i++) {
-            if (movieExistsOnDb(rawMovieNames.get(i))) {
-                System.out.println(originalMovieNames.get(i) + " Existe !");
-            } else {
-                System.out.println(originalMovieNames.get(i) + " Existe pas !");
-                getMovieInfosFromAPI(originalMovieNames.get(i), rawMovieNames.get(i));
+        
+        Thread test = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                // Check if the movie already exists on the DB, if not, we put on all the datas
+                for (int i = 0; i < originalMovieNames.size(); i++) {
+                    if (movieExistsOnDb(rawMovieNames.get(i))) {
+                        System.out.println(originalMovieNames.get(i) + " Existe !");
+                    } else {
+                        System.out.println(originalMovieNames.get(i) + " Existe pas !");
+                        ApiHandler.getMovieId(originalMovieNames.get(i), rawMovieNames.get(i));
+                        try {
+                            Thread.sleep(180);
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(DbHandler.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                }
+                
             }
-        }
+        });
+        test.start();
+        
+        
         deleteMovieOnDb();
     }
 
