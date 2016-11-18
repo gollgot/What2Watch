@@ -30,7 +30,8 @@ public class DbHandler {
     }
 
     public void update() {
-        
+        // Thread for update the database, because we have to get the datas from the
+        //API and wait x ms after each request (see method "getAllMovieInfos" in class "ApiHandler" for more infos
         Thread test = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -40,12 +41,7 @@ public class DbHandler {
                         System.out.println(originalMovieNames.get(i) + " Existe !");
                     } else {
                         System.out.println(originalMovieNames.get(i) + " Existe pas !");
-                        ApiHandler.getMovieId(originalMovieNames.get(i), rawMovieNames.get(i));
-                        try {
-                            Thread.sleep(180);
-                        } catch (InterruptedException ex) {
-                            Logger.getLogger(DbHandler.class.getName()).log(Level.SEVERE, null, ex);
-                        }
+                        ApiHandler.getAllMovieInfos(originalMovieNames.get(i), rawMovieNames.get(i));
                     }
                 }
                 
