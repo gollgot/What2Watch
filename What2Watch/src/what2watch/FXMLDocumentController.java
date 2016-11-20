@@ -103,8 +103,10 @@ public class FXMLDocumentController implements Initializable {
         // Combobox search criterias configuration
         this.searchCriteriasComboBox.getItems().addAll(
             "Titre",
-            "Acteur",
-            "Année"
+            "Genre",
+            "Année",
+            "Réalisateur",
+            "Acteur"
         );
     }    
 
@@ -152,15 +154,24 @@ public class FXMLDocumentController implements Initializable {
 
         switch (searchCriteria) {
             case "Titre":
-                // TODO limit the scope to movie title informations
+                // TODO define search scope
                 setYearSearchMode(false);
                 break;
-            case "Acteur":
-                // TODO limit the scope to actors informations  
+            case "Genre":
+                // TODO define search scope
                 setYearSearchMode(false);
                 break;
             case "Année":
+                // TODO define search scope
                 setYearSearchMode(true);
+                break;
+            case "Réalisateur":
+                // TODO define search scope 
+                setYearSearchMode(false);
+                break;
+            case "Acteur":
+                // TODO define search scope
+                setYearSearchMode(false);
                 break;
             default:
                 break;
