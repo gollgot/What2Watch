@@ -254,39 +254,34 @@ public class DbHandler {
         // For all the movie, we check if the file always exists on the
         // user directory or not (with the raw_path)
         for (int i = 0; i < totalMovies; i++) {
-            fileBrowser = new FileBrowser();
-            try {
-                String fullPath = fileBrowser.getFilePath(rawTitleMoviesDb[i]);
-                if (fullPath == "") {
-                    File movie = new File(fullPath);
-                    System.out.println("DEBUG----- " + fullPath + " -----DEBUG");
-                    if (!movie.exists()) {
-                        String query = "SELECT id FROM movie WHERE raw_title = '" + rawTitleMoviesDb[i] + "'";
-                        String idMovie = dataBase.doSelectQuery(query).replace(";", "");
-
-                        // Delete all row with foreign key and delete the movie
-                        // (We keep actors, directors and genres because they can be used by other movies)
-                        query = "DELETE FROM movie_has_actor WHERE movie_id = '" + idMovie + "'";
-                        dataBase.doNoReturnQuery(query);
-                        query = "DELETE FROM movie_has_genre WHERE movie_id = '" + idMovie + "'";
-                        dataBase.doNoReturnQuery(query);
-                        query = "DELETE FROM movie_has_director WHERE movie_id = '" + idMovie + "'";
-                        dataBase.doNoReturnQuery(query);
-
-                        //FOR DEBUG
-                        query = "SELECT title FROM movie WHERE id = '" + idMovie + "'";
-                        String title = dataBase.doSelectQuery(query).replace(";", "");
-                        // END DEBUG
-
-                        query = "DELETE FROM movie WHERE id = '" + idMovie + "'";
-                        dataBase.doNoReturnQuery(query);
-
-                        System.out.println("\"" + title + "\"" + " has been successfully deleted");
-                        System.out.println("suppression d un film");
-                    }
+            String fullPath = FileBrowser.getFilePath(rawTitleMoviesDb[i]);
+            if (fullPath.equals("")) {
+                File movie = new File(fullPath);
+                System.out.println("DEBUG----- " + fullPath + " -----DEBUG");
+                if (!movie.exists()) {
+                    String query = "SELECT id FROM movie WHERE raw_title = '" + rawTitleMoviesDb[i] + "'";
+                    String idMovie = dataBase.doSelectQuery(query).replace(";", "");
+                    
+                    // Delete all row with foreign key and delete the movie
+                    // (We keep actors, directors and genres because they can be used by other movies)
+                    query = "DELETE FROM movie_has_actor WHERE movie_id = '" + idMovie + "'";
+                    dataBase.doNoReturnQuery(query);
+                    query = "DELETE FROM movie_has_genre WHERE movie_id = '" + idMovie + "'";
+                    dataBase.doNoReturnQuery(query);
+                    query = "DELETE FROM movie_has_director WHERE movie_id = '" + idMovie + "'";
+                    dataBase.doNoReturnQuery(query);
+                    
+                    //FOR DEBUG
+                    query = "SELECT title FROM movie WHERE id = '" + idMovie + "'";
+                    String title = dataBase.doSelectQuery(query).replace(";", "");
+                    // END DEBUG
+                    
+                    query = "DELETE FROM movie WHERE id = '" + idMovie + "'";
+                    dataBase.doNoReturnQuery(query);
+                    
+                    System.out.println("\"" + title + "\"" + " has been successfully deleted");
+                    System.out.println("suppression d un film");
                 }
-            } catch (IOException ex) {
-                System.out.println("ERROR DbHandler.deleteMovieOnDb : " + ex.getMessage().toString());
             }
         }
 
