@@ -1,13 +1,12 @@
 /*
- * The purpose of this class is to handle the movie files used within the application
- * This class is based on https://docs.oracle.com/javase/tutorial/displayCode.html?code=https://docs.oracle.com/javase/tutorial/essential/io/examples/Find.java
- */
+ * The purpose of this class is to work with the FileFinder class in the file tree walking process
+ * and to serve as a platform to get files informations from
+*/
 package what2watch;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -18,7 +17,6 @@ import java.util.logging.Logger;
  * @author Raphael.BAZZARI
  */
 public class FileBrowser{
-    private PathMatcher matcher;
     private static String pattern = "*.{avi,mkv,mpeg,wmv,m4v,mp4,flv,mov}";
     private static ArrayList<String> movieFileNames = new ArrayList<String>();
     private static UserPreferences prefs = new UserPreferences();

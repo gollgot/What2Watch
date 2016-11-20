@@ -1,6 +1,7 @@
 /*
  * This class is responsible for reacting upon receiving events in the file tree browsing process
  * Its main tasks are to find and store movie file names and their respective paths
+ * This class is based on https://docs.oracle.com/javase/tutorial/displayCode.html?code=https://docs.oracle.com/javase/tutorial/essential/io/examples/Find.java
  */
 package what2watch;
 
