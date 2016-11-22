@@ -25,8 +25,9 @@ public class ApiHandler {
         try {
             String id = getMovieId(movieName);
             Thread.sleep(180);
-            getMovieDetails(movieName, id);
+            Movie movie = getMovieDetails(movieName, rawMovieName, id);
             Thread.sleep(180);
+            getMovieActorsDirectors(movie, id);
         } catch (InterruptedException ex) {
             Logger.getLogger(ApiHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -36,7 +37,7 @@ public class ApiHandler {
     private static String getMovieId(String movieName) {
         Boolean internetError = false;
         String movieNameUrlFormat = movieName.replaceAll(" ", "%20");
-        String id = "unknow";
+        String id = "Unknown";
 
         // Fetch the JSON and add data into movie object
         try {
@@ -47,13 +48,11 @@ public class ApiHandler {
             
             // If there is no infos for the film
             if(jsonArray.isNull(0)){
-                id = "unknow";
-                System.out.println("DEBUG----- ID : "+id+" -----DEBUG");
+                id = "Unknown";
             }else{
                 // Get the first object of "results array"
                 JSONObject jsonOject = jsonArray.getJSONObject(0);
                 id = String.valueOf(jsonOject.getInt("id"));
-                System.out.println("DEBUG----- ID : "+id+" -----DEBUG");
             }
         
         // Differents error (JSON / IO)
@@ -64,22 +63,181 @@ public class ApiHandler {
             internetError = true;
         }
         
+        // If there is no problem with internet connection
+        if (!internetError) {
+
+        } else {
+            System.out.println("Impossible de récupérer les informations du film "
+                    + "\"" + movieName + "\", Veuillez vérifié votre connexion "
+                    + "internet et relancer le programme.");
+        }
+        
         return id;
         
     }
     
-    private static void getMovieDetails(String movieName, String id){
+    private static Movie getMovieDetails(String movieName, String rawMovieName, String id){
         Boolean internetError = false;
         
-        // If we have an id, we get the real title
-        if(id != "unknow"){
+        String originalTitle = movieName;
+        String year = "Unknown";
+        String synopsis = "Unknown";
+        String poster_link = "Unknown";
+        String genres = "";
+        
+        // If we have an id, we get the real data, else, we don't have data so we put "unknown"
+        if(id != "Unknown"){
             // Fetch the JSON and add data into movie object
             try {
                 // Get a JSON from an URL
                 JSONObject jsonObject = ParsingJSON.readJsonFromUrl("https://api.themoviedb.org/3/movie/" + id + "?api_key="+apiKey+"&language=en-US");
+                
+                /* TITLE */
+                if(jsonObject.getString("title").equals("")){
+                    originalTitle = "Unknown";
+                }else{
+                    originalTitle = jsonObject.getString("title");
+                }
+                
+                /* SYNOPSIS */
+                if(jsonObject.isNull("overview") || jsonObject.getString("overview").equals("")){ // .isNull first else ther is an error
+                    synopsis = "Unknown";
+                }else{
+                    synopsis = jsonObject.getString("overview");
+                }
+                
+                /* YEAR */
+                if(jsonObject.getString("release_date").equals("")){
+                    year = "Unknown";
+                }else{
+                    year = jsonObject.getString("release_date");
+                    year = year.substring(0, 4);
+                }
+                
+                /* POSTER PATH*/
+                if(jsonObject.getString("poster_path").equals("")){
+                    poster_link = "";
+                }else{
+                    poster_link = jsonObject.getString("poster_path");
+                }
+                
+                /* GENRES */
+                JSONArray jsonArrayGenres = jsonObject.getJSONArray("genres");
+                if(jsonArrayGenres.isNull(0)){
+                    genres += "Unknown";
+                }else{
+                    for (int i = 0; i < jsonArrayGenres.length(); i++) {
+                        JSONObject jsonObjectGenres = jsonArrayGenres.getJSONObject(i);
+                        // If this is the last genres listed (i < total-1), we display just the name
+                        if(i == jsonArrayGenres.length()-1){
+                            genres += jsonObjectGenres.getString("name");
+                        }
+                        // else, we display the name + ", "
+                        else{
+                            genres += jsonObjectGenres.getString("name")+", ";
+                        }
+                        // Like that we have : "Fantasy, Action, Comedy"
+                    }
+                }
+                
+                
+                // Differents error (JSON / IO)
+            } catch (JSONException ex) {
+                System.out.println("ERROR on parsingJSON (JSON exception) : " + ex.getMessage());
+            } catch (IOException ex) {
+                System.out.println("ERROR on parsingJSON (IO exception) : " + ex.getMessage() + "\nVeuillez vérifier votre connexion internet");
+                internetError = true;
+            }
+            
+            // If there is no problem with internet connection
+            if (!internetError) {
+                
+            } else {
+                System.out.println("Impossible de récupérer les informations du film "
+                        + "\"" + movieName + "\", Veuillez vérifié votre connexion "
+                        + "internet et relancer le programme.");
+            }
 
-                String originalTitle = jsonObject.getString("title");
-                System.out.println("DEBUG----- Title : "+originalTitle+" -----DEBUG");
+        }
+        // If id == Unknown, we add Unknown on the genres
+        else{
+            genres = "Unknown";
+        }
+        
+        // Create the movie Object (without actors and director, we do that in the next method)
+        Movie movie = new Movie();
+        movie.setTitle(originalTitle);
+        movie.setRawTitle(rawMovieName);
+        movie.setYear(year);
+        movie.setPoster(poster_link);
+        movie.setSynopsis(synopsis);
+        movie.setGenre(genres);
+        
+        return movie;
+        
+    }
+    
+    private static void getMovieActorsDirectors(Movie movie, String id){
+
+       Boolean internetError = false;
+       String actors = "";
+       String directors = "";
+       
+       if(id != "Unknown"){
+            // Fetch the JSON and add data into movie object
+            try {
+                // Get a JSON from an URL
+                JSONObject json = ParsingJSON.readJsonFromUrl("https://api.themoviedb.org/3/movie/"+id+"/credits?api_key="+apiKey);
+
+                /* CASTING */
+                JSONArray jsonArrayCast = json.getJSONArray("cast");      
+                // If there is one or more people on the casting
+                if(jsonArrayCast.isNull(0)){
+                    actors = "Unknown";
+                }else{
+                    // We get all peoples
+                    for (int i = 0; i < jsonArrayCast.length(); i++) {
+                        JSONObject jsonObject = jsonArrayCast.getJSONObject(i);
+                        // If this is the last actor listed (i < total-1), we display just the name
+                        if(i == jsonArrayCast.length()-1){
+                            actors += jsonObject.getString("name");
+                        }
+                        // else, we display the name + ", "
+                        else{
+                            actors += jsonObject.getString("name")+", ";
+                        }
+                        // Like that we have : "actor1, Actor2, Actor3"
+                    }
+                }
+
+                /* CREW */
+                JSONArray jsonArrayCrew = json.getJSONArray("crew");      
+                // If there is one or more people on the casting
+                if(jsonArrayCrew.isNull(0)){
+                    directors = "Unknown";
+                }else{
+                    // We get all peoples
+                    for (int i = 0; i < jsonArrayCrew.length(); i++) {
+                        JSONObject jsonObject = jsonArrayCrew.getJSONObject(i);
+                        // If the job of the person is Director
+                        if(jsonObject.getString("job").equals("Director")){
+                            // If this is the last director listed (i < total-1), we display just the name
+                            if(i == jsonArrayCrew.length()-1){
+                                directors += jsonObject.getString("name");
+                            }
+                            // else, we display the name + ", "
+                            else{
+                                directors += jsonObject.getString("name")+", ";
+                            }
+                            // Like that we have : "Director1, Director2, Director3"
+                        }
+                    }
+                    // If all the people don't have de Director job :
+                    if(directors == ""){
+                        directors = "Unknown";
+                    }
+                }
+
             // Differents error (JSON / IO)
             } catch (JSONException ex) {
                 System.out.println("ERROR on parsingJSON (JSON exception) : " + ex.getMessage());
@@ -90,18 +248,32 @@ public class ApiHandler {
 
             // If there is no problem with internet connection
             if (!internetError) {
-                //insertMovieOnDb(movie);
+
             } else {
                 System.out.println("Impossible de récupérer les informations du film "
-                        + "\"" + movieName + "\", Veuillez vérifié votre connexion "
+                        + "\"" + movie.getTitle() + "\", Veuillez vérifié votre connexion "
                         + "internet et relancer le programme.");
             }
-        }
-        // If we don't have any id, we can't have any infos... so all infos will be "unknow"
-        else{
-            String originalTitle = "unknow";
-            System.out.println("DEBUG----- Title : "+originalTitle+" -----DEBUG");
-        }
+       }
+       // If id == Unknown
+       else{
+           actors = "Unknown";
+           directors = "Unknown";
+       }
+        
+        movie.setActors(actors);
+        movie.setDirector(directors);
+        
+        System.out.println("\n------------------------------------------");
+        System.out.println("Titre : "+movie.getTitle());
+        System.out.println("Year : "+movie.getYear());
+        System.out.println("Poster Link : "+movie.getPoster());
+        System.out.println("Genres : ");
+        System.out.println("Actors : "+actors);
+        System.out.println("Directors : "+directors);
+        System.out.println("Synopsis : "+movie.getSynopsis());
+        System.out.println("------------------------------------------");
+        
     }
     
     
