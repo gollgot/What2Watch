@@ -8,10 +8,6 @@ package what2watch;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  *
@@ -207,19 +203,19 @@ public class DbHandler {
 
                         // Delete all row with foreign key and delete the movie
                         // (We keep actors, directors and genres because they can be used by other movies)
-                        query = "DELETE FROM movie_has_actor WHERE movie_id = '" + idMovie + "'";
+                        query = "DELETE FROM movie_has_actor WHERE movie_id = \"" + idMovie + "\"";
                         dataBase.doNoReturnQuery(query);
-                        query = "DELETE FROM movie_has_genre WHERE movie_id = '" + idMovie + "'";
+                        query = "DELETE FROM movie_has_genre WHERE movie_id = \"" + idMovie + "\"";
                         dataBase.doNoReturnQuery(query);
-                        query = "DELETE FROM movie_has_director WHERE movie_id = '" + idMovie + "'";
+                        query = "DELETE FROM movie_has_director WHERE movie_id = \"" + idMovie + "\"";
                         dataBase.doNoReturnQuery(query);
 
                         //FOR DEBUG
-                        query = "SELECT title FROM movie WHERE id = '" + idMovie + "'";
+                        query = "SELECT title FROM movie WHERE id = \"" + idMovie + "\"";
                         String title = dataBase.doSelectQuery(query).replace(";", "");
                         // END DEBUG
 
-                        query = "DELETE FROM movie WHERE id = '" + idMovie + "'";
+                        query = "DELETE FROM movie WHERE id = \"" + idMovie + "\"";
                         dataBase.doNoReturnQuery(query);
 
                         System.out.println("\"" + title + "\"" + " has been successfully deleted");
