@@ -18,13 +18,13 @@ public class ParsingFiles {
     
     // Add exclusion term on the REGEX (It's for afine)
     public static String simplify_name(String name){
-        String listExcludeExtension = ".mkv|.avi|.m4v";
+        String listExcludeExtension = "\\.mkv|\\.m4v|\\.mp4|\\.avi|\\.mpeg|\\.wmv|\\.flv|\\.mov";
         String listExcludeTypeExtension = "Mkv";
-        String listExcludeLanguage = "FRENCH|VOSTA|VOSTFR|VF|FR|EN";
-        String listExcludeTeam = "Ganesh-AC3";
+        String listExcludeLanguage = "FRENCH|VOSTA|VOSTFR|VF|FR|EN|TRUE|truefrench|Truefrench";
+        String listExcludeTeam = "Ganesh-AC3|Dieudonne|Cpasbien|\\[www\\.Cpasbien\\.me\\]|GraNPa|byPhilou";
         String listExcludeFileResolution = "720p|1080p";        
-        String listExcludeTypeRecord = "BluRay|DVDRIP|HD|3D|3d";
-        String listExcludeTypePonctuation = "\\.|-|;|,";
+        String listExcludeTypeRecord = "BluRay|DVDRIP|dvdrip|HD|3D|3d|Version|BDRip|Xvid|AC3|EDITION EXCLUSIVE|XviD";
+        String listExcludeTypePonctuation = "\\.|-|;|,|_";
         String listExclude = listExcludeExtension +"|" + 
                              listExcludeTypeExtension + "|" +
                              listExcludeLanguage + "|" +
