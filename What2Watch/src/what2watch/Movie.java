@@ -95,10 +95,11 @@ public class Movie {
     public void setSynopsis(String synopsis) {
         this.synopsis = synopsis;
     }
-    
-    
-    
-    
+
+    @Override
+    public String toString() {
+        return title;
+    }
     
     
     
