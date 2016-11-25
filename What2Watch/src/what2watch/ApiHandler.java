@@ -21,16 +21,18 @@ public class ApiHandler {
     private static String apiKey = "9a52628ae3939c738592ac50fdd73f7c";
 
     // We get all movie datas, and between each request, we wait 180ms, because we have a limit with the API...
-    public static void getAllMovieInfos(String movieName, String rawMovieName){
+    public static Movie getAllMovieInfos(String movieName, String rawMovieName){
+        Movie movie = new Movie();
         try {
             String id = getMovieId(movieName);
-            Thread.sleep(180);
-            Movie movie = getMovieDetails(movieName, rawMovieName, id);
-            Thread.sleep(180);
-            getMovieActorsDirectors(movie, id);
+            Thread.sleep(200);
+            movie = getMovieDetails(movieName, rawMovieName, id);
+            Thread.sleep(200);
+            movie = getMovieActorsDirectors(movie, id);
         } catch (InterruptedException ex) {
             Logger.getLogger(ApiHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return movie;
     }
     
     
@@ -104,6 +106,8 @@ public class ApiHandler {
                     synopsis = "Unknown";
                 }else{
                     synopsis = jsonObject.getString("overview");
+                    // Replace " with `
+                    synopsis = synopsis.replaceAll("\\\"", "`");
                 }
                 
                 /* YEAR */
@@ -177,7 +181,7 @@ public class ApiHandler {
         
     }
     
-    private static void getMovieActorsDirectors(Movie movie, String id){
+    private static Movie getMovieActorsDirectors(Movie movie, String id){
 
        Boolean internetError = false;
        String actors = "";
@@ -221,20 +225,15 @@ public class ApiHandler {
                         JSONObject jsonObject = jsonArrayCrew.getJSONObject(i);
                         // If the job of the person is Director
                         if(jsonObject.getString("job").equals("Director")){
-                            // If this is the last director listed (i < total-1), we display just the name
-                            if(i == jsonArrayCrew.length()-1){
-                                directors += jsonObject.getString("name");
-                            }
-                            // else, we display the name + ", "
-                            else{
-                                directors += jsonObject.getString("name")+", ";
-                            }
-                            // Like that we have : "Director1, Director2, Director3"
+                            directors += jsonObject.getString("name")+", ";
                         }
                     }
                     // If all the people don't have de Director job :
                     if(directors == ""){
                         directors = "Unknown";
+                    }else{
+                        // We delete 2 last char of the String (last ", ") to have : director1, director2, director3
+                        directors = directors.substring(0, directors.length()-2);
                     }
                 }
 
@@ -264,16 +263,26 @@ public class ApiHandler {
         movie.setActors(actors);
         movie.setDirector(directors);
         
+        
+        /*DEBUG */
+        /*String d = "";
+        String[] a = movie.getGenre();
+        for (int i = 0; i < a.length; i++) {
+            d+= a[i]+ " ";
+        }
+        
         System.out.println("\n------------------------------------------");
         System.out.println("Titre : "+movie.getTitle());
         System.out.println("Year : "+movie.getYear());
         System.out.println("Poster Link : "+movie.getPoster());
-        System.out.println("Genres : ");
+        System.out.println("Genres : "+d);
         System.out.println("Actors : "+actors);
         System.out.println("Directors : "+directors);
         System.out.println("Synopsis : "+movie.getSynopsis());
         System.out.println("------------------------------------------");
+        */
         
+        return movie;
     }
     
     
