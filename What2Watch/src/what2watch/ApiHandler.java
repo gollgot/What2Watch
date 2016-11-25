@@ -136,11 +136,11 @@ public class ApiHandler {
                         if(i == jsonArrayGenres.length()-1){
                             genres += jsonObjectGenres.getString("name");
                         }
-                        // else, we display the name + ", "
+                        // else, we display the name + ";"
                         else{
-                            genres += jsonObjectGenres.getString("name")+", ";
+                            genres += jsonObjectGenres.getString("name")+";";
                         }
-                        // Like that we have : "Fantasy, Action, Comedy"
+                        // Like that we have : "Fantasy;Action;Comedy"
                     }
                 }
                 
@@ -208,7 +208,7 @@ public class ApiHandler {
                         }
                         // else, we display the name + ", "
                         else{
-                            actors += jsonObject.getString("name")+", ";
+                            actors += jsonObject.getString("name")+";";
                         }
                         // Like that we have : "actor1, Actor2, Actor3"
                     }
@@ -225,7 +225,7 @@ public class ApiHandler {
                         JSONObject jsonObject = jsonArrayCrew.getJSONObject(i);
                         // If the job of the person is Director
                         if(jsonObject.getString("job").equals("Director")){
-                            directors += jsonObject.getString("name")+", ";
+                            directors += jsonObject.getString("name")+";";
                         }
                     }
                     // If all the people don't have de Director job :

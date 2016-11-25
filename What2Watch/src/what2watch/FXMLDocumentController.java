@@ -87,6 +87,7 @@ public class FXMLDocumentController implements Initializable {
     private UserPreferences prefs = new UserPreferences();
     private ObservableList movieFileNames = 
         FXCollections.observableArrayList();
+    private ArrayList<Movie> movies = new ArrayList();
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -127,7 +128,7 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private void browseFiles(ActionEvent event) throws IOException {
         CacheDb cacheDb = new CacheDb();
-        
+        movies.clear();
         // Update the cache db (add or remove movies on DB, it depend on the
         // browser.getMovieFileNames) and get real titles of all the movies on 
         // the DB.
@@ -135,7 +136,16 @@ public class FXMLDocumentController implements Initializable {
         ArrayList<String> rawFileNames = FileBrowser.getMovieFileNames();
         DbHandler dbHandler = new DbHandler(cacheDb,fileNames,rawFileNames);
         dbHandler.update();
+        
+        // We wait the end of the thread
+        while(dbHandler.getUpdateThread().isAlive()){
+            
+        }
+        
+        // Get the array holding all the infos
         String[] realTitles = dbHandler.getAllTitles();
+        movies = dbHandler.getMovies(realTitles);
+        
         
         // Filing the listView with movie file names
         this.movieFileNames.clear();
