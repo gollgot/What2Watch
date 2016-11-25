@@ -85,7 +85,6 @@ public class FXMLDocumentController implements Initializable {
     private Label directorsValueLabel;
     
     private UserPreferences prefs = new UserPreferences();
-    private FileBrowser browser = new FileBrowser();
     private ObservableList movieFileNames = 
         FXCollections.observableArrayList();
     
@@ -128,14 +127,12 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private void browseFiles(ActionEvent event) throws IOException {
         CacheDb cacheDb = new CacheDb();
-        String path = this.prefs.getPath();
-        browser.fetchMoviesFileNames(path);
         
         // Update the cache db (add or remove movies on DB, it depend on the
         // browser.getMovieFileNames) and get real titles of all the movies on 
         // the DB.
-        ArrayList<String> fileNames = ParsingFiles.parse(browser.getMovieFileNames());
-        ArrayList<String> rawFileNames = browser.getMovieFileNames();
+        ArrayList<String> fileNames = ParsingFiles.parse(FileBrowser.getMovieFileNames());
+        ArrayList<String> rawFileNames = FileBrowser.getMovieFileNames();
         DbHandler dbHandler = new DbHandler(cacheDb,fileNames,rawFileNames);
         dbHandler.update();
         String[] realTitles = dbHandler.getAllTitles();
@@ -178,8 +175,6 @@ public class FXMLDocumentController implements Initializable {
 
     @FXML
     private void getMovieInformations(MouseEvent event) {
-        // TODO: Fetch + display data according to the selected movie
-        System.out.println("Fetching data for: " + movieListView.getSelectionModel().getSelectedItem());
         
         // Connect to the DB
         CacheDb cacheDb = new CacheDb();
@@ -230,7 +225,10 @@ public class FXMLDocumentController implements Initializable {
         directorsValueLabel.setText(movieDirectors);
         
         // Movie poster handling
-        Image moviePoster = new Image(moviePosterURL);
+        Image moviePoster = new Image("what2watch/images/placeHolder.png");
+        if (!moviePosterURL.equals("Inconnu")) {
+            moviePoster = new Image(moviePosterURL);
+        }
         movieImageView.setImage(moviePoster);
     }
     

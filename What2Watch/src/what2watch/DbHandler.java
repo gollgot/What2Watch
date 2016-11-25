@@ -76,15 +76,15 @@ public class DbHandler {
                 + "(NULL,\"" + movie.getRawTitle() + "\",\"" + movie.getTitle() + "\",\"" + movie.getYear() + "\",\"" + movie.getPoster() + "\",\"" + movie.getSynopsis() + "\")";
         dataBase.doNoReturnQuery(queryInsertMovie);
         System.out.println(movie.getTitle() + " ajouté");
-        
+
         // Get id of the movie
-        String querySelectIdMovie = "SELECT id FROM movie WHERE title = \""+movie.getTitle()+"\"";
-        String idMovie = dataBase.doSelectQuery(querySelectIdMovie).replace(";", "");  
-        
+        String querySelectIdMovie = "SELECT id FROM movie WHERE title = \"" + movie.getTitle() + "\"";
+        String idMovie = dataBase.doSelectQuery(querySelectIdMovie).replace(";", "");
+
         /* Insert actor and movie_has_actor if he doesn't already exists and if we know the name of the actors */
         String actors[] = movie.getActors();
-        if(actors[0] != "Inconnu"){ 
-            
+        if (actors[0] != "Inconnu") {
+
             for (int i = 0; i < actors.length; i++) {
                 String querySelect = "SELECT name FROM actor WHERE name = \"" + actors[i] + "\"";
                 String result = dataBase.doSelectQuery(querySelect);
@@ -108,10 +108,10 @@ public class DbHandler {
                 System.out.println("movie_has_actor add : " + idMovie + "," + idActor);
             }
         }
-        
+
         /* Insert genre and movie_has_genre if he doesn't already exists and if we know the name of the genres */
         String genres[] = movie.getGenre();
-        if(genres[0] != "Inconnu"){
+        if (genres[0] != "Inconnu") {
             for (int i = 0; i < genres.length; i++) {
                 String querySelect = "SELECT type FROM genre WHERE type = \"" + genres[i] + "\"";
                 String result = dataBase.doSelectQuery(querySelect);
@@ -138,7 +138,7 @@ public class DbHandler {
 
         /* Insert director and movie_has_director if he doesn't already exists and if we know the name of the directors*/
         String directors[] = movie.getDirector();
-        if(directors[0] != "Inconnu"){
+        if (directors[0] != "Inconnu") {
             for (int i = 0; i < directors.length; i++) {
                 String querySelect = "SELECT name FROM director WHERE name = \"" + directors[i] + "\"";
                 String result = dataBase.doSelectQuery(querySelect);
@@ -176,7 +176,6 @@ public class DbHandler {
         String strTotalMovies;
         int totalMovies;
         String[] rawTitleMoviesDb;
-        FileBrowser fileBrowser;
 
         // Get number of movie on the DB and all their raw_title
         String query1 = "SELECT COUNT(title) FROM movie";
@@ -191,18 +190,15 @@ public class DbHandler {
         // For all the movie, we check if the file always exists on the
         // user directory or not (with the raw_path)
         for (int i = 0; i < totalMovies; i++) {
-            fileBrowser = new FileBrowser();
-            try {
-                String fullPath = fileBrowser.getFilePath(rawTitleMoviesDb[i]);
-                if (fullPath == "") {
-                    File movie = new File(fullPath);
-                    System.out.println("DEBUG----- " + fullPath + " -----DEBUG");
-                    if (!movie.exists()) {
-                        String query = "SELECT id FROM movie WHERE raw_title = '" + rawTitleMoviesDb[i] + "'";
-                        String idMovie = dataBase.doSelectQuery(query).replace(";", "");
+            String fullPath = FileBrowser.getFilePath(rawTitleMoviesDb[i]);
+            System.out.println("DEBUG----- " + fullPath + " -----DEBUG");
+            // At this point, we know the movie doesn't exist if it has no path
+            if (fullPath.equals("")) {
+                String query = "SELECT id FROM movie WHERE raw_title = '" + rawTitleMoviesDb[i] + "'";
+                String idMovie = dataBase.doSelectQuery(query).replace(";", "");
 
-                        // Delete all row with foreign key and delete the movie
                         // (We keep actors, directors and genres because they can be used by other movies)
+                        // Delete all row with foreign key and delete the movie
                         query = "DELETE FROM movie_has_actor WHERE movie_id = \"" + idMovie + "\"";
                         dataBase.doNoReturnQuery(query);
                         query = "DELETE FROM movie_has_genre WHERE movie_id = \"" + idMovie + "\"";
@@ -218,15 +214,10 @@ public class DbHandler {
                         query = "DELETE FROM movie WHERE id = \"" + idMovie + "\"";
                         dataBase.doNoReturnQuery(query);
 
-                        System.out.println("\"" + title + "\"" + " has been successfully deleted");
-                        System.out.println("suppression d un film");
-                    }
-                }
-            } catch (IOException ex) {
-                System.out.println("ERROR DbHandler.deleteMovieOnDb : " + ex.getMessage().toString());
+                System.out.println("\"" + title + "\"" + " has been successfully deleted");
+                System.out.println("suppression d un film");
             }
         }
-
     }
 
     public String[] getAllTitles() {
