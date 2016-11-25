@@ -18,9 +18,8 @@ import java.util.logging.Logger;
  */
 public class FileBrowser{
     private static String pattern = "*.{avi,mkv,mpeg,wmv,m4v,mp4,flv,mov}";
-    private static ArrayList<String> movieFileNames = new ArrayList<String>();
     private static UserPreferences prefs = new UserPreferences();
-    private static FileFinder finder = new FileFinder();
+    private static FileFinder finder;
 
     // Custom methods
     
@@ -41,6 +40,7 @@ public class FileBrowser{
     
     public static void getMovieFileInfos() {
         try {
+            finder = new FileFinder();
             String path = prefs.getPath();
             Path startingDir = Paths.get(path);
             finder.setInitialDirectory(startingDir);
