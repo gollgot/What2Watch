@@ -30,15 +30,26 @@ public class DbHandler {
     }
 
     public void update() {
-        // Check if the movie already exists on the DB, if not, we put on all the datas
-        for (int i = 0; i < originalMovieNames.size(); i++) {
-            if (movieExistsOnDb(rawMovieNames.get(i))) {
-                System.out.println(originalMovieNames.get(i) + " Existe !");
-            } else {
-                System.out.println(originalMovieNames.get(i) + " Existe pas !");
-                getMovieInfosFromAPI(originalMovieNames.get(i), rawMovieNames.get(i));
+        // Thread for update the database, because we have to get the datas from the
+        //API and wait x ms after each request (see method "getAllMovieInfos" in class "ApiHandler" for more infos
+        Thread test = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                // Check if the movie already exists on the DB, if not, we put on all the datas
+                for (int i = 0; i < originalMovieNames.size(); i++) {
+                    if (movieExistsOnDb(rawMovieNames.get(i))) {
+                        System.out.println(originalMovieNames.get(i) + " Existe !");
+                    } else {
+                        System.out.println(originalMovieNames.get(i) + " Existe pas !");
+                        Movie movie = ApiHandler.getAllMovieInfos(originalMovieNames.get(i), rawMovieNames.get(i));
+                        insertMovieOnDb(movie);
+                    }
+                }
+                
             }
-        }
+        });
+        test.start();
+        
         deleteMovieOnDb();
     }
 
@@ -55,82 +66,12 @@ public class DbHandler {
             return true;
         }
     }
-
-    private void getMovieInfosFromAPI(String movieName, String rawMovieName) {
-
-        Boolean internetError = false;
-        String movieNameUrlFormat = movieName.replaceAll(" ", "%20");
-
-        Movie movie = new Movie();
-        // Fetch the JSON and add data into movie object
-        try {
-            // Get a JSON from an URL
-            JSONObject json = ParsingJSON.readJsonFromUrl("http://www.omdbapi.com/?t=" + movieNameUrlFormat + "&y=&plot=full&r=json");
-            // Set data on a movie object
-            movie.setRawTitle(rawMovieName);
-            
-            // If the json key is NULL OR N/A, we write "Inconnu" in the DB
-            if(json.isNull("Title")){
-                movie.setTitle(movieName);
-            }else{
-                movie.setTitle(json.get("Title").toString());
-            }
-            if(json.isNull("Year") || json.get("Year").equals("N/A")){
-                movie.setYear("Inconnu");
-            }else{
-                movie.setYear(json.get("Year").toString());
-            }
-            if(json.isNull("Director") || json.get("Director").equals("N/A")){
-                movie.setDirector("Inconnu");
-            }else{
-                movie.setDirector(json.get("Director").toString());
-            }
-            if(json.isNull("Actors") || json.get("Actors").equals("N/A")){
-                movie.setActors("Inconnu");
-            }else{
-               movie.setActors(json.get("Actors").toString()); 
-            }
-            if(json.isNull("Genre") || json.get("Genre").equals("N/A")){
-                movie.setGenre("Inconnu");
-            }else{
-                movie.setGenre(json.get("Genre").toString());
-            }
-            if(json.isNull("Poster") || json.get("Poster").equals("N/A")){
-                movie.setPoster("Inconnu");
-            }else{
-                movie.setPoster(json.get("Poster").toString());
-            }
-            if(json.isNull("Plot") || json.get("Plot").equals("N/A")){
-                movie.setSynopsis("Inconnu");
-            }else{
-                // Some plots have \" on their text, so we have to replace all \" with ´
-                // like that it's like a simple quote 
-                String synopsis = json.get("Plot").toString();
-                synopsis = synopsis.replaceAll("\\\"", "`");
-                movie.setSynopsis(synopsis);
-            }
-            
-        } catch (JSONException ex) {
-            System.out.println("ERROR on parsingJSON (JSON exception) : " + ex.getMessage());
-        } catch (IOException ex) {
-            System.out.println("ERROR on parsingJSON (IO exception) : " + ex.getMessage() + "\nVeuillez vérifier votre connexion internet");
-            internetError = true;
-        }
-
-        if (!internetError) {
-            insertMovieOnDb(movie);
-        } else {
-            System.out.println("Impossible de récupérer les informations du film "
-                    + "\"" + movieName + "\", Veuillez vérifié votre connexion "
-                    + "internet et relancer le programme.");
-        }
-
-    }
+    
 
     // BE CAREFUL -> we have to replace replace ' with " for keep ' on all text
     // on query example : INSERT INTO('description') VALUES('i'm') => so => 
     // INSERT INTO('description') VALUES("i'm")
-    private void insertMovieOnDb(Movie movie) {
+    void insertMovieOnDb(Movie movie) {
         System.out.println("\n**** INSERT MOVIE *****");
 
         /* Insert Movie */
