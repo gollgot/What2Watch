@@ -12,6 +12,7 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -22,6 +23,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -30,6 +32,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Callback;
+import sun.awt.RepaintArea;
 
 /**
  *
@@ -44,7 +48,7 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private TextArea synopsisTextArea;
     @FXML
-    private ListView<?> movieListView;
+    private ListView<Movie> movieListView;
     @FXML
     private TextField searchTextField;
     @FXML
@@ -139,14 +143,22 @@ public class FXMLDocumentController implements Initializable {
         
         // We wait the end of the thread
         while(dbHandler.getUpdateThread().isAlive()){
-            
+           
         }
         
         // Get the array holding all the infos
         String[] realTitles = dbHandler.getAllTitles();
         movies = dbHandler.getMovies(realTitles);
+        for (int i = 0; i < movies.size(); i++) {
+            System.out.println("D : "+movies.get(i));
+        }
         
-        this.movieListView.setItems(movies);       
+        // Add a list of Movie object to the list.
+        // (for display the movie title on the list, the list fetch itself the "toString" method
+        // override from Object class. toString return the title)
+        ObservableList<Movie> myObservableList = FXCollections.observableArrayList();
+        myObservableList.addAll(movies);
+        movieListView.setItems(myObservableList);
     }
 
     @FXML
@@ -182,7 +194,6 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private void getMovieInformations(MouseEvent event) {
         
-        int selectedIndex = movieListView.getSelectionModel().getSelectedIndex();
         Movie movie = (Movie)movieListView.getSelectionModel().getSelectedItem();
         String poster = "Unknown";
 

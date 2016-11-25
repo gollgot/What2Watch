@@ -227,13 +227,12 @@ public class DbHandler {
     }
 
     public ArrayList<Movie> getMovies(String[] realTitles) {
-        ArrayList<Movie> movies = new ArrayList();
-        Movie movie = new Movie();
         
+        ArrayList<Movie> movies = new ArrayList<Movie>();
         int totalMovies = realTitles.length;
         
         for (int i = 0; i < totalMovies; i++) {
-            
+            Movie movie = new Movie();
             // Get infos of the current movie
             String currentTitle = realTitles[i];
             String query = "SELECT id, raw_title, title, year, image_link, synopsis FROM movie "+
@@ -281,6 +280,7 @@ public class DbHandler {
             // Add the current movie to the movies ArrayList
             movies.add(movie);
         }
+        
         
         return movies;
     
