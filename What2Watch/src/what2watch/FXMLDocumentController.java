@@ -142,10 +142,13 @@ public class FXMLDocumentController implements Initializable {
         dbHandler.update();
         
         // We wait the end of the thread
-        while(dbHandler.getUpdateThread().isAlive()){
-           
+        // (thread.join() allow to continue when thread is finished)
+        try {
+            dbHandler.getUpdateThread().join();
+        } catch (InterruptedException ex) {
+            System.out.println("Error on browseFiles method on FXMLDocumentController class Ex: "+ex.getMessage().toString());
         }
-        
+
         // Get the array holding all the infos
         String[] realTitles = dbHandler.getAllTitles();
         movies = dbHandler.getMovies(realTitles);
