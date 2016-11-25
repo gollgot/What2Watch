@@ -227,7 +227,7 @@ public class FXMLDocumentController implements Initializable {
         // Movie poster handling
         Image moviePoster = new Image("what2watch/images/placeHolder.png");
         if (!moviePosterURL.equals("Inconnu")) {
-            moviePoster = new Image(moviePosterURL);
+            moviePoster = new Image("http://image.tmdb.org/t/p/w300" + moviePosterURL);
         }
         movieImageView.setImage(moviePoster);
     }
