@@ -12,6 +12,7 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -22,6 +23,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -30,6 +32,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Callback;
+import sun.awt.RepaintArea;
 
 /**
  *
@@ -44,7 +48,7 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private TextArea synopsisTextArea;
     @FXML
-    private ListView<?> movieListView;
+    private ListView<Movie> movieListView;
     @FXML
     private TextField searchTextField;
     @FXML
@@ -87,6 +91,7 @@ public class FXMLDocumentController implements Initializable {
     private UserPreferences prefs = new UserPreferences();
     private ObservableList movieFileNames = 
         FXCollections.observableArrayList();
+    private ArrayList<Movie> movies = new ArrayList();
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -129,7 +134,7 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private void browseFiles(ActionEvent event) throws IOException {
         CacheDb cacheDb = new CacheDb();
-        
+        movies.clear();
         // Update the cache db (add or remove movies on DB, it depend on the
         // browser.getMovieFileNames) and get real titles of all the movies on 
         // the DB.
@@ -137,12 +142,25 @@ public class FXMLDocumentController implements Initializable {
         ArrayList<String> rawFileNames = FileBrowser.getMovieFileNames();
         DbHandler dbHandler = new DbHandler(cacheDb,fileNames,rawFileNames);
         dbHandler.update();
-        String[] realTitles = dbHandler.getAllTitles();
         
-        // Filing the listView with movie file names
-        this.movieFileNames.clear();
-        this.movieFileNames.addAll(realTitles);
-        this.movieListView.setItems(this.movieFileNames);       
+        // We wait the end of the thread
+        // (thread.join() allow to continue when thread is finished)
+        try {
+            dbHandler.getUpdateThread().join();
+        } catch (InterruptedException ex) {
+            System.out.println("Error on browseFiles method on FXMLDocumentController class Ex: "+ex.getMessage().toString());
+        }
+
+        // Get the array holding all the infos
+        String[] realTitles = dbHandler.getAllTitles();
+        movies = dbHandler.getMovies(realTitles);
+        
+        // Add a list of Movie object to the list.
+        // (for display the movie title on the list, the list fetch itself the "toString" method
+        // override from Object class. toString return the title)
+        ObservableList<Movie> myObservableList = FXCollections.observableArrayList();
+        myObservableList.addAll(movies);
+        movieListView.setItems(myObservableList);
     }
 
     @FXML
@@ -187,58 +205,47 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private void getMovieInformations(MouseEvent event) {
         
-        // Connect to the DB
-        CacheDb cacheDb = new CacheDb();
-        // Get title of clicked film
-        String movieTitle = movieListView.getSelectionModel().getSelectedItem().toString();
-        // Set all data of the Movie
-        String query = "SELECT * FROM movie WHERE title=\""+movieTitle+"\"";
-        String results[] = cacheDb.doSelectQuery(query).split(";");
-        String movieId = results[0];
-        String movieRawTitle = results[1];
-        movieTitle = results[2];
-        String movieYear = results[3];
-        String movieImageLink = results[4];
-        String movieSynopsis = results[5];
-        
-        query = "SELECT name FROM actor INNER JOIN movie_has_actor ON actor.id = movie_has_actor.actor_id "
-                + "INNER JOIN movie ON movie.id = movie_has_actor.movie_id "
-                + "WHERE movie.title=\""+movieTitle+"\"";
-        String movieActors = cacheDb.doSelectQuery(query).replaceAll(";", ", ");
-        // Delete last comma
-        movieActors = movieActors.replaceAll(", $", "");
-        
-        query = "SELECT type FROM genre INNER JOIN movie_has_genre ON genre.id = movie_has_genre.genre_id "
-                + "INNER JOIN movie ON movie.id = movie_has_genre.movie_id "
-                + "WHERE movie.title=\""+movieTitle+"\"";
-        String movieGenres = cacheDb.doSelectQuery(query).replaceAll(";", ", ");
-        // Delete last comma
-        movieGenres = movieGenres.replaceAll(", $", "");
-        
-        query = "SELECT name FROM director INNER JOIN movie_has_director ON director.id = movie_has_director.director_id "
-                + "INNER JOIN movie ON movie.id = movie_has_director.movie_id "
-                + "WHERE movie.title=\""+movieTitle+"\"";
-        String movieDirectors = cacheDb.doSelectQuery(query).replaceAll(";", ", ");
-        // Delete last comma
-        movieDirectors = movieDirectors.replaceAll(", $", "");
-        
-        query = "SELECT image_link FROM movie WHERE movie.title=\""+movieTitle+"\"";
-        String moviePosterURL = cacheDb.doSelectQuery(query).replaceAll(";", ", ");
-        // Delete last comma
-        moviePosterURL = moviePosterURL.replaceAll(", $", "");
-        
+        Movie movie = (Movie)movieListView.getSelectionModel().getSelectedItem();
+        String poster = "Unknown";
+
+        /* ACTORS */
+        String[] actorsArray = movie.getActors();
+        String actors = "";
+        for (int j = 0; j < actorsArray.length; j++) {
+            actors += actorsArray[j]+", ";
+        }
+        actors = actors.substring(0, actors.length()-2);
+
+        /* DIRECTORS */
+        String[] directorArray = movie.getDirector();
+        String director = "";
+        for (int j = 0; j < directorArray.length; j++) {
+            director += directorArray[j]+", ";
+        }
+        director = director.substring(0, director.length()-2);
+
+        /* GENRES */
+        String[] genresArray = movie.getGenre();
+        String genres = "";
+        for (int j = 0; j < genresArray.length; j++) {
+            genres += genresArray[j]+", ";
+        }
+        genres = genres.substring(0, genres.length()-2);
+
         // Set texts on the labels
-        titleValueLabel.setText(movieTitle);
-        yearValueLabel.setText(movieYear);
-        synopsisTextArea.setText(movieSynopsis);  
-        actorsValueLabel.setText(movieActors);
-        genreValueLabel.setText(movieGenres);
-        directorsValueLabel.setText(movieDirectors);
+        titleValueLabel.setText(movie.getTitle());
+        yearValueLabel.setText(movie.getYear());
+        synopsisTextArea.setText(movie.getSynopsis());  
+        actorsValueLabel.setText(actors);
+        genreValueLabel.setText(genres);
+        directorsValueLabel.setText(director);
+
+        poster = movie.getPoster();        
         
         // Movie poster handling
         Image moviePoster = new Image("what2watch/images/placeHolder.png");
-        if (!moviePosterURL.equals("Inconnu")) {
-            moviePoster = new Image("http://image.tmdb.org/t/p/w300" + moviePosterURL);
+        if (!poster.equals("Unknown")) {
+            moviePoster = new Image("http://image.tmdb.org/t/p/w300" + poster);
         }
         movieImageView.setImage(moviePoster);
     }

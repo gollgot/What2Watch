@@ -8,6 +8,8 @@ package what2watch;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -18,6 +20,7 @@ public class DbHandler {
     private CacheDb dataBase;
     private ArrayList<String> originalMovieNames;
     private ArrayList<String> rawMovieNames;
+    private Thread updateThread;
 
     public DbHandler(CacheDb dataBase, ArrayList<String> originalMovieNames, ArrayList<String> rawMovieNames) {
         this.dataBase = dataBase;
@@ -28,7 +31,7 @@ public class DbHandler {
     public void update() {
         // Thread for update the database, because we have to get the datas from the
         //API and wait x ms after each request (see method "getAllMovieInfos" in class "ApiHandler" for more infos
-        Thread test = new Thread(new Runnable() {
+        updateThread = new Thread(new Runnable() {
             @Override
             public void run() {
                 // Check if the movie already exists on the DB, if not, we put on all the datas
@@ -41,12 +44,15 @@ public class DbHandler {
                         insertMovieOnDb(movie);
                     }
                 }
+                deleteMovieOnDb();
                 
-            }
+            } 
         });
-        test.start();
-        
-        deleteMovieOnDb();
+        updateThread.start();
+    }
+    
+    public Thread getUpdateThread(){
+        return updateThread;
     }
 
     private boolean movieExistsOnDb(String rawMovieName) {
@@ -191,10 +197,10 @@ public class DbHandler {
         // user directory or not (with the raw_path)
         for (int i = 0; i < totalMovies; i++) {
             String fullPath = FileBrowser.getFilePath(rawTitleMoviesDb[i]);
-            System.out.println("DEBUG----- " + fullPath + " -----DEBUG");
+
             // At this point, we know the movie doesn't exist if it has no path
             if (fullPath.equals("")) {
-                String query = "SELECT id FROM movie WHERE raw_title = '" + rawTitleMoviesDb[i] + "'";
+                String query = "SELECT id FROM movie WHERE raw_title = \"" + rawTitleMoviesDb[i] + "\"";
                 String idMovie = dataBase.doSelectQuery(query).replace(";", "");
 
                         // (We keep actors, directors and genres because they can be used by other movies)
@@ -220,6 +226,66 @@ public class DbHandler {
         }
     }
 
+    public ArrayList<Movie> getMovies(String[] realTitles) {
+        
+        ArrayList<Movie> movies = new ArrayList<Movie>();
+        int totalMovies = realTitles.length;
+        
+        for (int i = 0; i < totalMovies; i++) {
+            Movie movie = new Movie();
+            // Get infos of the current movie
+            String currentTitle = realTitles[i];
+            String query = "SELECT id, raw_title, title, year, image_link, synopsis FROM movie "+
+                           "WHERE title = \""+currentTitle+"\"";
+            String result = dataBase.doSelectQuery(query);
+            result = result.substring(0,result.length()-1);
+            String movieInfos[] = result.split(";");
+            
+            // Set infos of the current movie
+            int id = Integer.valueOf(movieInfos[0]);
+            // Set some infos on a movie object
+            movie.setRawTitle(movieInfos[1]);
+            movie.setTitle(movieInfos[2]);
+            movie.setYear(movieInfos[3]);
+            movie.setPoster(movieInfos[4]);
+            movie.setSynopsis(movieInfos[5]);
+            
+            /* ACTORS */
+            query = "SELECT actor.name FROM actor "+
+                    "INNER JOIN movie_has_actor ON actor.id = movie_has_actor.actor_id "+
+                    "INNER JOIN movie ON movie.id = movie_has_actor.movie_id "+
+                    "WHERE movie_has_actor.movie_id = "+id;
+            result = dataBase.doSelectQuery(query);
+            result = result.substring(0,result.length()-1);
+            movie.setActors(result);
+            
+            /* GENRES */
+            query = "SELECT genre.type FROM genre "+
+                    "INNER JOIN movie_has_genre ON genre.id = movie_has_genre.genre_id "+
+                    "INNER JOIN movie ON movie.id = movie_has_genre.movie_id "+
+                    "WHERE movie_has_genre.movie_id = "+id;
+            result = dataBase.doSelectQuery(query);
+            result = result.substring(0,result.length()-1);
+            movie.setGenre(result);
+            
+            /* DIRECTORS */
+            query = "SELECT director.name FROM director "+
+                    "INNER JOIN movie_has_director ON director.id = movie_has_director.director_id "+
+                    "INNER JOIN movie ON movie.id = movie_has_director.movie_id "+
+                    "WHERE movie_has_director.movie_id = "+id;
+            result = dataBase.doSelectQuery(query);
+            result = result.substring(0,result.length()-1);
+            movie.setDirector(result);
+            
+            // Add the current movie to the movies ArrayList
+            movies.add(movie);
+        }
+        
+        
+        return movies;
+    
+    }
+    
     public String[] getAllTitles() {
 
         String query = "SELECT title FROM movie";

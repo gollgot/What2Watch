@@ -26,7 +26,6 @@ public class Movie {
     public Movie() {
     }
     
-    
     // GETTERS
     public String getRawTitle() {
         return rawTitle;
@@ -74,11 +73,11 @@ public class Movie {
     }
 
     public void setDirector(String director) {
-        this.director = director.split(", ");
+        this.director = director.split(";");
     }
 
     public void setActors(String actors) {
-        this.actor = actors.split(", ");
+        this.actor = actors.split(";");
     }
 
     public void setYear(String year) {
@@ -90,16 +89,17 @@ public class Movie {
     }
 
     public void setGenre(String genre) {
-        this.genre = genre.split(", ");
+        this.genre = genre.split(";");
     }
     
     public void setSynopsis(String synopsis) {
         this.synopsis = synopsis;
     }
-    
-    
-    
-    
+
+    @Override
+    public String toString() {
+        return title;
+    }
     
     
     
