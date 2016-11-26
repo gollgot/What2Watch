@@ -152,9 +152,6 @@ public class FXMLDocumentController implements Initializable {
         // Get the array holding all the infos
         String[] realTitles = dbHandler.getAllTitles();
         movies = dbHandler.getMovies(realTitles);
-        for (int i = 0; i < movies.size(); i++) {
-            System.out.println("D : "+movies.get(i));
-        }
         
         // Add a list of Movie object to the list.
         // (for display the movie title on the list, the list fetch itself the "toString" method
@@ -200,9 +197,6 @@ public class FXMLDocumentController implements Initializable {
         Movie movie = (Movie)movieListView.getSelectionModel().getSelectedItem();
         String poster = "Unknown";
 
-
-        System.out.println(" TRUE : clicked on : "+movie.getTitle());
-
         /* ACTORS */
         String[] actorsArray = movie.getActors();
         String actors = "";
@@ -235,10 +229,7 @@ public class FXMLDocumentController implements Initializable {
         genreValueLabel.setText(genres);
         directorsValueLabel.setText(director);
 
-        poster = movie.getPoster();
-        System.out.println(poster);
-            
-        
+        poster = movie.getPoster();        
         
         // Movie poster handling
         Image moviePoster = new Image("what2watch/images/placeHolder.png");

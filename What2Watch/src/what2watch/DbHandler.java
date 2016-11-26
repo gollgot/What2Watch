@@ -197,7 +197,7 @@ public class DbHandler {
         // user directory or not (with the raw_path)
         for (int i = 0; i < totalMovies; i++) {
             String fullPath = FileBrowser.getFilePath(rawTitleMoviesDb[i]);
-            System.out.println("DEBUG----- " + fullPath + " -----DEBUG");
+
             // At this point, we know the movie doesn't exist if it has no path
             if (fullPath.equals("")) {
                 String query = "SELECT id FROM movie WHERE raw_title = \"" + rawTitleMoviesDb[i] + "\"";
