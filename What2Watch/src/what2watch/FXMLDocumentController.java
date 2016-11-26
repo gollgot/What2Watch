@@ -141,7 +141,7 @@ public class FXMLDocumentController implements Initializable {
         ArrayList<String> fileNames = ParsingFiles.parse(FileBrowser.getMovieFileNames());
         ArrayList<String> rawFileNames = FileBrowser.getMovieFileNames();
         DbHandler dbHandler = new DbHandler(cacheDb,fileNames,rawFileNames);
-        
+        movieListView.getItems().clear();
         // Init progress indicator to 0 and display it
         searchProgressIndicator.setProgress(0);
         searchProgressIndicator.setVisible(true);

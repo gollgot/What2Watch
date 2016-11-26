@@ -39,6 +39,6 @@
       <Label fx:id="endingYearLabel" layoutX="554.0" layoutY="95.0" text="à" visible="false" />
       <Label fx:id="directorsLabel" layoutX="168.0" layoutY="263.0" text="Réalisateur(s):" />
       <Label fx:id="directorsValueLabel" alignment="TOP_LEFT" layoutX="251.0" layoutY="263.0" prefHeight="43.0" prefWidth="162.0" text="George Lucas, Rick McCulm" />
-      <ProgressIndicator fx:id="searchProgressIndicator" layoutX="627.0" layoutY="181.0" prefHeight="76.0" prefWidth="84.0" progress="0.0" />
+      <ProgressIndicator fx:id="searchProgressIndicator" layoutX="594.0" layoutY="205.0" prefHeight="116.0" prefWidth="128.0" progress="0.0" />
     </children>
 </AnchorPane>
