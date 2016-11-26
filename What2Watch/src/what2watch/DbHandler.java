@@ -5,12 +5,11 @@
  */
 package what2watch;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
-import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.scene.control.ListView;
-import javafx.scene.control.ProgressIndicator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -22,7 +21,6 @@ public class DbHandler {
     private ArrayList<String> originalMovieNames;
     private ArrayList<String> rawMovieNames;
     private Thread updateThread;
-    private ArrayList<Movie> movies = new ArrayList();
 
     public DbHandler(CacheDb dataBase, ArrayList<String> originalMovieNames, ArrayList<String> rawMovieNames) {
         this.dataBase = dataBase;
@@ -30,12 +28,10 @@ public class DbHandler {
         this.rawMovieNames = rawMovieNames;
     }
 
-    public void update(ListView<Movie> listView, ProgressIndicator searchProgressIndicator) {
-        
+    public void update() {
         // Thread for update the database, because we have to get the datas from the
         //API and wait x ms after each request (see method "getAllMovieInfos" in class "ApiHandler" for more infos
         updateThread = new Thread(new Runnable() {
-            float pourcent;
             @Override
             public void run() {
                 // Check if the movie already exists on the DB, if not, we put on all the datas
@@ -47,36 +43,9 @@ public class DbHandler {
                         Movie movie = ApiHandler.getAllMovieInfos(originalMovieNames.get(i), rawMovieNames.get(i));
                         insertMovieOnDb(movie);
                     }
-                    
-                    // Get the pourcent bewteen 0 and 1
-                    pourcent = 100 * (i+1) / originalMovieNames.size();
-                    pourcent = pourcent / 100;
-                    
-                    // Set the %
-                    searchProgressIndicator.setProgress(pourcent);
                 }
                 deleteMovieOnDb();
                 
-                // We have to create a new runnable on the Platform.runLater
-                // Because we cannot set the data on this thread, we have to to on 
-                // The runLater thread for not have an error
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        // Get the array holding all the infos
-                        String[] realTitles = getAllTitles();
-                        movies.clear();
-                        movies = getMovies(realTitles);
-
-                        searchProgressIndicator.setVisible(false);
-                        // Add a list of Movie object to the list.
-                        // (for display the movie title on the list, the list fetch itself the "toString" method
-                        // override from Object class. toString return the title)
-                        ObservableList<Movie> myObservableList = FXCollections.observableArrayList();
-                        myObservableList.addAll(movies);
-                        listView.setItems(myObservableList);
-                    }
-                });
             } 
         });
         updateThread.start();

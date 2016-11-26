@@ -25,7 +25,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -88,10 +87,11 @@ public class FXMLDocumentController implements Initializable {
     private Label directorsLabel;
     @FXML
     private Label directorsValueLabel;
-    @FXML
-    private ProgressIndicator searchProgressIndicator;
     
     private UserPreferences prefs = new UserPreferences();
+    private ObservableList movieFileNames = 
+        FXCollections.observableArrayList();
+    private ArrayList<Movie> movies = new ArrayList();
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -110,9 +110,6 @@ public class FXMLDocumentController implements Initializable {
             "Acteur",
             "Année"
         );
-        
-        // We hide the progressIndicator
-        searchProgressIndicator.setVisible(false);
     }    
 
     @FXML
@@ -135,19 +132,33 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private void browseFiles(ActionEvent event) throws IOException {
         CacheDb cacheDb = new CacheDb();
+        movies.clear();
         // Update the cache db (add or remove movies on DB, it depend on the
         // browser.getMovieFileNames) and get real titles of all the movies on 
         // the DB.
         ArrayList<String> fileNames = ParsingFiles.parse(FileBrowser.getMovieFileNames());
         ArrayList<String> rawFileNames = FileBrowser.getMovieFileNames();
         DbHandler dbHandler = new DbHandler(cacheDb,fileNames,rawFileNames);
+        dbHandler.update();
         
-        // Init progress indicator to 0 and display it
-        searchProgressIndicator.setProgress(0);
-        searchProgressIndicator.setVisible(true);
+        // We wait the end of the thread
+        // (thread.join() allow to continue when thread is finished)
+        try {
+            dbHandler.getUpdateThread().join();
+        } catch (InterruptedException ex) {
+            System.out.println("Error on browseFiles method on FXMLDocumentController class Ex: "+ex.getMessage().toString());
+        }
+
+        // Get the array holding all the infos
+        String[] realTitles = dbHandler.getAllTitles();
+        movies = dbHandler.getMovies(realTitles);
         
-        // Update DB and display result on the list
-        dbHandler.update(movieListView, searchProgressIndicator);
+        // Add a list of Movie object to the list.
+        // (for display the movie title on the list, the list fetch itself the "toString" method
+        // override from Object class. toString return the title)
+        ObservableList<Movie> myObservableList = FXCollections.observableArrayList();
+        myObservableList.addAll(movies);
+        movieListView.setItems(myObservableList);
     }
 
     @FXML
@@ -225,7 +236,6 @@ public class FXMLDocumentController implements Initializable {
         if (!poster.equals("Unknown")) {
             moviePoster = new Image("http://image.tmdb.org/t/p/w300" + poster);
         }
-        
         movieImageView.setImage(moviePoster);
     }
     
