@@ -106,16 +106,16 @@ public class FXMLDocumentController implements Initializable {
         
         // Combobox search criterias configuration
         this.searchCriteriasComboBox.getItems().addAll(
-            "Titre",
+            "Title",
             "Genre",
-            "Année",
-            "Réalisateur",
-            "Acteur"
+            "Year",
+            "Director",
+            "Actor"
         );
         
-        // Disabling the search bar to prevent the user from typing
-        // until the movie folder has been parsed
-        this.searchTextField.setEditable(false);
+        // Disabling the search bars to prevent searches from being processed
+        // until the movie list is displayed in the listView
+       enableSearchBars(false);
     }    
 
     @FXML
@@ -165,11 +165,11 @@ public class FXMLDocumentController implements Initializable {
         // override from Object class. toString return the title)
         movieListView.setItems(movies);
         
-        // Search handler management
+        // Providing the search hander with informations needed to process movie searches
         SearchHandler.initializeSearchHandler(movieListView, movies);
         
         // Allowing the user to use the search bar
-        this.searchTextField.setEditable(true);
+        enableSearchBars(true);
     }
 
     @FXML
@@ -177,7 +177,7 @@ public class FXMLDocumentController implements Initializable {
         String searchCriteria = this.searchCriteriasComboBox.getValue();
 
         switch (searchCriteria) {
-            case "Titre":
+            case "Title":
                 // TODO define search scope
                 setYearSearchMode(false);
                 break;
@@ -185,21 +185,40 @@ public class FXMLDocumentController implements Initializable {
                 // TODO define search scope
                 setYearSearchMode(false);
                 break;
-            case "Année":
+            case "Year":
                 // TODO define search scope
                 setYearSearchMode(true);
                 break;
-            case "Réalisateur":
+            case "Director":
                 // TODO define search scope 
                 setYearSearchMode(false);
                 break;
-            case "Acteur":
+            case "Actor":
                 // TODO define search scope
                 setYearSearchMode(false);
                 break;
             default:
                 break;
         }
+    }
+    
+    // Disable
+    private void enableSearchBars(boolean toggleValue) {
+        double opacityValue;
+        
+        if (toggleValue == true) {
+            opacityValue = 1.0;
+        } else {
+            opacityValue = 0.2;
+        }
+        
+        this.searchTextField.setOpacity(opacityValue);
+        this.startingYearTextField.setOpacity(opacityValue);
+        this.endingYearTextField.setOpacity(opacityValue);
+        
+        this.searchTextField.setEditable(toggleValue);
+        this.startingYearTextField.setEditable(toggleValue);
+        this.endingYearTextField.setEditable(toggleValue);
     }
     
     // Displays/hides textfields according to the selected combobox search criteria
@@ -261,7 +280,9 @@ public class FXMLDocumentController implements Initializable {
 
     @FXML
     private void searchForMatchingMovies(KeyEvent event) {
-        SearchHandler.findMoviesByTitle(searchTextField.getText());
+        if (this.searchTextField.isEditable()) {
+            SearchHandler.findMoviesByTitle(searchTextField.getText());
+        }
     }
     
 }

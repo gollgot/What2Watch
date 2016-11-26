@@ -17,6 +17,7 @@ import javafx.scene.control.ListView;
 public class SearchHandler {
     private static ListView<Movie> movieListView;
     private static ObservableList<Movie> originalMovieList;
+    private static String searchMode; // Indicates how the search will be handled in this class methods
     
     // Provides the class with informations that will be used in its methods
     // in order to process a movie search
