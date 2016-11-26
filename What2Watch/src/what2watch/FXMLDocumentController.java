@@ -29,6 +29,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -89,9 +90,8 @@ public class FXMLDocumentController implements Initializable {
     private Label directorsValueLabel;
     
     private UserPreferences prefs = new UserPreferences();
-    private ObservableList movieFileNames = 
-        FXCollections.observableArrayList();
-    private ArrayList<Movie> movies = new ArrayList();
+    private ObservableList movieFileNames = FXCollections.observableArrayList();
+    private ObservableList<Movie> movies = FXCollections.observableArrayList();
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -112,6 +112,10 @@ public class FXMLDocumentController implements Initializable {
             "Réalisateur",
             "Acteur"
         );
+        
+        // Disabling the search bar to prevent the user from typing
+        // until the movie folder has been parsed
+        this.searchTextField.setEditable(false);
     }    
 
     @FXML
@@ -153,14 +157,19 @@ public class FXMLDocumentController implements Initializable {
 
         // Get the array holding all the infos
         String[] realTitles = dbHandler.getAllTitles();
-        movies = dbHandler.getMovies(realTitles);
+        ArrayList<Movie> movieList = dbHandler.getMovies(realTitles);
+        movies = FXCollections.observableArrayList(movieList);
         
         // Add a list of Movie object to the list.
         // (for display the movie title on the list, the list fetch itself the "toString" method
         // override from Object class. toString return the title)
-        ObservableList<Movie> myObservableList = FXCollections.observableArrayList();
-        myObservableList.addAll(movies);
-        movieListView.setItems(myObservableList);
+        movieListView.setItems(movies);
+        
+        // Search handler management
+        SearchHandler.initializeSearchHandler(movieListView, movies);
+        
+        // Allowing the user to use the search bar
+        this.searchTextField.setEditable(true);
     }
 
     @FXML
@@ -248,6 +257,11 @@ public class FXMLDocumentController implements Initializable {
             moviePoster = new Image("http://image.tmdb.org/t/p/w300" + poster);
         }
         movieImageView.setImage(moviePoster);
+    }
+
+    @FXML
+    private void searchForMatchingMovies(KeyEvent event) {
+        SearchHandler.findMoviesByTitle(searchTextField.getText());
     }
     
 }
