@@ -5,11 +5,17 @@
  */
 package what2watch;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  *
@@ -24,6 +30,7 @@ public class Main extends Application {
         Scene scene = new Scene(root);
         
         stage.setScene(scene);
+        stage.setResizable(false);
         stage.show();
     }
 
@@ -31,6 +38,47 @@ public class Main extends Application {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        
+        /* First step : create the cache folder and file */
+        CacheDb cacheDb = new CacheDb();
+        // If DB file (for cache) doesn't exists, we will create one
+        if(!cacheDb.exists()) {
+            cacheDb.create();
+        }else{
+            System.out.println("The cache file already exists.");
+        }
+        
+         
+        /* TEST ParsingFiles */
+        /*UserPreferences userPref = new UserPreferences();
+        FileBrowser fileBrowser = new FileBrowser();
+        ArrayList<String> originalListFiles = new ArrayList<>(); 
+        
+        // get path saved on the UserPreferences
+        String path = userPref.getPath();
+        
+        try {
+            fileBrowser.fetchMoviesFileNames(path);
+            originalListFiles = fileBrowser.getMovieFileNames();
+        } catch (IOException ex) {
+            System.out.println("Error on Main : getFilesNames. Ex : "+ex);
+        }
+        ArrayList<String> finalListFiles = ParsingFiles.parse(originalListFiles);
+        
+        
+        
+        /* TEST IF MOVIE EXISTS OR NOT*/ 
+        // it's an updating of cache
+        /*for (int i = 0; i < finalListFiles.size(); i++) {
+            System.out.println("Nom : "+finalListFiles.get(i));
+        }*/
+       //DbHandler dbHandler = new DbHandler(cacheDb,finalListFiles);
+        
+        
+        
+        
+        
+        /* After : Launch the window */
         launch(args);
     }
     
