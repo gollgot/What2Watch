@@ -58,4 +58,40 @@ public class SearchHandler {
         // Updating the listView
         movieListView.setItems(finalList);
     }
+    
+    public static void findMovieByActor(String searchTerm) {
+        // Eventually holds the list of films that will be displayed in the listView
+        ObservableList<String> finalList;
+
+        // Making sure there's a search term to compare against
+        if (!searchTerm.equals("")) {
+            ObservableList<String> matchingMovies = FXCollections.observableArrayList();
+            
+            CacheDb db = new CacheDb();
+            String query = "SELECT DISTINCT movie.title FROM movie "
+                + "INNER JOIN movie_has_actor ON movie.id = movie_has_actor.movie_id "
+                + "INNER JOIN actor ON movie_has_actor.actor_id = actor.id "
+                + "WHERE actor.name like '%" + searchTerm + "%'";
+
+            String queryResult = db.doSelectQuery(query);
+
+            // Making sure the query returned something 
+            if (!queryResult.equals("")) {
+                queryResult = queryResult.substring(0, queryResult.length() - 1);
+                String movieTtiles[] = queryResult.split(";");
+                
+                // Filling the finalList with movies matching the search term 
+                for (String movie : movieTtiles) {
+                    matchingMovies.add(movie);
+                }
+            }
+            
+            finalList = matchingMovies;
+        } else {
+            finalList = originalMovieList;
+        }
+
+        // Updating the listView
+        movieListView.setItems(finalList);
+    }
 }

@@ -309,7 +309,7 @@ public class FXMLDocumentController implements Initializable {
                     //SearchHandler.findMovieByDirector(this.searchTextField.getText());
                     break;
                 case 4: // Actor
-                    //SearchHandler.findMovieByActor(this.searchTextField.getText());
+                    SearchHandler.findMovieByActor(this.searchTextField.getText());
                     break;
                 default:
                     break;
