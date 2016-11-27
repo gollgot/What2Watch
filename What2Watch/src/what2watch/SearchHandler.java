@@ -1,11 +1,10 @@
 /*
  * The purpose of this class is to handle searches triggerd by the user
- * when typing in the search bar in the main window. Also, this class is responsible
+ * when typing in one of the search bars in the main window. Also, this class is responsible
  * for updating the informations displayed in the movie list.
  */
 package what2watch;
 
-import java.util.ArrayList;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ListView;
@@ -15,7 +14,6 @@ import javafx.scene.control.ListView;
  * @author Raphael.BAZZARI
  */
 public class SearchHandler {
-
     private static ListView<String> movieListView;
     private static ObservableList<String> originalMovieList;
 
@@ -26,8 +24,7 @@ public class SearchHandler {
         originalMovieList = movieList;
     }
 
-    // Finds and displays movies that match the query passed by parameter
-    // Displays the original movie list in case the searchTerm parameter is empty
+    // Displays movies fetched via the query passed in parameter
     public static void findMoviesFromQuery(String query) {
         // Eventually holds the list of films that will be displayed in the listView
         ObservableList<String> matchingMovies = FXCollections.observableArrayList();

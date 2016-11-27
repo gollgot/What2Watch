@@ -29,6 +29,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
@@ -234,11 +235,11 @@ public class FXMLDocumentController implements Initializable {
     }
 
     @FXML
-    private void getMovieInformations(MouseEvent event) {
+    private void getMovieInformations() {
     // Connect to the DB
         CacheDb cacheDb = new CacheDb();
         // Get title of clicked film
-        String movieTitle = movieListView.getSelectionModel().getSelectedItem().toString();
+        String movieTitle = movieListView.getSelectionModel().getSelectedItem();
         // Set all data of the Movie
         String query = "SELECT * FROM movie WHERE title=\""+movieTitle+"\"";
         String results[] = cacheDb.doSelectQuery(query).split(";");
@@ -316,5 +317,11 @@ public class FXMLDocumentController implements Initializable {
             }
         }
     }
-    
+
+    @FXML
+    private void updateDisplayedInfos(KeyEvent event) {
+        if (event.getCode().equals(KeyCode.UP) || event.getCode().equals(KeyCode.DOWN)) {
+            getMovieInformations();
+        }
+    }
 }
