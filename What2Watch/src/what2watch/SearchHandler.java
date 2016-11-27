@@ -72,6 +72,14 @@ public class SearchHandler {
         findMoviesFromQuery(query, searchTerm);
     }
 
+    public static void findMovieByDirector(String searchTerm) {
+        String query = "SELECT title from movie "
+                + "INNER JOIN movie_has_director ON movie.id = movie_has_director.movie_id "
+                + "INNER JOIN director ON movie_has_director.director_id = director.id "
+                + "WHERE director.name like '%" + searchTerm + "%'";
+        findMoviesFromQuery(query, searchTerm);
+    }
+    
     public static void findMovieByActor(String searchTerm) {
         String query = "SELECT DISTINCT movie.title FROM movie "
                 + "INNER JOIN movie_has_actor ON movie.id = movie_has_actor.movie_id "

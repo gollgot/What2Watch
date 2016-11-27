@@ -306,7 +306,7 @@ public class FXMLDocumentController implements Initializable {
                     //findMovieByYearRange(this.startingYearTextField.getText(), this.endingYearTextField.getText());
                     break;
                 case 3: // Director
-                    //SearchHandler.findMovieByDirector(this.searchTextField.getText());
+                    SearchHandler.findMovieByDirector(this.searchTextField.getText());
                     break;
                 case 4: // Actor
                     SearchHandler.findMovieByActor(this.searchTextField.getText());
