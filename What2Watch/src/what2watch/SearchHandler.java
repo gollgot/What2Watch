@@ -1,5 +1,5 @@
 /*
- * The purpose of this class is to handle the search triggerd by the user
+ * The purpose of this class is to handle searches triggerd by the user
  * when typing in the search bar in the main window. Also, this class is responsible
  * for updating the informations displayed in the movie list.
  */
@@ -15,46 +15,47 @@ import javafx.scene.control.ListView;
  * @author Raphael.BAZZARI
  */
 public class SearchHandler {
-    private static ListView<Movie> movieListView;
-    private static ObservableList<Movie> originalMovieList;
-    private static String searchMode; // Indicates how the search will be handled in this class methods
-    
+    private static ListView<String> movieListView;
+    private static ObservableList<String> originalMovieList;
+
     // Provides the class with informations that will be used in its methods
     // in order to process a movie search
-    public static void initializeSearchHandler (ListView<Movie> listView, ObservableList<Movie> movieList) {
-       movieListView = listView; 
-       originalMovieList = movieList;
+    public static void initializeSearchHandler(ListView<String> listView, ObservableList<String> movieList) {
+        movieListView = listView;
+        originalMovieList = movieList;
     }
     
-    // Compares the title of every movies contained in the listView on the main Window
-    // against the search term provided in parameter.
-    // Either displays a list of movies that match the search or the original one
-    public static void findMoviesByTitle(String searchTerm) {
+    public static void findMovieByTitle(String searchTerm) {
         // Eventually holds the list of films that will be displayed in the listView
-        ObservableList<Movie> finalList = FXCollections.observableArrayList();
-        
-        // Making sure there is a term to base the search on
+        ObservableList<String> finalList;
+
+        // Making sure there's a search term to compare against
         if (!searchTerm.equals("")) {
-            ObservableList<Movie> matchingMovies = FXCollections.observableArrayList();
+            ObservableList<String> matchingMovies = FXCollections.observableArrayList();
             
-            // Comparing the search term against each title of movies in the list
-            for (Movie currentMovie : originalMovieList) {
-                String movieName = currentMovie.getTitle();
-                if (movieName.toLowerCase().contains(searchTerm.toLowerCase())) {
-                   matchingMovies.add(currentMovie); 
+            CacheDb db = new CacheDb();
+            String query = "SELECT title from movie "
+                    + "WHERE title like '%" + searchTerm + "%'";
+
+            String queryResult = db.doSelectQuery(query);
+
+            // Making sure the query returned something 
+            if (!queryResult.equals("")) {
+                queryResult = queryResult.substring(0, queryResult.length() - 1);
+                String movieTtiles[] = queryResult.split(";");
+                
+                // Filling the finalList with movies matching the search term 
+                for (String movie : movieTtiles) {
+                    matchingMovies.add(movie);
                 }
             }
-            // Setting the final with a list of movies that match the search term
-            finalList = matchingMovies;
             
+            finalList = matchingMovies;
         } else {
-            // No search term to compare against -> setting the final list to the original movie list
             finalList = originalMovieList;
         }
-        
-        // Updating the list view with either a list of movies matching the search term
-        // or the list that was originally displayed before the search occured
+
+        // Updating the listView
         movieListView.setItems(finalList);
     }
-    
 }
