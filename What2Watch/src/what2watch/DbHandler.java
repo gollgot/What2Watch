@@ -55,6 +55,7 @@ public class DbHandler {
                     
                     // We add this setProgress, because it's a round number, so it's a step with different progress number than before
                     float pourcent = 100 * (i+1) / originalMovieNames.size();
+                    pourcent = pourcent / 100;
                     searchProgressIndicator.setProgress(pourcent);
                 }
                 deleteMovieOnDb();
