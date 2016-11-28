@@ -52,8 +52,6 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private TextField searchTextField;
     @FXML
-    private Button searchButton;
-    @FXML
     private ComboBox<String> searchCriteriasComboBox;
     @FXML
     private ImageView movieImageView;
@@ -62,15 +60,9 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private TextField endingYearTextField;
     @FXML
-    private Label titleLabel;
-    @FXML
     private Label titleValueLabel;
     @FXML
-    private Label yearLabel;
-    @FXML
     private Label yearValueLabel;
-    @FXML
-    private Label genreLabel;
     @FXML
     private Label genreValueLabel;
     @FXML
@@ -84,14 +76,16 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private Label endingYearLabel;
     @FXML
-    private Label directorsLabel;
-    @FXML
     private Label directorsValueLabel;
     
     private UserPreferences prefs = new UserPreferences();
     private ObservableList movieFileNames = 
         FXCollections.observableArrayList();
     private ArrayList<Movie> movies = new ArrayList();
+    @FXML
+    private Button searchButton;
+    @FXML
+    private Label directorsLabel;
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
