@@ -16,10 +16,13 @@
       <TextField fx:id="searchTextField" layoutX="457.0" layoutY="89.0" prefHeight="27.0" prefWidth="262.0" promptText="Titanic" />
       <Button fx:id="searchButton" layoutX="736.0" layoutY="89.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="122.0" text="Rechercher" />
       <ComboBox fx:id="searchCriteriasComboBox" layoutX="457.0" layoutY="44.0" onAction="#updateSearchMode" prefHeight="27.0" prefWidth="401.0" promptText="Rechercher par..." />
-      <ImageView fx:id="movieImageView" fitHeight="191.0" fitWidth="154.0" layoutX="14.0" layoutY="86.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="movieImageView" fitHeight="191.0" fitWidth="154.0" layoutX="14.0" layoutY="86.0" onMouseClicked="#displayBigPoster" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@images/placeHolder.png" />
-         </image></ImageView>
+         </image>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor></ImageView>
       <TextField fx:id="startingYearTextField" layoutX="486.0" layoutY="90.0" prefHeight="27.0" prefWidth="52.0" promptText="1990" visible="false" />
       <TextField fx:id="endingYearTextField" layoutX="575.0" layoutY="90.0" prefHeight="27.0" prefWidth="52.0" promptText="2000" visible="false" />
       <Label fx:id="titleLabel" layoutX="167.0" layoutY="86.0" text="Titre:" />
@@ -39,5 +42,15 @@
       <Label fx:id="endingYearLabel" layoutX="554.0" layoutY="95.0" text="à" visible="false" />
       <Label fx:id="directorsLabel" layoutX="168.0" layoutY="263.0" text="Réalisateur(s):" />
       <Label fx:id="directorsValueLabel" alignment="TOP_LEFT" layoutX="251.0" layoutY="263.0" prefHeight="43.0" prefWidth="162.0" text="George Lucas, Rick McCulm" />
+      <Pane fx:id="paneBlackOpacity" onMouseClicked="#closeBigPoster" opacity="0.75" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #000;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </Pane>
+      <ImageView fx:id="movieBigPoster" fitHeight="490.0" fitWidth="345.0" layoutX="264.0" layoutY="47.0" onKeyPressed="#closeBigPoster" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@images/placeHolder.png" />
+         </image>
+      </ImageView>
     </children>
 </AnchorPane>

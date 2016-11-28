@@ -14,6 +14,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -28,7 +29,8 @@ public class Main extends Application {
         Parent root = FXMLLoader.load(getClass().getResource("FXMLDocument.fxml"));
         
         Scene scene = new Scene(root);
-        
+        // StageStyle.UNIFIED is for remove the basic blue border of the windows
+        stage.initStyle(StageStyle.UNIFIED);
         stage.setScene(scene);
         stage.setResizable(false);
         stage.show();

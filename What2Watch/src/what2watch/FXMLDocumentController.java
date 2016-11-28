@@ -29,7 +29,10 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
@@ -87,11 +90,14 @@ public class FXMLDocumentController implements Initializable {
     private Label directorsLabel;
     @FXML
     private Label directorsValueLabel;
+    @FXML
+    private Pane paneBlackOpacity;
+    @FXML
+    private ImageView movieBigPoster;
     
     private UserPreferences prefs = new UserPreferences();
-    private ObservableList movieFileNames = 
-        FXCollections.observableArrayList();
     private ArrayList<Movie> movies = new ArrayList();
+    
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -110,6 +116,9 @@ public class FXMLDocumentController implements Initializable {
             "Acteur",
             "Année"
         );
+        
+        paneBlackOpacity.setVisible(false);
+        movieBigPoster.setVisible(false);
     }    
 
     @FXML
@@ -237,6 +246,30 @@ public class FXMLDocumentController implements Initializable {
             moviePoster = new Image("http://image.tmdb.org/t/p/w300" + poster);
         }
         movieImageView.setImage(moviePoster);
+        movieBigPoster.setImage(moviePoster);
+    }
+    
+    @FXML
+    private void displayBigPoster(MouseEvent event) {
+        paneBlackOpacity.setVisible(true);
+        movieBigPoster.setVisible(true);
+        // We set the focus to the BigPoster (like that we can check if we presse the escape key or not)
+        movieBigPoster.requestFocus();
+    }
+    
+    // Close the bigPoster when we clicked on the black opac pane
+    @FXML
+    private void closeBigPoster(MouseEvent event) {
+        paneBlackOpacity.setVisible(false);
+        movieBigPoster.setVisible(false);
+    }
+    // Close the bigPoster when we presse escape key
+    @FXML
+    private void closeBigPoster(KeyEvent event) {
+        if(event.getCode() == KeyCode.ESCAPE){
+            paneBlackOpacity.setVisible(false);
+            movieBigPoster.setVisible(false);
+        }
     }
     
 }
