@@ -8,6 +8,7 @@ package what2watch;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.scene.control.ProgressIndicator;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,14 +22,28 @@ public class ApiHandler {
     private static String apiKey = "9a52628ae3939c738592ac50fdd73f7c";
 
     // We get all movie datas, and between each request, we wait 180ms, because we have a limit with the API...
-    public static Movie getAllMovieInfos(String movieName, String rawMovieName){
+    public static Movie getAllMovieInfos(String movieName, String rawMovieName, float oneStepPourcent, ProgressIndicator progressIndicator){
+        
+        
+        // We have 3 big process, so 33% of the oneStepPourcent.
+        float pourcentToAdd = 33 * oneStepPourcent / 100;
+            
         Movie movie = new Movie();
         try {
+            // Each time, we add this pourcentToAdd to the current progressNumber
+            // Beacause we add all the time the same value to each step
+            
             String id = getMovieId(movieName);
+            progressIndicator.setProgress(progressIndicator.getProgress()+pourcentToAdd);
             Thread.sleep(200);
+            
             movie = getMovieDetails(movieName, rawMovieName, id);
+            progressIndicator.setProgress(progressIndicator.getProgress()+pourcentToAdd);
             Thread.sleep(200);
+            
             movie = getMovieActorsDirectors(movie, id);
+            progressIndicator.setProgress(progressIndicator.getProgress()+pourcentToAdd);
+
         } catch (InterruptedException ex) {
             Logger.getLogger(ApiHandler.class.getName()).log(Level.SEVERE, null, ex);
         }

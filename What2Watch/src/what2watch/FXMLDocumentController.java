@@ -147,18 +147,10 @@ public class FXMLDocumentController implements Initializable {
         ArrayList<String> fileNames = ParsingFiles.parse(FileBrowser.getMovieFileNames());
         ArrayList<String> rawFileNames = FileBrowser.getMovieFileNames();
         DbHandler dbHandler = new DbHandler(cacheDb,fileNames,rawFileNames);
-        dbHandler.update();
-        
-        // We wait the end of the thread
-        // (thread.join() allow to continue when thread is finished)
-        try {
-            dbHandler.getUpdateThread().join();
-        } catch (InterruptedException ex) {
-            System.out.println("Error on browseFiles method on FXMLDocumentController class Ex: "+ex.getMessage().toString());
-        }
-
-        // Get the array holding all the infos
-        String[] realTitles = dbHandler.getAllTitles();
+        movieListView.getItems().clear();
+        // Init progress indicator to 0 and display it
+        searchProgressIndicator.setProgress(0);
+        searchProgressIndicator.setVisible(true);
         
         // Filing the listView with movie file names
         this.movieFileNames.clear();

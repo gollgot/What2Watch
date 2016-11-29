@@ -36,16 +36,47 @@ public class DbHandler {
             public void run() {
                 // Check if the movie already exists on the DB, if not, we put on all the datas
                 for (int i = 0; i < originalMovieNames.size(); i++) {
+                    
+                    // The pourcent is set between 0 and 1 (0 and 100%)
+                    // So we get only one step pourcent (exemple 4 movies, one step is 0.25)
+                    float oneStepPourcent = 100 * (1) / originalMovieNames.size();
+                    oneStepPourcent = oneStepPourcent / 100;
+
                     if (movieExistsOnDb(rawMovieNames.get(i))) {
                         System.out.println(originalMovieNames.get(i) + " Existe !");
                     } else {
                         System.out.println(originalMovieNames.get(i) + " Existe pas !");
-                        Movie movie = ApiHandler.getAllMovieInfos(originalMovieNames.get(i), rawMovieNames.get(i));
+                        Movie movie = ApiHandler.getAllMovieInfos(originalMovieNames.get(i), rawMovieNames.get(i), oneStepPourcent, searchProgressIndicator);
                         insertMovieOnDb(movie);
                     }
+                    
+                    // We add this setProgress, because it's a round number, so it's a step with different progress number than before
+                    float pourcent = 100 * (i+1) / originalMovieNames.size();
+                    pourcent = pourcent / 100;
+                    searchProgressIndicator.setProgress(pourcent);
                 }
                 deleteMovieOnDb();
                 
+                // We have to create a new runnable on the Platform.runLater
+                // Because we cannot set the data on this thread, we have to do on 
+                // The runLater thread for not have an error
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Get the array holding all the infos
+                        String[] realTitles = getAllTitles();
+                        movies.clear();
+                        movies = getMovies(realTitles);
+
+                        searchProgressIndicator.setVisible(false);
+                        // Add a list of Movie object to the list.
+                        // (for display the movie title on the list, the list fetch itself the "toString" method
+                        // override from Object class. toString return the title)
+                        ObservableList<Movie> myObservableList = FXCollections.observableArrayList();
+                        myObservableList.addAll(movies);
+                        listView.setItems(myObservableList);
+                    }
+                });
             } 
         });
         updateThread.start();
@@ -98,9 +129,9 @@ public class DbHandler {
                     String queryInsertActor = "INSERT INTO 'actor' "
                             + "VALUES(NULL,\"" + actors[i] + "\")";
                     dataBase.doNoReturnQuery(queryInsertActor);
-                    System.out.println(actors[i] + " ajouté");
+                    //System.out.println(actors[i] + " ajouté");
                 } else {
-                    System.out.println(actors[i] + " existe déjà");
+                    //System.out.println(actors[i] + " existe déjà");
                 }
                 /* Insert movie_has_actor*/
                 // For each actors on the movie, we get their id and insert the both of
@@ -111,7 +142,7 @@ public class DbHandler {
                         + "VALUES"
                         + "('" + idMovie + "','" + idActor + "')";
                 dataBase.doNoReturnQuery(queryInsertMovieHasActor);
-                System.out.println("movie_has_actor add : " + idMovie + "," + idActor);
+                //System.out.println("movie_has_actor add : " + idMovie + "," + idActor);
             }
         }
 
@@ -125,9 +156,9 @@ public class DbHandler {
                     String queryInsertGenre = "INSERT INTO 'genre' "
                             + "VALUES(NULL,'" + genres[i] + "')";
                     dataBase.doNoReturnQuery(queryInsertGenre);
-                    System.out.println(genres[i] + " ajouté");
+                    //System.out.println(genres[i] + " ajouté");
                 } else {
-                    System.out.println(genres[i] + " existe déjà");
+                    //System.out.println(genres[i] + " existe déjà");
                 }
                 /* Insert movie_has_genre*/
                 // For each genre of the movie, we get their id and insert the both of
@@ -138,7 +169,7 @@ public class DbHandler {
                         + "VALUES"
                         + "('" + idMovie + "','" + idGenre + "')";
                 dataBase.doNoReturnQuery(queryInsertMovieHasGenre);
-                System.out.println("movie_has_genre add : " + idMovie + "," + idGenre);
+                //System.out.println("movie_has_genre add : " + idMovie + "," + idGenre);
             }
         }
 
@@ -152,9 +183,9 @@ public class DbHandler {
                     String queryInsertDirector = "INSERT INTO 'director' "
                             + "VALUES(NULL,\"" + directors[i] + "\")";
                     dataBase.doNoReturnQuery(queryInsertDirector);
-                    System.out.println(directors[i] + " ajouté");
+                    //System.out.println(directors[i] + " ajouté");
                 } else {
-                    System.out.println(directors[i] + " existe déjà");
+                    //System.out.println(directors[i] + " existe déjà");
 
                 }
                 /* Insert movie_has_director*/
@@ -166,7 +197,7 @@ public class DbHandler {
                         + "VALUES"
                         + "('" + idMovie + "','" + idDirector + "')";
                 dataBase.doNoReturnQuery(queryInsertMovieHasDirector);
-                System.out.println("movie_has_director add : " + idMovie + "," + idDirector);
+                //System.out.println("movie_has_director add : " + idMovie + "," + idDirector);
             }
         }
 
