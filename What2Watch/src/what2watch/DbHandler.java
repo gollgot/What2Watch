@@ -81,7 +81,7 @@ public class DbHandler {
                         SearchHandler.initializeSearchHandler(movieListView, movieFileNames);
 
                         // Allowing the user to use the search bar
-                        controller.enableSearchBars(true);
+                        controller.disableSearchBars(false);
                         
                     }
                 });

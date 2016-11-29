@@ -124,7 +124,7 @@ public class FXMLDocumentController implements Initializable {
         
         // Disabling the search bars to prevent searches from being processed
         // until the movie list is displayed in the listView
-        enableSearchBars(false);
+        disableSearchBars(true);
         
         // Hide all things related of the big poster
         paneBlackOpacity.setVisible(false);
@@ -164,7 +164,7 @@ public class FXMLDocumentController implements Initializable {
         // Init progress indicator to 0 and display it
         searchProgressIndicator.setProgress(0);
         searchProgressIndicator.setVisible(true);
-        // We pass the current instance of "FXMLDocumentController" class, because we have to access the "enableSearchBars" method 
+        // We pass the current instance of "FXMLDocumentController" class, because we have to access the "disableSearchBars" method 
         dbHandler.update(this, movieListView, searchProgressIndicator);
     }
 
@@ -201,23 +201,10 @@ public class FXMLDocumentController implements Initializable {
     }
     
     // Disables search textfields and toggles the searchIsEnabled property
-    public void enableSearchBars(boolean toggleValue) {
-        double opacityValue;
-        
-        if (toggleValue == true) {
-            opacityValue = 1.0;
-        } else {
-            opacityValue = 0.2;
-        }
-        
-        
-        this.searchTextField.setOpacity(opacityValue);
-        this.startingYearTextField.setOpacity(opacityValue);
-        this.endingYearTextField.setOpacity(opacityValue);
-        
-        this.searchTextField.setEditable(toggleValue);
-        this.startingYearTextField.setEditable(toggleValue);
-        this.endingYearTextField.setEditable(toggleValue);
+    public void disableSearchBars(boolean toggleValue) {
+        this.searchTextField.setDisable(toggleValue);
+        this.startingYearTextField.setDisable(toggleValue);
+        this.endingYearTextField.setDisable(toggleValue);
         
         this.searchIsEnabled = toggleValue;
     }
