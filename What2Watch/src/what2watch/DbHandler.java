@@ -10,6 +10,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.control.ListView;
+import javafx.scene.control.ProgressIndicator;
 
 /**
  *
@@ -28,7 +33,7 @@ public class DbHandler {
         this.rawMovieNames = rawMovieNames;
     }
 
-    public void update() {
+    public void update(FXMLDocumentController controller, ListView movieListView, ProgressIndicator searchProgressIndicator) {
         // Thread for update the database, because we have to get the datas from the
         //API and wait x ms after each request (see method "getAllMovieInfos" in class "ApiHandler" for more infos
         updateThread = new Thread(new Runnable() {
@@ -65,16 +70,19 @@ public class DbHandler {
                     public void run() {
                         // Get the array holding all the infos
                         String[] realTitles = getAllTitles();
-                        movies.clear();
-                        movies = getMovies(realTitles);
-
+                        ObservableList movieFileNames = FXCollections.observableArrayList();
+                        // Filing the listView with movie file names
+                        movieFileNames.clear();
+                        movieFileNames.addAll(realTitles);
+                        movieListView.setItems(movieFileNames);
                         searchProgressIndicator.setVisible(false);
-                        // Add a list of Movie object to the list.
-                        // (for display the movie title on the list, the list fetch itself the "toString" method
-                        // override from Object class. toString return the title)
-                        ObservableList<Movie> myObservableList = FXCollections.observableArrayList();
-                        myObservableList.addAll(movies);
-                        listView.setItems(myObservableList);
+                        
+                        // Providing the search hander with informations needed to process movie searches
+                        SearchHandler.initializeSearchHandler(movieListView, movieFileNames);
+
+                        // Allowing the user to use the search bar
+                        controller.enableSearchBars(true);
+                        
                     }
                 });
             } 

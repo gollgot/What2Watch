@@ -25,6 +25,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -87,12 +88,14 @@ public class FXMLDocumentController implements Initializable {
     private Label directorsLabel;
     @FXML
     private Label directorsValueLabel;
+    @FXML
+    private ProgressIndicator searchProgressIndicator;
+    
     
     private UserPreferences prefs = new UserPreferences();
-    private ObservableList movieFileNames = FXCollections.observableArrayList();
-    private ObservableList<Movie> movies = FXCollections.observableArrayList();
     private boolean searchIsEnabled; // Indicates whether the UI is ready to handle searches or not
     private int activeSearchMode = 0;
+    
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -140,7 +143,7 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private void browseFiles(ActionEvent event) throws IOException {
         CacheDb cacheDb = new CacheDb();
-        movies.clear();
+//movies.clear();
         // Update the cache db (add or remove movies on DB, it depend on the
         // browser.getMovieFileNames) and get real titles of all the movies on 
         // the DB.
@@ -151,17 +154,8 @@ public class FXMLDocumentController implements Initializable {
         // Init progress indicator to 0 and display it
         searchProgressIndicator.setProgress(0);
         searchProgressIndicator.setVisible(true);
-        
-        // Filing the listView with movie file names
-        this.movieFileNames.clear();
-        this.movieFileNames.addAll(realTitles);
-        this.movieListView.setItems(this.movieFileNames);
-        
-        // Providing the search hander with informations needed to process movie searches
-        SearchHandler.initializeSearchHandler(movieListView, this.movieFileNames);
-        
-        // Allowing the user to use the search bar
-        enableSearchBars(true);
+        // We pass the current instance of "FXMLDocumentController" class, because we have to access the "enableSearchBars" method 
+        dbHandler.update(this, movieListView, searchProgressIndicator);
     }
 
     @FXML
@@ -197,7 +191,7 @@ public class FXMLDocumentController implements Initializable {
     }
     
     // Disables search textfields and toggles the searchIsEnabled property
-    private void enableSearchBars(boolean toggleValue) {
+    public void enableSearchBars(boolean toggleValue) {
         double opacityValue;
         
         if (toggleValue == true) {
@@ -205,6 +199,7 @@ public class FXMLDocumentController implements Initializable {
         } else {
             opacityValue = 0.2;
         }
+        
         
         this.searchTextField.setOpacity(opacityValue);
         this.startingYearTextField.setOpacity(opacityValue);
