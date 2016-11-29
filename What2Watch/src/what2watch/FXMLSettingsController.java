@@ -7,6 +7,8 @@ package what2watch;
 
 import java.io.File;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -92,9 +94,13 @@ public class FXMLSettingsController implements Initializable {
         String initialDirectory = System.getProperty("user.home");
         directoryChooser.setTitle("Select directory");
         
+        String movieFolderPath = prefs.getPath();
+        
         // Sets the default folder opened by directory chooser to be the one saved by the user
-        if(! prefs.getPath().equals("")) { 
-            initialDirectory = prefs.getPath();
+        if(!movieFolderPath.equals("")) { 
+            if (Files.exists(Paths.get(movieFolderPath))) {
+                initialDirectory = movieFolderPath;
+            }
         }
         
         directoryChooser.setInitialDirectory(new File(initialDirectory));

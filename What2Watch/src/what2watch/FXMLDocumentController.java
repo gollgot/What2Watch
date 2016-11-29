@@ -7,6 +7,8 @@ package what2watch;
 
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -20,7 +22,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
@@ -44,7 +49,7 @@ import sun.awt.RepaintArea;
  * @author Raphael.BAZZARI
  */
 public class FXMLDocumentController implements Initializable {
-    
+
     @FXML
     private Button settingsButton;
     @FXML
@@ -95,58 +100,75 @@ public class FXMLDocumentController implements Initializable {
     private ImageView imageViewBigPoster;
     @FXML
     private ProgressIndicator searchProgressIndicator;
-    
-    
+
     private UserPreferences prefs = new UserPreferences();
     private boolean searchIsEnabled; // Indicates whether the UI is ready to handle searches or not
     private int activeSearchMode = 0;
-    
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // Displaying the settings window before the main one if no path has been saved in the app
-        if(this.prefs.getPath().equals("")) {
+        String movieFolderPath = this.prefs.getPath();
+        if (movieFolderPath.equals("")) {
             try {
                 showSettings(null);
             } catch (IOException ex) {
                 Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
             }
+        } else if (!Files.exists(Paths.get(movieFolderPath))) {
+            Alert alert = new Alert(AlertType.WARNING);
+            alert.setTitle("Error");
+            alert.setHeaderText("Missing movie folder");
+            alert.setContentText("The folder containing your movies has been moved or deleted.\n"
+                    + "Please select the folder containing your movies.");
+
+            alert.showAndWait().ifPresent(response -> {
+                if (response == ButtonType.OK) {
+                    alert.close();
+                    try {
+                        showSettings(null);
+                    } catch (IOException ex) {
+                        Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            });
         }
-        
+
         // Combobox search criterias configuration
         // those values have to match the switch case statement in the updateSearchMode method below
         this.searchCriteriasComboBox.getItems().addAll(
-            "Title", // index 0
-            "Genre", // index 1
-            "Year", // index 2
-            "Director", // index 3
-            "Actor" // index 4
+                "Title", // index 0
+                "Genre", // index 1
+                "Year", // index 2
+                "Director", // index 3
+                "Actor" // index 4
         );
-        
+
         // Disabling the search bars to prevent searches from being processed
         // until the movie list is displayed in the listView
         disableSearchBars(true);
-        
+
         // Hide all things related of the big poster
         paneBlackOpacity.setVisible(false);
         imageViewBigPoster.setVisible(false);
-        
+
         searchProgressIndicator.setVisible(false);
-    }    
+    }
 
     @FXML
     private void showSettings(ActionEvent event) throws IOException {
         // Settings window creation
         Parent root = FXMLLoader.load(getClass().getResource("FXMLSettings.fxml"));
         Stage settingStage = new Stage();
-        
+
         // Window customization
         settingStage.setResizable(false);
         settingStage.initModality(Modality.APPLICATION_MODAL);
         settingStage.setTitle("Sélection du répertoire de films");
-        
+
         Scene scene = new Scene(root);
         settingStage.setScene(scene);
-        
+
         settingStage.showAndWait();
     }
 
@@ -159,7 +181,7 @@ public class FXMLDocumentController implements Initializable {
         // the DB.
         ArrayList<String> fileNames = ParsingFiles.parse(FileBrowser.getMovieFileNames());
         ArrayList<String> rawFileNames = FileBrowser.getMovieFileNames();
-        DbHandler dbHandler = new DbHandler(cacheDb,fileNames,rawFileNames);
+        DbHandler dbHandler = new DbHandler(cacheDb, fileNames, rawFileNames);
         movieListView.getItems().clear();
         // Init progress indicator to 0 and display it
         searchProgressIndicator.setProgress(0);
@@ -171,9 +193,8 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private void updateSearchMode(ActionEvent event) {
         int boxIndex = this.searchCriteriasComboBox.getSelectionModel().getSelectedIndex();
-        
-        // NOTE: The combobox item values have to be defined so that they match the following statement
 
+        // NOTE: The combobox item values have to be defined so that they match the following statement
         switch (boxIndex) {
             case 0: // Title
                 setYearSearchMode(false);
@@ -204,16 +225,16 @@ public class FXMLDocumentController implements Initializable {
                 break;
         }
     }
-    
+
     // Disables search textfields and toggles the searchIsEnabled property
     public void disableSearchBars(boolean toggleValue) {
         this.searchTextField.setDisable(toggleValue);
         this.startingYearTextField.setDisable(toggleValue);
         this.endingYearTextField.setDisable(toggleValue);
-        
+
         this.searchIsEnabled = !toggleValue;
     }
-    
+
     // Displays/hides textfields according to the selected combobox search criteria
     private void setYearSearchMode(boolean on) {
         startingYearLabel.setVisible(on);
@@ -225,12 +246,12 @@ public class FXMLDocumentController implements Initializable {
 
     @FXML
     private void getMovieInformations() {
-    // Connect to the DB
+        // Connect to the DB
         CacheDb cacheDb = new CacheDb();
         // Get title of clicked film
         String movieTitle = movieListView.getSelectionModel().getSelectedItem();
         // Set all data of the Movie
-        String query = "SELECT * FROM movie WHERE title=\""+movieTitle+"\"";
+        String query = "SELECT * FROM movie WHERE title=\"" + movieTitle + "\"";
         String results[] = cacheDb.doSelectQuery(query).split(";");
         String movieId = results[0];
         String movieRawTitle = results[1];
@@ -238,41 +259,41 @@ public class FXMLDocumentController implements Initializable {
         String movieYear = results[3];
         String movieImageLink = results[4];
         String movieSynopsis = results[5];
-        
+
         query = "SELECT name FROM actor INNER JOIN movie_has_actor ON actor.id = movie_has_actor.actor_id "
                 + "INNER JOIN movie ON movie.id = movie_has_actor.movie_id "
-                + "WHERE movie.title=\""+movieTitle+"\"";
+                + "WHERE movie.title=\"" + movieTitle + "\"";
         String movieActors = cacheDb.doSelectQuery(query).replaceAll(";", ", ");
         // Delete last comma
         movieActors = movieActors.replaceAll(", $", "");
-        
+
         query = "SELECT type FROM genre INNER JOIN movie_has_genre ON genre.id = movie_has_genre.genre_id "
                 + "INNER JOIN movie ON movie.id = movie_has_genre.movie_id "
-                + "WHERE movie.title=\""+movieTitle+"\"";
+                + "WHERE movie.title=\"" + movieTitle + "\"";
         String movieGenres = cacheDb.doSelectQuery(query).replaceAll(";", ", ");
         // Delete last comma
         movieGenres = movieGenres.replaceAll(", $", "");
-        
+
         query = "SELECT name FROM director INNER JOIN movie_has_director ON director.id = movie_has_director.director_id "
                 + "INNER JOIN movie ON movie.id = movie_has_director.movie_id "
-                + "WHERE movie.title=\""+movieTitle+"\"";
+                + "WHERE movie.title=\"" + movieTitle + "\"";
         String movieDirectors = cacheDb.doSelectQuery(query).replaceAll(";", ", ");
         // Delete last comma
         movieDirectors = movieDirectors.replaceAll(", $", "");
-        
-        query = "SELECT image_link FROM movie WHERE movie.title=\""+movieTitle+"\"";
+
+        query = "SELECT image_link FROM movie WHERE movie.title=\"" + movieTitle + "\"";
         String moviePosterURL = cacheDb.doSelectQuery(query).replaceAll(";", ", ");
         // Delete last comma
         moviePosterURL = moviePosterURL.replaceAll(", $", "");
-        
+
         // Set texts on the labels
         titleValueLabel.setText(movieTitle);
         yearValueLabel.setText(movieYear);
-        synopsisTextArea.setText(movieSynopsis);  
+        synopsisTextArea.setText(movieSynopsis);
         actorsValueLabel.setText(movieActors);
         genreValueLabel.setText(movieGenres);
-        directorsValueLabel.setText(movieDirectors);  
-        
+        directorsValueLabel.setText(movieDirectors);
+
         // Movie poster handling
         Image moviePoster = new Image("what2watch/images/placeHolder.png");
         if (!moviePosterURL.equals("Unknown")) {
@@ -314,7 +335,7 @@ public class FXMLDocumentController implements Initializable {
             getMovieInformations();
         }
     }
-    
+
     @FXML
     private void displayBigPoster(MouseEvent event) {
         paneBlackOpacity.setVisible(true);
@@ -322,25 +343,24 @@ public class FXMLDocumentController implements Initializable {
         // We set the focus to the BigPoster (like that we can check if we presse the escape key or not)
         imageViewBigPoster.requestFocus();
     }
-    
-    
+
     private void closeBigPoster() {
         paneBlackOpacity.setVisible(false);
         imageViewBigPoster.setVisible(false);
     }
-    
+
     // Close the bigPoster when we clicked on the black opac pane
     @FXML
     private void paneBlackOpacityClicked(MouseEvent event) {
         closeBigPoster();
     }
-    
+
     // Close the bigPoster when we presse escape key
     @FXML
     private void bigPosterKeyPressed(KeyEvent event) {
-        if(event.getCode() == KeyCode.ESCAPE){
+        if (event.getCode() == KeyCode.ESCAPE) {
             closeBigPoster();
-        }    
+        }
     }
-    
+
 }
