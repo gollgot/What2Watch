@@ -29,6 +29,8 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -48,11 +50,9 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private TextArea synopsisTextArea;
     @FXML
-    private ListView<Movie> movieListView;
+    private ListView<String> movieListView;
     @FXML
     private TextField searchTextField;
-    @FXML
-    private Button searchButton;
     @FXML
     private ComboBox<String> searchCriteriasComboBox;
     @FXML
@@ -89,9 +89,10 @@ public class FXMLDocumentController implements Initializable {
     private Label directorsValueLabel;
     
     private UserPreferences prefs = new UserPreferences();
-    private ObservableList movieFileNames = 
-        FXCollections.observableArrayList();
-    private ArrayList<Movie> movies = new ArrayList();
+    private ObservableList movieFileNames = FXCollections.observableArrayList();
+    private ObservableList<Movie> movies = FXCollections.observableArrayList();
+    private boolean searchIsEnabled; // Indicates whether the UI is ready to handle searches or not
+    private int activeSearchMode = 0;
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -105,11 +106,18 @@ public class FXMLDocumentController implements Initializable {
         }
         
         // Combobox search criterias configuration
+        // those values have to match the switch case statement in the updateSearchMode method below
         this.searchCriteriasComboBox.getItems().addAll(
-            "Titre",
-            "Acteur",
-            "Année"
+            "Title", // index 0
+            "Genre", // index 1
+            "Year", // index 2
+            "Director", // index 3
+            "Actor" // index 4
         );
+        
+        // Disabling the search bars to prevent searches from being processed
+        // until the movie list is displayed in the listView
+       enableSearchBars(false);
     }    
 
     @FXML
@@ -151,35 +159,70 @@ public class FXMLDocumentController implements Initializable {
 
         // Get the array holding all the infos
         String[] realTitles = dbHandler.getAllTitles();
-        movies = dbHandler.getMovies(realTitles);
         
-        // Add a list of Movie object to the list.
-        // (for display the movie title on the list, the list fetch itself the "toString" method
-        // override from Object class. toString return the title)
-        ObservableList<Movie> myObservableList = FXCollections.observableArrayList();
-        myObservableList.addAll(movies);
-        movieListView.setItems(myObservableList);
+        // Filing the listView with movie file names
+        this.movieFileNames.clear();
+        this.movieFileNames.addAll(realTitles);
+        this.movieListView.setItems(this.movieFileNames);
+        
+        // Providing the search hander with informations needed to process movie searches
+        SearchHandler.initializeSearchHandler(movieListView, this.movieFileNames);
+        
+        // Allowing the user to use the search bar
+        enableSearchBars(true);
     }
 
     @FXML
     private void updateSearchMode(ActionEvent event) {
-        String searchCriteria = this.searchCriteriasComboBox.getValue();
+        int boxIndex = this.searchCriteriasComboBox.getSelectionModel().getSelectedIndex();
+        
+        // NOTE: The combobox item values have to be defined so that they match the following statement
 
-        switch (searchCriteria) {
-            case "Titre":
-                // TODO limit the scope to movie title informations
+        switch (boxIndex) {
+            case 0: // Title
                 setYearSearchMode(false);
+                this.activeSearchMode = 0;
                 break;
-            case "Acteur":
-                // TODO limit the scope to actors informations  
+            case 1: // Genre
                 setYearSearchMode(false);
+                this.activeSearchMode = 1;
                 break;
-            case "Année":
+            case 2: // Year
                 setYearSearchMode(true);
+                this.activeSearchMode = 2;
+                break;
+            case 3: // Director
+                setYearSearchMode(false);
+                this.activeSearchMode = 3;
+                break;
+            case 4: // Actor
+                setYearSearchMode(false);
+                this.activeSearchMode = 4;
                 break;
             default:
                 break;
         }
+    }
+    
+    // Disables search textfields and toggles the searchIsEnabled property
+    private void enableSearchBars(boolean toggleValue) {
+        double opacityValue;
+        
+        if (toggleValue == true) {
+            opacityValue = 1.0;
+        } else {
+            opacityValue = 0.2;
+        }
+        
+        this.searchTextField.setOpacity(opacityValue);
+        this.startingYearTextField.setOpacity(opacityValue);
+        this.endingYearTextField.setOpacity(opacityValue);
+        
+        this.searchTextField.setEditable(toggleValue);
+        this.startingYearTextField.setEditable(toggleValue);
+        this.endingYearTextField.setEditable(toggleValue);
+        
+        this.searchIsEnabled = toggleValue;
     }
     
     // Displays/hides textfields according to the selected combobox search criteria
@@ -192,51 +235,93 @@ public class FXMLDocumentController implements Initializable {
     }
 
     @FXML
-    private void getMovieInformations(MouseEvent event) {
+    private void getMovieInformations() {
+    // Connect to the DB
+        CacheDb cacheDb = new CacheDb();
+        // Get title of clicked film
+        String movieTitle = movieListView.getSelectionModel().getSelectedItem();
+        // Set all data of the Movie
+        String query = "SELECT * FROM movie WHERE title=\""+movieTitle+"\"";
+        String results[] = cacheDb.doSelectQuery(query).split(";");
+        String movieId = results[0];
+        String movieRawTitle = results[1];
+        movieTitle = results[2];
+        String movieYear = results[3];
+        String movieImageLink = results[4];
+        String movieSynopsis = results[5];
         
-        Movie movie = (Movie)movieListView.getSelectionModel().getSelectedItem();
-        String poster = "Unknown";
-
-        /* ACTORS */
-        String[] actorsArray = movie.getActors();
-        String actors = "";
-        for (int j = 0; j < actorsArray.length; j++) {
-            actors += actorsArray[j]+", ";
-        }
-        actors = actors.substring(0, actors.length()-2);
-
-        /* DIRECTORS */
-        String[] directorArray = movie.getDirector();
-        String director = "";
-        for (int j = 0; j < directorArray.length; j++) {
-            director += directorArray[j]+", ";
-        }
-        director = director.substring(0, director.length()-2);
-
-        /* GENRES */
-        String[] genresArray = movie.getGenre();
-        String genres = "";
-        for (int j = 0; j < genresArray.length; j++) {
-            genres += genresArray[j]+", ";
-        }
-        genres = genres.substring(0, genres.length()-2);
-
+        query = "SELECT name FROM actor INNER JOIN movie_has_actor ON actor.id = movie_has_actor.actor_id "
+                + "INNER JOIN movie ON movie.id = movie_has_actor.movie_id "
+                + "WHERE movie.title=\""+movieTitle+"\"";
+        String movieActors = cacheDb.doSelectQuery(query).replaceAll(";", ", ");
+        // Delete last comma
+        movieActors = movieActors.replaceAll(", $", "");
+        
+        query = "SELECT type FROM genre INNER JOIN movie_has_genre ON genre.id = movie_has_genre.genre_id "
+                + "INNER JOIN movie ON movie.id = movie_has_genre.movie_id "
+                + "WHERE movie.title=\""+movieTitle+"\"";
+        String movieGenres = cacheDb.doSelectQuery(query).replaceAll(";", ", ");
+        // Delete last comma
+        movieGenres = movieGenres.replaceAll(", $", "");
+        
+        query = "SELECT name FROM director INNER JOIN movie_has_director ON director.id = movie_has_director.director_id "
+                + "INNER JOIN movie ON movie.id = movie_has_director.movie_id "
+                + "WHERE movie.title=\""+movieTitle+"\"";
+        String movieDirectors = cacheDb.doSelectQuery(query).replaceAll(";", ", ");
+        // Delete last comma
+        movieDirectors = movieDirectors.replaceAll(", $", "");
+        
+        query = "SELECT image_link FROM movie WHERE movie.title=\""+movieTitle+"\"";
+        String moviePosterURL = cacheDb.doSelectQuery(query).replaceAll(";", ", ");
+        // Delete last comma
+        moviePosterURL = moviePosterURL.replaceAll(", $", "");
+        
         // Set texts on the labels
-        titleValueLabel.setText(movie.getTitle());
-        yearValueLabel.setText(movie.getYear());
-        synopsisTextArea.setText(movie.getSynopsis());  
-        actorsValueLabel.setText(actors);
-        genreValueLabel.setText(genres);
-        directorsValueLabel.setText(director);
-
-        poster = movie.getPoster();        
+        titleValueLabel.setText(movieTitle);
+        yearValueLabel.setText(movieYear);
+        synopsisTextArea.setText(movieSynopsis);  
+        actorsValueLabel.setText(movieActors);
+        genreValueLabel.setText(movieGenres);
+        directorsValueLabel.setText(movieDirectors);  
         
         // Movie poster handling
         Image moviePoster = new Image("what2watch/images/placeHolder.png");
-        if (!poster.equals("Unknown")) {
-            moviePoster = new Image("http://image.tmdb.org/t/p/w300" + poster);
+        if (!moviePosterURL.equals("Unknown")) {
+            moviePoster = new Image("http://image.tmdb.org/t/p/w300" + moviePosterURL);
         }
         movieImageView.setImage(moviePoster);
     }
-    
+
+    @FXML
+    private void searchForMatchingMovies(KeyEvent event) {
+        if (this.searchIsEnabled) {
+            // Calling the right search methods according to the active search mode
+            switch (activeSearchMode) {
+                case 0: // Title
+                    SearchHandler.findMovieByTitle(this.searchTextField.getText());
+                    break;
+                case 1: // Genre
+                    SearchHandler.findMovieByGenre(this.searchTextField.getText());
+                    break;
+                case 2: // Year
+                    SearchHandler.findMovieByYearRange(this.startingYearTextField.getText(), this.endingYearTextField.getText());
+                    break;
+                case 3: // Director
+                    SearchHandler.findMovieByDirector(this.searchTextField.getText());
+                    break;
+                case 4: // Actor
+                    SearchHandler.findMovieByActor(this.searchTextField.getText());
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    @FXML
+    private void updateDisplayedInfos(KeyEvent event) {
+        if (event.getCode().equals(KeyCode.UP) || event.getCode().equals(KeyCode.DOWN)) {
+            getMovieInformations();
+        }
+    }
 }
