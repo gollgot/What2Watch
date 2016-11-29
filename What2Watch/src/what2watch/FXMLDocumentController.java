@@ -124,11 +124,13 @@ public class FXMLDocumentController implements Initializable {
         
         // Disabling the search bars to prevent searches from being processed
         // until the movie list is displayed in the listView
-       enableSearchBars(false);
+        enableSearchBars(false);
         
         // Hide all things related of the big poster
         paneBlackOpacity.setVisible(false);
         imageViewBigPoster.setVisible(false);
+        
+        searchProgressIndicator.setVisible(false);
     }    
 
     @FXML
