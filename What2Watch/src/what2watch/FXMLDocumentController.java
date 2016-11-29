@@ -177,22 +177,27 @@ public class FXMLDocumentController implements Initializable {
         switch (boxIndex) {
             case 0: // Title
                 setYearSearchMode(false);
+                this.searchTextField.requestFocus();
                 this.activeSearchMode = 0;
                 break;
             case 1: // Genre
                 setYearSearchMode(false);
+                this.searchTextField.requestFocus();
                 this.activeSearchMode = 1;
                 break;
             case 2: // Year
                 setYearSearchMode(true);
+                this.startingYearTextField.requestFocus();
                 this.activeSearchMode = 2;
                 break;
             case 3: // Director
                 setYearSearchMode(false);
+                this.searchTextField.requestFocus();
                 this.activeSearchMode = 3;
                 break;
             case 4: // Actor
                 setYearSearchMode(false);
+                this.searchTextField.requestFocus();
                 this.activeSearchMode = 4;
                 break;
             default:
@@ -206,7 +211,7 @@ public class FXMLDocumentController implements Initializable {
         this.startingYearTextField.setDisable(toggleValue);
         this.endingYearTextField.setDisable(toggleValue);
         
-        this.searchIsEnabled = toggleValue;
+        this.searchIsEnabled = !toggleValue;
     }
     
     // Displays/hides textfields according to the selected combobox search criteria
