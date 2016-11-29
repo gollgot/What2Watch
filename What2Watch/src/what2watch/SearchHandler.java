@@ -59,7 +59,7 @@ public class SearchHandler {
 
     public static void findMovieByGenre(String searchTerm) {
         if (!searchTerm.equals("")) {
-            String query = "SELECT title from movie "
+            String query = "SELECT DISTINCT title from movie "
                     + "INNER JOIN movie_has_genre ON movie.id = movie_has_genre.movie_id "
                     + "INNER JOIN genre ON movie_has_genre.genre_id = genre.id "
                     + "WHERE genre.type like '%" + searchTerm + "%'";
