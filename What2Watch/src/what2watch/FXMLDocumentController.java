@@ -102,7 +102,6 @@ public class FXMLDocumentController implements Initializable {
     private ProgressIndicator searchProgressIndicator;
 
     private UserPreferences prefs = new UserPreferences();
-    private boolean searchIsEnabled; // Indicates whether the UI is ready to handle searches or not
     private int activeSearchMode = 0;
 
     @Override
@@ -146,7 +145,7 @@ public class FXMLDocumentController implements Initializable {
 
         // Disabling the search bars to prevent searches from being processed
         // until the movie list is displayed in the listView
-        disableSearchBars(true);
+        this.disableSearchUI(true);
 
         // Hide all things related of the big poster
         paneBlackOpacity.setVisible(false);
@@ -185,7 +184,8 @@ public class FXMLDocumentController implements Initializable {
         // Init progress indicator to 0 and display it
         searchProgressIndicator.setProgress(0);
         searchProgressIndicator.setVisible(true);
-        // We pass the current instance of "FXMLDocumentController" class, because we have to access the "disableSearchBars" method 
+        this.disableSearchUI(true);
+        // We pass the current instance of "FXMLDocumentController" class, because we have to access the "disableSearchUI" method 
         dbHandler.update(this, movieListView, searchProgressIndicator);
     }
 
@@ -232,8 +232,6 @@ public class FXMLDocumentController implements Initializable {
         this.searchTextField.setDisable(toggleValue);
         this.startingYearTextField.setDisable(toggleValue);
         this.endingYearTextField.setDisable(toggleValue);
-
-        this.searchIsEnabled = !toggleValue;
     }
 
     // Displays/hides textfields according to the selected combobox search criteria
@@ -291,27 +289,25 @@ public class FXMLDocumentController implements Initializable {
 
     @FXML
     private void searchForMatchingMovies(KeyEvent event) {
-        if (this.searchIsEnabled) {
             // Calling the right search methods according to the active search mode
-            switch (activeSearchMode) {
-                case 0: // Title
-                    SearchHandler.findMovieByTitle(this.searchTextField.getText());
-                    break;
-                case 1: // Genre
-                    SearchHandler.findMovieByGenre(this.searchTextField.getText());
-                    break;
-                case 2: // Year
-                    SearchHandler.findMovieByYearRange(this.startingYearTextField.getText(), this.endingYearTextField.getText());
-                    break;
-                case 3: // Director
-                    SearchHandler.findMovieByDirector(this.searchTextField.getText());
-                    break;
-                case 4: // Actor
-                    SearchHandler.findMovieByActor(this.searchTextField.getText());
-                    break;
-                default:
-                    break;
-            }
+        switch (activeSearchMode) {
+            case 0: // Title
+                SearchHandler.findMovieByTitle(this.searchTextField.getText());
+                break;
+            case 1: // Genre
+                SearchHandler.findMovieByGenre(this.searchTextField.getText());
+                break;
+            case 2: // Year
+                SearchHandler.findMovieByYearRange(this.startingYearTextField.getText(), this.endingYearTextField.getText());
+                break;
+            case 3: // Director
+                SearchHandler.findMovieByDirector(this.searchTextField.getText());
+                break;
+            case 4: // Actor
+                SearchHandler.findMovieByActor(this.searchTextField.getText());
+                break;
+            default:
+                break;
         }
     }
 
@@ -347,6 +343,12 @@ public class FXMLDocumentController implements Initializable {
         if (event.getCode() == KeyCode.ESCAPE) {
             closeBigPoster();
         }
+    }
+    
+    public void disableSearchUI(boolean toggleValue) {
+        this.disableSearchBars(toggleValue);
+        this.searchCriteriasComboBox.setDisable(toggleValue);
+        this.movieListView.setDisable(toggleValue);
     }
 
 }

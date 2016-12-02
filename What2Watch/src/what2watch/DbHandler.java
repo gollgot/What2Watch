@@ -84,8 +84,8 @@ public class DbHandler {
                         // Providing the search hander with informations needed to process movie searches
                         SearchHandler.initializeSearchHandler(movieListView, movieFileNames);
 
-                        // Allowing the user to use the search bar
-                        controller.disableSearchBars(false);
+                        // Allowing the user to interact with the search UI
+                        controller.disableSearchUI(false);
                         
                     }
                 });
