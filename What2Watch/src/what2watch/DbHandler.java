@@ -15,6 +15,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressIndicator;
+import javafx.scene.image.Image;
 
 /**
  *
@@ -22,7 +23,7 @@ import javafx.scene.control.ProgressIndicator;
  */
 public class DbHandler {
 
-    private CacheDb dataBase;
+    private static CacheDb dataBase;
     private ArrayList<String> originalMovieNames;
     private ArrayList<String> rawMovieNames;
     private Thread updateThread;
@@ -332,6 +333,47 @@ public class DbHandler {
         String[] results = result.split(";");
 
         return results;
+    }
+    
+    public static Movie getMovie(String title){
+        Movie movie = new Movie();
+        String query = "SELECT raw_title, title, year, image_link, synopsis FROM movie WHERE title=\"" + title + "\"";
+        String movieDatas[] = dataBase.doSelectQuery(query).split(";");
+        
+        movie.setRawTitle(movieDatas[0]);
+        movie.setTitle(movieDatas[1]);
+        movie.setYear(movieDatas[2]);
+        movie.setPoster(movieDatas[3]);
+        movie.setSynopsis(movieDatas[4]);
+        
+        // Do multiple queries because the "doSelectQuery" method return one result String separate each data with ";"
+        // So if we do in one big query, no possibility to distinguish between one group of datas and another
+        
+        query = "SELECT name FROM actor INNER JOIN movie_has_actor ON actor.id = movie_has_actor.actor_id "
+                + "INNER JOIN movie ON movie.id = movie_has_actor.movie_id "
+                + "WHERE movie.title=\"" + title + "\"";
+        // Format the String for displaying later (in this style : "data1, data2, data3")
+        String actors = dataBase.doSelectQuery(query).replaceAll("; $", "");
+
+        query = "SELECT type FROM genre INNER JOIN movie_has_genre ON genre.id = movie_has_genre.genre_id "
+                + "INNER JOIN movie ON movie.id = movie_has_genre.movie_id "
+                + "WHERE movie.title=\"" + title + "\"";
+        String genres = dataBase.doSelectQuery(query).replaceAll("; $", "");
+
+        query = "SELECT name FROM director INNER JOIN movie_has_director ON director.id = movie_has_director.director_id "
+                + "INNER JOIN movie ON movie.id = movie_has_director.movie_id "
+                + "WHERE movie.title=\"" + title + "\"";
+        String directors = dataBase.doSelectQuery(query).replaceAll("; $", "");
+
+        query = "SELECT image_link FROM movie WHERE movie.title=\"" + title + "\"";
+        String posterURL = dataBase.doSelectQuery(query).replaceAll("; $", "");
+
+        
+        movie.setActors(actors);
+        movie.setGenre(genres);
+        movie.setDirector(directors);
+        
+        return movie;
     }
 
 }

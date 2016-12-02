@@ -247,58 +247,41 @@ public class FXMLDocumentController implements Initializable {
 
     @FXML
     private void getMovieInformations() {
-        // Connect to the DB
-        CacheDb cacheDb = new CacheDb();
-        // Get title of clicked film
         String movieTitle = movieListView.getSelectionModel().getSelectedItem();
-        // Set all data of the Movie
-        String query = "SELECT * FROM movie WHERE title=\"" + movieTitle + "\"";
-        String results[] = cacheDb.doSelectQuery(query).split(";");
-        String movieId = results[0];
-        String movieRawTitle = results[1];
-        movieTitle = results[2];
-        String movieYear = results[3];
-        String movieImageLink = results[4];
-        String movieSynopsis = results[5];
-
-        query = "SELECT name FROM actor INNER JOIN movie_has_actor ON actor.id = movie_has_actor.actor_id "
-                + "INNER JOIN movie ON movie.id = movie_has_actor.movie_id "
-                + "WHERE movie.title=\"" + movieTitle + "\"";
-        String movieActors = cacheDb.doSelectQuery(query).replaceAll(";", ", ");
-        // Delete last comma
-        movieActors = movieActors.replaceAll(", $", "");
-
-        query = "SELECT type FROM genre INNER JOIN movie_has_genre ON genre.id = movie_has_genre.genre_id "
-                + "INNER JOIN movie ON movie.id = movie_has_genre.movie_id "
-                + "WHERE movie.title=\"" + movieTitle + "\"";
-        String movieGenres = cacheDb.doSelectQuery(query).replaceAll(";", ", ");
-        // Delete last comma
-        movieGenres = movieGenres.replaceAll(", $", "");
-
-        query = "SELECT name FROM director INNER JOIN movie_has_director ON director.id = movie_has_director.director_id "
-                + "INNER JOIN movie ON movie.id = movie_has_director.movie_id "
-                + "WHERE movie.title=\"" + movieTitle + "\"";
-        String movieDirectors = cacheDb.doSelectQuery(query).replaceAll(";", ", ");
-        // Delete last comma
-        movieDirectors = movieDirectors.replaceAll(", $", "");
-
-        query = "SELECT image_link FROM movie WHERE movie.title=\"" + movieTitle + "\"";
-        String moviePosterURL = cacheDb.doSelectQuery(query).replaceAll(";", ", ");
-        // Delete last comma
-        moviePosterURL = moviePosterURL.replaceAll(", $", "");
+        Movie selectedMovie = DbHandler.getMovie(movieTitle);
+        
+        // getActors / Directors / Genres, return an array, so we have to format that
+        // to have a String with a comma for separate data Ex : data1, data2, data3
+        String actors = "";
+        for (int i = 0; i < selectedMovie.getActors().length; i++) {
+            actors += selectedMovie.getActors()[i]+", ";
+        }
+        actors = actors.replaceAll(", $", ""); // Delete last comma
+        
+        String genres = "";
+        for (int i = 0; i < selectedMovie.getGenre().length; i++) {
+            genres += selectedMovie.getGenre()[i]+", ";
+        }
+        genres = genres.replaceAll(", $", "");
+        
+        String directors = "";
+        for (int i = 0; i < selectedMovie.getDirector().length; i++) {
+            directors += selectedMovie.getDirector()[i]+", ";
+        }
+        directors = directors.replaceAll(", $", "");
 
         // Set texts on the labels
-        titleValueLabel.setText(movieTitle);
-        yearValueLabel.setText(movieYear);
-        synopsisTextArea.setText(movieSynopsis);
-        actorsValueLabel.setText(movieActors);
-        genreValueLabel.setText(movieGenres);
-        directorsValueLabel.setText(movieDirectors);
+        titleValueLabel.setText(selectedMovie.getTitle());
+        yearValueLabel.setText(selectedMovie.getYear());
+        synopsisTextArea.setText(selectedMovie.getSynopsis());
+        actorsValueLabel.setText(actors);
+        genreValueLabel.setText(genres);
+        directorsValueLabel.setText(directors);
 
         // Movie poster handling
         Image moviePoster = new Image("what2watch/images/placeHolder.png");
-        if (!moviePosterURL.equals("Unknown")) {
-            moviePoster = new Image("http://image.tmdb.org/t/p/w300" + moviePosterURL);
+        if (!selectedMovie.getPoster().equals("Unknown")) {
+            moviePoster = new Image("http://image.tmdb.org/t/p/w300" + selectedMovie.getPoster());
         }
         movieImageView.setImage(moviePoster);
         imageViewBigPoster.setImage(moviePoster);
