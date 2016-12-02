@@ -223,6 +223,8 @@ public class FXMLDocumentController implements Initializable {
             default:
                 break;
         }
+        
+        this.searchForMatchingMovies(null);
     }
 
     // Disables search textfields and toggles the searchIsEnabled property

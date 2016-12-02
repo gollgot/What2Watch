@@ -71,7 +71,7 @@ public class SearchHandler {
 
     public static void findMovieByDirector(String searchTerm) {
         if (!searchTerm.equals("")) {
-            String query = "SELECT title from movie "
+            String query = "SELECT DISTINCT title from movie "
                     + "INNER JOIN movie_has_director ON movie.id = movie_has_director.movie_id "
                     + "INNER JOIN director ON movie_has_director.director_id = director.id "
                     + "WHERE director.name like '%" + searchTerm + "%'";

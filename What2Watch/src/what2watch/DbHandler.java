@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.image.Image;
@@ -69,6 +70,8 @@ public class DbHandler {
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
+                        movieListView.setPlaceholder(new Label("No movie has been found"));
+                        
                         // Get the array holding all the infos
                         String[] realTitles = getAllTitles();
                         ObservableList movieFileNames = FXCollections.observableArrayList();
