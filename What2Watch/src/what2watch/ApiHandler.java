@@ -217,15 +217,14 @@ public class ApiHandler {
                     // We get all peoples
                     for (int i = 0; i < jsonArrayCast.length(); i++) {
                         JSONObject jsonObject = jsonArrayCast.getJSONObject(i);
-                        // If this is the last actor listed (i < total-1), we display just the name
+                        // If this is the last actor listed (i < total-1), we display just the name, else a ;
                         if(i == jsonArrayCast.length()-1){
                             actors += jsonObject.getString("name");
                         }
-                        // else, we display the name + ", "
                         else{
                             actors += jsonObject.getString("name")+";";
                         }
-                        // Like that we have : "actor1, Actor2, Actor3"
+                        // Like that we have : "actor1;Actor2;Actor3"
                     }
                 }
 
@@ -247,8 +246,8 @@ public class ApiHandler {
                     if(directors == ""){
                         directors = "Unknown";
                     }else{
-                        // We delete 2 last char of the String (last ", ") to have : director1, director2, director3
-                        directors = directors.substring(0, directors.length()-2);
+                        // We delete the last char of the String (last ";") to have : director1;director2;director3
+                        directors = directors.substring(0, directors.length()-1);
                     }
                 }
 

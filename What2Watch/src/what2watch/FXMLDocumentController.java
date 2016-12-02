@@ -175,7 +175,6 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private void browseFiles(ActionEvent event) throws IOException {
         CacheDb cacheDb = new CacheDb();
-//movies.clear();
         // Update the cache db (add or remove movies on DB, it depend on the
         // browser.getMovieFileNames) and get real titles of all the movies on 
         // the DB.
@@ -243,6 +242,8 @@ public class FXMLDocumentController implements Initializable {
         endingYearTextField.setVisible(on);
         searchTextField.setVisible(!on);
     }
+    
+    // Clic on an items on the list
 
     @FXML
     private void getMovieInformations() {
