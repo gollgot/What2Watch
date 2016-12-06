@@ -28,6 +28,8 @@ public class DbHandler {
     private ArrayList<String> originalMovieNames;
     private ArrayList<String> rawMovieNames;
     private Thread updateThread;
+    // It's static because we have to call it on the "Platform.runLater" on the "updateThread"
+    private static float pourcent;
 
     public DbHandler(CacheDb dataBase, ArrayList<String> originalMovieNames, ArrayList<String> rawMovieNames) {
         this.dataBase = dataBase;
@@ -58,15 +60,23 @@ public class DbHandler {
                     }
                     
                     // We add this setProgress, because it's a round number, so it's a step with different progress number than before
-                    float pourcent = 100 * (i+1) / originalMovieNames.size();
-                    pourcent = pourcent / 100;
-                    searchProgressIndicator.setProgress(pourcent);
+                    // (Pourcent is static, like that we can get it on the platform.runLater)
+                    DbHandler.pourcent = 100 * (i+1) / originalMovieNames.size();
+                    DbHandler.pourcent = DbHandler.pourcent / 100;
+                    // For do an update Graphic on a "logical method" we have to do this on the Application Thread
+                    // So, Platform.runLater is the Application Thread
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            searchProgressIndicator.setProgress(DbHandler.pourcent);
+                        }
+                    });
+                    
                 }
                 deleteMovieOnDb();
                 
-                // We have to create a new runnable on the Platform.runLater
-                // Because we cannot set the data on this thread, we have to do on 
-                // The runLater thread for not have an error
+                // For do an update Graphic on a "logical method" we have to do this on the Application Thread
+                // So, Platform.runLater is the Application Thread
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
