@@ -5,6 +5,9 @@
  */
 package what2watch;
 
+import com.sun.org.apache.bcel.internal.generic.F2D;
+import java.awt.Desktop;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -351,7 +354,17 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private void imgPlayerClicked(MouseEvent event) {
         String title = titleValueLabel.getText();
-        System.out.println(title);
+        String rawTitle = DbHandler.getRawTitle(title);
+        String path = FileBrowser.getFilePath(rawTitle);
+        
+        // Desktop open is for open the file with the linked application launcher on the OS
+        File movieFile = new File(path);
+        Desktop desktop = Desktop.getDesktop();
+        try {
+            desktop.open(movieFile);
+        } catch (IOException ex) {
+            System.out.println("Error in 'imgPlayerClicked' method in 'FXMLDocumentController' classe. EX:"+ex.getMessage().toString());
+        }
     }
 
 }
