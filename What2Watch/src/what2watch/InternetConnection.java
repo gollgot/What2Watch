@@ -7,6 +7,8 @@ package what2watch;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -19,17 +21,15 @@ public class InternetConnection {
     
     public static boolean isEnable(){
         boolean enable = false;  
-        try {
-            InetAddress add = InetAddress.getByName("8.8.8.8");
-            if(add.isReachable(1000)){
-                enable = true;
-                System.out.println("Yes there is an internet connection !");
-            }else{
-                System.out.println("No internet connection !");
-            }
-        } catch (IOException ex) {
-            Logger.getLogger(InternetConnection.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        try 
+        {
+            URL url = new URL("http://www.google.com");
+            URLConnection connection = url.openConnection();
+            connection.connect();   
+            enable = true;
+        }catch (Exception e){
+            System.out.println("Error on isEnable() in InternetConnection class. Ex: "+e.getMessage().toString());     
+        } 
         return enable;
     }
     

@@ -75,12 +75,12 @@ public class Main extends Application {
             System.out.println("Nom : "+finalListFiles.get(i));
         }*/
        //DbHandler dbHandler = new DbHandler(cacheDb,finalListFiles);
-        
-        
-        
-        
-        
-        /* After : Launch the window */
+
+       
+       
+       
+       
+       /* After : Launch the window */
         launch(args);
     }
     
