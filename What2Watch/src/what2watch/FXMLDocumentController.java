@@ -364,6 +364,18 @@ public class FXMLDocumentController implements Initializable {
             desktop.open(movieFile);
         } catch (IOException ex) {
             System.out.println("Error in 'imgPlayerClicked' method in 'FXMLDocumentController' classe. EX:"+ex.getMessage().toString());
+            
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Impossible to open the file");
+            alert.setContentText("Check that you have a launcher application linked \n"
+                    + "to your file extension, or launch it manually.");
+
+            alert.showAndWait().ifPresent(response -> {
+                if (response == ButtonType.OK) {
+                    alert.close();
+                }
+            });
         }
     }
 
