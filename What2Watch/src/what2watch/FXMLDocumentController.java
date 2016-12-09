@@ -353,7 +353,7 @@ public class FXMLDocumentController implements Initializable {
 
     @FXML
     private void imgPlayerClicked(MouseEvent event) {
-        String title = titleValueLabel.getText();
+        String title = lblTitleValue.getText();
         String rawTitle = DbHandler.getRawTitle(title);
         String path = FileBrowser.getFilePath(rawTitle);
         
