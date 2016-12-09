@@ -48,58 +48,58 @@ import javafx.stage.Stage;
 public class FXMLDocumentController implements Initializable {
 
     @FXML
-    private Button settingsButton;
+    private Button btnSettings;
     @FXML
-    private Button scanFolder;
+    private Button btnScanFolder;
     @FXML
-    private TextArea synopsisTextArea;
+    private TextArea taSynopsis;
     @FXML
-    private ListView<String> movieListView;
+    private ListView<String> listMovie;
     @FXML
-    private TextField searchTextField;
+    private TextField tfSearch;
     @FXML
-    private ComboBox<String> searchCriteriasComboBox;
+    private ComboBox<String> cbxSearchCriterias;
     @FXML
-    private ImageView movieImageView;
+    private ImageView ivMovie;
     @FXML
-    private TextField startingYearTextField;
+    private TextField tfStartingYear;
     @FXML
-    private TextField endingYearTextField;
+    private TextField tfEndingYear;
     @FXML
-    private Label titleLabel;
+    private Label lblTitle;
     @FXML
-    private Label titleValueLabel;
+    private Label lblTitleValue;
     @FXML
-    private Label yearLabel;
+    private Label lblYear;
     @FXML
-    private Label yearValueLabel;
+    private Label lblYearValue;
     @FXML
-    private Label genreLabel;
+    private Label lblGenre;
     @FXML
-    private Label genreValueLabel;
+    private Label lblGenreValue;
     @FXML
-    private Label ActorsLabel;
+    private Label lblActors;
     @FXML
-    private Label actorsValueLabel;
+    private Label lblActorsValue;
     @FXML
-    private Label synopsisLabel;
+    private Label lblSynopsis;
     @FXML
-    private Label startingYearLabel;
+    private Label lblStartingYear;
     @FXML
-    private Label endingYearLabel;
+    private Label lblEndingYear;
     @FXML
-    private Label directorsLabel;
+    private Label labelDirectors;
     @FXML
-    private Label directorsValueLabel;
+    private Label lblDirectorsValue;
+    @FXML
+    private ProgressIndicator searchProgressIndicator;
     @FXML
     private Pane paneBlackOpacity;
     @FXML
     private ImageView imageViewBigPoster;
     @FXML
-    private ProgressIndicator searchProgressIndicator;
-    @FXML
     private ImageView imgPlayer;
-
+    
     private UserPreferences prefs = new UserPreferences();
     private int activeSearchMode = 0;
     
@@ -135,7 +135,7 @@ public class FXMLDocumentController implements Initializable {
 
         // Combobox search criterias configuration
         // those values have to match the switch case statement in the updateSearchMode method below
-        this.searchCriteriasComboBox.getItems().addAll(
+        this.cbxSearchCriterias.getItems().addAll(
                 "Title", // index 0
                 "Genre", // index 1
                 "Year", // index 2
@@ -180,44 +180,44 @@ public class FXMLDocumentController implements Initializable {
         ArrayList<String> fileNames = ParsingFiles.parse(FileBrowser.getMovieFileNames());
         ArrayList<String> rawFileNames = FileBrowser.getMovieFileNames();
         DbHandler dbHandler = new DbHandler(cacheDb, fileNames, rawFileNames);
-        movieListView.getItems().clear();
+        listMovie.getItems().clear();
         // Init progress indicator to 0 and display it
         searchProgressIndicator.setProgress(0);
         searchProgressIndicator.setVisible(true);
         this.disableSearchUI(true);
         // We pass the current instance of "FXMLDocumentController" class, because we have to access the "disableSearchUI" method 
-        dbHandler.update(this, movieListView, searchProgressIndicator);
+        dbHandler.update(this, listMovie, searchProgressIndicator);
     }
 
     @FXML
     private void updateSearchMode(ActionEvent event) {
-        int boxIndex = this.searchCriteriasComboBox.getSelectionModel().getSelectedIndex();
+        int boxIndex = this.cbxSearchCriterias.getSelectionModel().getSelectedIndex();
 
         // NOTE: The combobox item values have to be defined so that they match the following statement
         switch (boxIndex) {
             case 0: // Title
                 setYearSearchMode(false);
-                this.searchTextField.requestFocus();
+                this.tfSearch.requestFocus();
                 this.activeSearchMode = 0;
                 break;
             case 1: // Genre
                 setYearSearchMode(false);
-                this.searchTextField.requestFocus();
+                this.tfSearch.requestFocus();
                 this.activeSearchMode = 1;
                 break;
             case 2: // Year
                 setYearSearchMode(true);
-                this.startingYearTextField.requestFocus();
+                this.tfStartingYear.requestFocus();
                 this.activeSearchMode = 2;
                 break;
             case 3: // Director
                 setYearSearchMode(false);
-                this.searchTextField.requestFocus();
+                this.tfSearch.requestFocus();
                 this.activeSearchMode = 3;
                 break;
             case 4: // Actor
                 setYearSearchMode(false);
-                this.searchTextField.requestFocus();
+                this.tfSearch.requestFocus();
                 this.activeSearchMode = 4;
                 break;
             default:
@@ -229,25 +229,25 @@ public class FXMLDocumentController implements Initializable {
 
     // Disables search textfields and toggles the searchIsEnabled property
     public void disableSearchBars(boolean toggleValue) {
-        this.searchTextField.setDisable(toggleValue);
-        this.startingYearTextField.setDisable(toggleValue);
-        this.endingYearTextField.setDisable(toggleValue);
+        this.tfSearch.setDisable(toggleValue);
+        this.tfStartingYear.setDisable(toggleValue);
+        this.tfEndingYear.setDisable(toggleValue);
     }
 
     // Displays/hides textfields according to the selected combobox search criteria
     private void setYearSearchMode(boolean on) {
-        startingYearLabel.setVisible(on);
-        startingYearTextField.setVisible(on);
-        endingYearLabel.setVisible(on);
-        endingYearTextField.setVisible(on);
-        searchTextField.setVisible(!on);
+        lblStartingYear.setVisible(on);
+        tfStartingYear.setVisible(on);
+        lblEndingYear.setVisible(on);
+        tfEndingYear.setVisible(on);
+        tfSearch.setVisible(!on);
     }
     
     // Clic on an items on the list
 
     @FXML
     private void getMovieInformations() {
-        String movieTitle = movieListView.getSelectionModel().getSelectedItem();
+        String movieTitle = listMovie.getSelectionModel().getSelectedItem();
         Movie selectedMovie = DbHandler.getMovie(movieTitle);
         
         // getActors / Directors / Genres, return an array, so we have to format that
@@ -271,19 +271,19 @@ public class FXMLDocumentController implements Initializable {
         directors = directors.replaceAll(", $", "");
 
         // Set texts on the labels
-        titleValueLabel.setText(selectedMovie.getTitle());
-        yearValueLabel.setText(selectedMovie.getYear());
-        synopsisTextArea.setText(selectedMovie.getSynopsis());
-        actorsValueLabel.setText(actors);
-        genreValueLabel.setText(genres);
-        directorsValueLabel.setText(directors);
+        lblTitleValue.setText(selectedMovie.getTitle());
+        lblYearValue.setText(selectedMovie.getYear());
+        taSynopsis.setText(selectedMovie.getSynopsis());
+        lblActorsValue.setText(actors);
+        lblGenreValue.setText(genres);
+        lblDirectorsValue.setText(directors);
 
         // Movie poster handling
         Image moviePoster = new Image("what2watch/images/placeHolder.png");
         if (!selectedMovie.getPoster().equals("Unknown")) {
             moviePoster = new Image("http://image.tmdb.org/t/p/w300" + selectedMovie.getPoster());
         }
-        movieImageView.setImage(moviePoster);
+        ivMovie.setImage(moviePoster);
         imageViewBigPoster.setImage(moviePoster);
     }
 
@@ -292,19 +292,19 @@ public class FXMLDocumentController implements Initializable {
             // Calling the right search methods according to the active search mode
         switch (activeSearchMode) {
             case 0: // Title
-                SearchHandler.findMovieByTitle(this.searchTextField.getText());
+                SearchHandler.findMovieByTitle(this.tfSearch.getText());
                 break;
             case 1: // Genre
-                SearchHandler.findMovieByGenre(this.searchTextField.getText());
+                SearchHandler.findMovieByGenre(this.tfSearch.getText());
                 break;
             case 2: // Year
-                SearchHandler.findMovieByYearRange(this.startingYearTextField.getText(), this.endingYearTextField.getText());
+                SearchHandler.findMovieByYearRange(this.tfStartingYear.getText(), this.tfEndingYear.getText());
                 break;
             case 3: // Director
-                SearchHandler.findMovieByDirector(this.searchTextField.getText());
+                SearchHandler.findMovieByDirector(this.tfSearch.getText());
                 break;
             case 4: // Actor
-                SearchHandler.findMovieByActor(this.searchTextField.getText());
+                SearchHandler.findMovieByActor(this.tfSearch.getText());
                 break;
             default:
                 break;
@@ -347,8 +347,8 @@ public class FXMLDocumentController implements Initializable {
     
     public void disableSearchUI(boolean toggleValue) {
         this.disableSearchBars(toggleValue);
-        this.searchCriteriasComboBox.setDisable(toggleValue);
-        this.movieListView.setDisable(toggleValue);
+        this.cbxSearchCriterias.setDisable(toggleValue);
+        this.listMovie.setDisable(toggleValue);
     }
 
     @FXML
