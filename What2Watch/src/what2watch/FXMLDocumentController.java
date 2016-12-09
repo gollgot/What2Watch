@@ -353,7 +353,7 @@ public class FXMLDocumentController implements Initializable {
 
     @FXML
     private void imgPlayerClicked(MouseEvent event) {
-        String title = titleValueLabel.getText();
+        String title = lblTitleValue.getText();
         String rawTitle = DbHandler.getRawTitle(title);
         String path = FileBrowser.getFilePath(rawTitle);
         
@@ -364,6 +364,17 @@ public class FXMLDocumentController implements Initializable {
             desktop.open(movieFile);
         } catch (IOException ex) {
             System.out.println("Error in 'imgPlayerClicked' method in 'FXMLDocumentController' classe. EX:"+ex.getMessage().toString());
+            
+            Alert alert = new Alert(AlertType.WARNING);
+            alert.setTitle("Warning");
+            alert.setHeaderText("This file cannot be read");
+            alert.setContentText("No program handling this type of file has been found on your system");
+
+            alert.showAndWait().ifPresent(response -> {
+                if (response == ButtonType.OK) {
+                    alert.close();
+                }
+            });
         }
     }
 
