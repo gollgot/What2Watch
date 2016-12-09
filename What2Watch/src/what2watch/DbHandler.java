@@ -388,5 +388,11 @@ public class DbHandler {
         
         return movie;
     }
+    
+    public static String getRawTitle(String title){
+        String query = "SELECT raw_title FROM movie WHERE title = \""+title+"\";";
+        String rawTitle = dataBase.doSelectQuery(query).replace(";", "");
+        return rawTitle;
+    }
 
 }

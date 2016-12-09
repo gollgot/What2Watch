@@ -5,6 +5,9 @@
  */
 package what2watch;
 
+import com.sun.org.apache.bcel.internal.generic.F2D;
+import java.awt.Desktop;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -13,9 +16,6 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -28,7 +28,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextArea;
@@ -41,8 +40,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.util.Callback;
-import sun.awt.RepaintArea;
 
 /**
  *
@@ -100,9 +97,12 @@ public class FXMLDocumentController implements Initializable {
     private Pane paneBlackOpacity;
     @FXML
     private ImageView imageViewBigPoster;
+    @FXML
+    private ImageView imgPlayer;
     
     private UserPreferences prefs = new UserPreferences();
     private int activeSearchMode = 0;
+    
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -349,6 +349,33 @@ public class FXMLDocumentController implements Initializable {
         this.disableSearchBars(toggleValue);
         this.cbxSearchCriterias.setDisable(toggleValue);
         this.listMovie.setDisable(toggleValue);
+    }
+
+    @FXML
+    private void imgPlayerClicked(MouseEvent event) {
+        String title = lblTitleValue.getText();
+        String rawTitle = DbHandler.getRawTitle(title);
+        String path = FileBrowser.getFilePath(rawTitle);
+        
+        // Desktop open is for open the file with the linked application launcher on the OS
+        File movieFile = new File(path);
+        Desktop desktop = Desktop.getDesktop();
+        try {
+            desktop.open(movieFile);
+        } catch (IOException ex) {
+            System.out.println("Error in 'imgPlayerClicked' method in 'FXMLDocumentController' classe. EX:"+ex.getMessage().toString());
+            
+            Alert alert = new Alert(AlertType.WARNING);
+            alert.setTitle("Warning");
+            alert.setHeaderText("This file cannot be read");
+            alert.setContentText("No program handling this type of file has been found on your system");
+
+            alert.showAndWait().ifPresent(response -> {
+                if (response == ButtonType.OK) {
+                    alert.close();
+                }
+            });
+        }
     }
 
 }
