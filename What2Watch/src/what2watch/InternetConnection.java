@@ -18,7 +18,13 @@ import java.util.logging.Logger;
  */
 public class InternetConnection {
     
-    
+    /**
+     * Check if there is an internet connection
+     *
+     *
+     * @return  {@code true} if internet in enable,
+     *          {@code false} if there is no internet connection
+     */
     public static boolean isEnable(){
         boolean enable = false;  
         try 
@@ -28,7 +34,7 @@ public class InternetConnection {
             connection.connect();   
             enable = true;
         }catch (Exception e){
-            System.out.println("Error on isEnable() in InternetConnection class. Ex: "+e.getMessage().toString());     
+            // No internet connection    
         } 
         return enable;
     }
