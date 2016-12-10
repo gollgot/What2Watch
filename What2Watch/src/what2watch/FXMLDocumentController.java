@@ -38,6 +38,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -66,23 +67,15 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private TextField tfEndingYear;
     @FXML
-    private Label lblTitle;
-    @FXML
     private Label lblTitleValue;
     @FXML
-    private Label lblYear;
-    @FXML
     private Label lblYearValue;
-    @FXML
-    private Label lblGenre;
     @FXML
     private Label lblGenreValue;
     @FXML
     private Label lblActors;
     @FXML
     private Label lblActorsValue;
-    @FXML
-    private Label lblSynopsis;
     @FXML
     private Label lblStartingYear;
     @FXML
@@ -99,9 +92,14 @@ public class FXMLDocumentController implements Initializable {
     private ImageView imageViewBigPoster;
     @FXML
     private ImageView imgPlayer;
+    @FXML
+    private Text txtTitle;
+    @FXML
+    private Text txtYear;
     
     private UserPreferences prefs = new UserPreferences();
     private int activeSearchMode = 0;
+    
     
 
     @Override
@@ -271,8 +269,8 @@ public class FXMLDocumentController implements Initializable {
         directors = directors.replaceAll(", $", "");
 
         // Set texts on the labels
-        lblTitleValue.setText(selectedMovie.getTitle());
-        lblYearValue.setText(selectedMovie.getYear());
+        txtTitle.setText(selectedMovie.getTitle());
+        txtYear.setText(" (" + selectedMovie.getYear() + ")");
         taSynopsis.setText(selectedMovie.getSynopsis());
         lblActorsValue.setText(actors);
         lblGenreValue.setText(genres);
