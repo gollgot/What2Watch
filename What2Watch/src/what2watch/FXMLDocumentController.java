@@ -100,9 +100,15 @@ public class FXMLDocumentController implements Initializable {
     private ImageView imageViewBigPoster;
     @FXML
     private ProgressIndicator searchProgressIndicator;
-
+    @FXML
+    private ImageView ivConnectionLost;
+    @FXML
+    private ImageView ivConnectionOk;
+    
     private UserPreferences prefs = new UserPreferences();
     private int activeSearchMode = 0;
+    public static boolean exit = false; // Change if we close the application (see -> Main class)
+    
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -152,6 +158,11 @@ public class FXMLDocumentController implements Initializable {
         imageViewBigPoster.setVisible(false);
 
         searchProgressIndicator.setVisible(false);
+        
+        // Initialize things about the internet connecion signal
+        ivConnectionLost.setVisible(false);
+        ivConnectionOk.setVisible(false);
+        checkInternetConnection();
     }
 
     @FXML
@@ -349,6 +360,30 @@ public class FXMLDocumentController implements Initializable {
         this.disableSearchBars(toggleValue);
         this.searchCriteriasComboBox.setDisable(toggleValue);
         this.movieListView.setDisable(toggleValue);
+    }
+
+    private void checkInternetConnection() {
+        Thread checkInternetConnection = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                // Exit change if we close the application, this way we can close the thread
+                while(exit == false){
+                    try {
+                        if(InternetConnection.isEnable()){
+                            ivConnectionLost.setVisible(false);
+                            ivConnectionOk.setVisible(true);
+                        }else{
+                            ivConnectionLost.setVisible(true);
+                            ivConnectionOk.setVisible(false);
+                        }
+                        Thread.sleep(15000);
+                    } catch (InterruptedException ex) {
+                        System.out.println("Error on checkInternetConnection method in FXMLDocumentCOntroller class. Ex: "+ex.getMessage().toString());
+                    }
+                }
+            }
+        });
+        checkInternetConnection.start();
     }
 
 }
