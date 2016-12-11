@@ -19,61 +19,24 @@
           <ColumnConstraints hgrow="SOMETIMES" maxWidth="497.0" minWidth="10.0" prefWidth="483.0" />
         </columnConstraints>
         <rowConstraints>
-          <RowConstraints maxHeight="196.0" minHeight="0.0" prefHeight="40.0" vgrow="SOMETIMES" />
-          <RowConstraints maxHeight="591.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
-          <RowConstraints maxHeight="474.0" minHeight="0.0" prefHeight="40.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="448.0" minHeight="10.0" prefHeight="296.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="591.0" minHeight="10.0" prefHeight="46.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="474.0" minHeight="0.0" prefHeight="45.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="448.0" minHeight="10.0" prefHeight="334.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="448.0" minHeight="10.0" prefHeight="152.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="448.0" minHeight="10.0" prefHeight="18.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <HBox prefHeight="100.0" prefWidth="200.0">
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.rowIndex="1">
                <children>
-                  <Button fx:id="btnSettings" mnemonicParsing="false" onAction="#showSettings" onMouseEntered="#enableHoveredIcon" onMouseExited="#disableHoveredIcon" prefHeight="22.0" prefWidth="30.0" style="-fx-background-color: null;">
-                     <HBox.margin>
-                        <Insets top="10.0" />
-                     </HBox.margin>
-                     <graphic>
-                        <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@resources/images/btnSettings.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
-                  <Button fx:id="btnRefresh" onAction="#browseFiles" onMouseEntered="#enableHoveredIcon" onMouseExited="#disableHoveredIcon" prefHeight="0.0" prefWidth="0.0" style="-fx-background-color: null;">
-                     <HBox.margin>
-                        <Insets top="10.0" />
-                     </HBox.margin>
-                     <graphic>
-                        <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@resources/images/btnRefresh.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
+                  <TextField fx:id="tfSearch" onKeyReleased="#searchForMatchingMovies" prefHeight="27.0" prefWidth="732.0" promptText="Titanic" styleClass="tfSearch" />
                </children>
                <GridPane.margin>
-                  <Insets bottom="10.0" />
+                  <Insets left="10.0" right="10.0" />
                </GridPane.margin>
-               <opaqueInsets>
-                  <Insets />
-               </opaqueInsets>
             </HBox>
-            <ComboBox fx:id="cbxSearchCriterias" onAction="#updateSearchMode" prefHeight="27.0" prefWidth="395.0" promptText="Search by title" GridPane.rowIndex="1">
-               <GridPane.margin>
-                  <Insets bottom="5.0" left="10.0" right="10.0" />
-               </GridPane.margin>
-            </ComboBox>
-            <TextField fx:id="tfSearch" onKeyReleased="#searchForMatchingMovies" prefHeight="27.0" prefWidth="732.0" promptText="Titanic" GridPane.rowIndex="2">
-               <GridPane.margin>
-                  <Insets bottom="5.0" left="10.0" right="10.0" />
-               </GridPane.margin>
-            </TextField>
-            <HBox pickOnBounds="false" prefHeight="100.0" prefWidth="200.0" spacing="10.0" style="-fx-background-color: null;" GridPane.rowIndex="2">
+            <HBox alignment="CENTER_LEFT" pickOnBounds="false" prefHeight="54.0" prefWidth="298.0" spacing="10.0" style="-fx-background-color: null;" GridPane.rowIndex="1">
                <children>
-                  <Label fx:id="lblStartingYear" prefHeight="28.0" prefWidth="37.0" text="from" visible="false" />
+                  <Label fx:id="lblStartingYear" prefHeight="26.0" prefWidth="37.0" text="from" visible="false" />
                   <TextField fx:id="tfStartingYear" onKeyReleased="#searchForMatchingMovies" prefHeight="27.0" prefWidth="52.0" promptText="1990" visible="false">
                      <HBox.margin>
                         <Insets />
@@ -91,18 +54,18 @@
                   </TextField>
                </children>
                <GridPane.margin>
-                  <Insets left="10.0" top="5.0" />
+                  <Insets left="10.0" right="10.0" />
                </GridPane.margin>
                <padding>
                   <Insets left="10.0" />
                </padding>
             </HBox>
-            <ListView fx:id="listMovie" onKeyReleased="#updateDisplayedInfos" onMouseClicked="#getMovieInformations" prefHeight="476.0" prefWidth="278.0" GridPane.rowIndex="3" GridPane.rowSpan="2">
+            <ListView fx:id="listMovie" fixedCellSize="30.0" onKeyReleased="#updateDisplayedInfos" onMouseClicked="#getMovieInformations" prefHeight="476.0" prefWidth="278.0" styleClass="listMovie" GridPane.rowIndex="2" GridPane.rowSpan="2">
                <GridPane.margin>
                   <Insets left="10.0" right="10.0" />
                </GridPane.margin>
             </ListView>
-            <VBox prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.rowSpan="3">
+            <VBox prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowSpan="4">
                <children>
                   <HBox prefHeight="165.0" prefWidth="418.0">
                      <children>
@@ -124,14 +87,14 @@
                            <children>
                               <TextFlow prefHeight="84.0" prefWidth="270.0">
                                  <children>
-                                    <Text fx:id="txtTitle" fill="#323232" strokeType="OUTSIDE" strokeWidth="0.0" style=": ;" styleClass="textElement" text="MovieTitle">
+                                    <Text fx:id="txtTitle" fill="#434242" strokeType="OUTSIDE" strokeWidth="0.0" style=": ;" styleClass="textElement" text="MovieTitle">
                                        <font>
-                                          <Font name="System Bold" size="16.0" />
+                                          <Font name="System Bold" size="20.0" />
                                        </font>
                                     </Text>
                                     <Text fx:id="txtYear" fill="#616161" strokeType="OUTSIDE" strokeWidth="0.0" text=" (year)">
                                        <font>
-                                          <Font size="16.0" />
+                                          <Font size="20.0" />
                                        </font>
                                     </Text>
                                  </children>
@@ -141,7 +104,7 @@
                                     <Insets top="5.0" />
                                  </VBox.margin>
                                  <font>
-                                    <Font size="12.0" />
+                                    <Font size="14.0" />
                                  </font></Label>
                               <ImageView fx:id="imgPlayer" fitHeight="40.0" fitWidth="40.0" onMouseClicked="#imgPlayerClicked" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -163,49 +126,95 @@
                   </HBox>
                   <HBox prefHeight="32.0" prefWidth="477.0">
                      <VBox.margin>
-                        <Insets top="20.0" />
+                        <Insets top="30.0" />
                      </VBox.margin>
                      <children>
-                        <Label fx:id="labelDirectors" alignment="TOP_LEFT" prefHeight="14.0" prefWidth="94.0" text="Director(s):">
+                        <Label fx:id="labelDirectors" alignment="TOP_LEFT" prefHeight="20.0" prefWidth="120.0" text="Director(s):" textFill="#434242">
                            <font>
-                              <Font name="System Bold" size="11.0" />
+                              <Font name="System Bold" size="14.0" />
                            </font></Label>
                         <Label fx:id="lblDirectorsValue" alignment="TOP_LEFT" prefHeight="14.0" prefWidth="393.0" text="George Lucas, Rick McCulm">
                            <font>
-                              <Font size="12.0" />
+                              <Font size="14.0" />
                            </font></Label>
                      </children>
                      <padding>
                         <Insets bottom="10.0" />
                      </padding>
                   </HBox>
-                  <HBox prefHeight="130.0" prefWidth="477.0">
+                  <HBox prefHeight="105.0" prefWidth="458.0">
                      <children>
-                        <Label fx:id="lblActors" prefHeight="14.0" prefWidth="165.0" text="Actors:">
+                        <Label fx:id="lblActors" prefHeight="20.0" prefWidth="191.0" text="Actors:" textFill="#434242">
                            <font>
-                              <Font name="System Bold" size="11.0" />
+                              <Font name="System Bold" size="14.0" />
                            </font></Label>
-                        <Label fx:id="lblActorsValue" alignment="TOP_LEFT" prefHeight="70.0" prefWidth="517.0" text="Mark Hamill, Harrison Ford, Carrie Fisher, David Prowse, Anthony Daniels, Kenny Baker, Peter Mayhew, Frank Oz" wrapText="true" />
+                        <Label fx:id="lblActorsValue" alignment="TOP_LEFT" prefHeight="99.0" prefWidth="508.0" text="Mark Hamill, Harrison Ford, Carrie Fisher, David Prowse, Anthony Daniels, Kenny Baker, Peter Mayhew, Frank Oz" wrapText="true" />
                      </children>
                      <padding>
                         <Insets top="10.0" />
                      </padding>
                   </HBox>
+                  <TextArea fx:id="taSynopsis" editable="false" prefHeight="182.0" prefWidth="458.0" styleClass="taSynopsis" text="Malgré la destruction de l'Etoile Noire, l'Empire maintient son emprise sur la galaxie, et poursuit sans relâche sa lutte contre l'Alliance rebelle. Basés sur la planète glacée de Hoth, les rebelles essuient un assaut des troupes impériales. Parvenus à s'échapper, la princesse Leia, Han Solo, Chewbacca et C-3P0 se dirigent vers Bespin, la cité des nuages gouvernée par Lando Calrissian, ancien compagnon de Han. Suivant les instructions d'Obi-Wan Kenobi, Luke Skywalker se rend quant à lui vers le système de Dagobah, planète marécageuse où il doit recevoir l'enseignement du dernier maître Jedi, Yoda. Apprenant l'arrestation de ses compagnons par les stormtroopers de Dark Vador après la trahison de Lando, Luke décide d'interrompre son entraînement pour porter secours à ses amis et affronter le sombre seigneur Sith..." wrapText="true">
+                     <VBox.margin>
+                        <Insets top="30.0" />
+                     </VBox.margin>
+                  </TextArea>
                </children>
                <padding>
-                  <Insets left="15.0" right="10.0" top="5.0" />
+                  <Insets left="15.0" right="10.0" top="22.0" />
                </padding>
             </VBox>
-            <TextArea fx:id="taSynopsis" editable="false" prefHeight="164.0" prefWidth="429.0" text="Malgré la destruction de l'Etoile Noire, l'Empire maintient son emprise sur la galaxie, et poursuit sans relâche sa lutte contre l'Alliance rebelle. Basés sur la planète glacée de Hoth, les rebelles essuient un assaut des troupes impériales. Parvenus à s'échapper, la princesse Leia, Han Solo, Chewbacca et C-3P0 se dirigent vers Bespin, la cité des nuages gouvernée par Lando Calrissian, ancien compagnon de Han. Suivant les instructions d'Obi-Wan Kenobi, Luke Skywalker se rend quant à lui vers le système de Dagobah, planète marécageuse où il doit recevoir l'enseignement du dernier maître Jedi, Yoda. Apprenant l'arrestation de ses compagnons par les stormtroopers de Dark Vador après la trahison de Lando, Luke décide d'interrompre son entraînement pour porter secours à ses amis et affronter le sombre seigneur Sith..." wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="4">
-               <GridPane.margin>
-                  <Insets left="15.0" right="10.0" top="10.0" />
-               </GridPane.margin>
-            </TextArea>
-            <ProgressIndicator fx:id="searchProgressIndicator" prefHeight="116.0" prefWidth="128.0" progress="0.0" GridPane.rowIndex="3">
+            <ProgressIndicator fx:id="searchProgressIndicator" prefHeight="116.0" prefWidth="128.0" progress="0.0" GridPane.rowIndex="2">
                <padding>
-                  <Insets bottom="80.0" left="80.0" right="80.0" top="80.0" />
+                  <Insets bottom="110.0" left="110.0" right="110.0" top="110.0" />
                </padding>
             </ProgressIndicator>
+            <HBox alignment="BOTTOM_CENTER" prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <HBox alignment="BOTTOM_CENTER" prefHeight="16.0" prefWidth="82.0">
+                     <children>
+                        <Button fx:id="btnSettings" mnemonicParsing="false" onAction="#showSettings" onMouseEntered="#enableHoveredIcon" onMouseExited="#disableHoveredIcon" prefHeight="22.0" prefWidth="30.0" style="-fx-background-color: null;">
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                           <graphic>
+                              <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@resources/images/btnSettings.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button fx:id="btnRefresh" onAction="#browseFiles" onMouseEntered="#enableHoveredIcon" onMouseExited="#disableHoveredIcon" prefHeight="0.0" prefWidth="0.0" style="-fx-background-color: null;">
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                           <graphic>
+                              <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@resources/images/btnRefresh.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                     </children>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                  </HBox>
+                  <ComboBox fx:id="cbxSearchCriterias" onAction="#updateSearchMode" prefHeight="27.0" prefWidth="211.0" promptText="Search by title" styleClass="cbxSearchCriterias">
+                     <HBox.margin>
+                        <Insets left="15.0" />
+                     </HBox.margin>
+                  </ComboBox>
+               </children>
+               <GridPane.margin>
+                  <Insets right="10.0" />
+               </GridPane.margin>
+               <padding>
+                  <Insets top="10.0" />
+               </padding>
+            </HBox>
          </children>
       </GridPane>
       <Pane fx:id="paneBlackOpacity" layoutX="497.0" layoutY="151.0" onMouseClicked="#paneBlackOpacityClicked" opacity="0.8" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #000;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="-0.0" AnchorPane.topAnchor="0.0">

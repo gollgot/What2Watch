@@ -33,7 +33,7 @@ public class Main extends Application {
         Scene scene = new Scene(root);
         
         Font test = Font.loadFont(getClass().getResourceAsStream("resources/fonts/SourceSansPro-Regular.otf"), 12);
-        Font test2 = Font.loadFont(getClass().getResourceAsStream("resources/fonts/SourceSansPro-Bold.otf"), 12);
+        Font test2 = Font.loadFont(getClass().getResourceAsStream("resources/fonts/Montserrat-Bold.ttf"), 12);
         System.out.println(test);
         System.out.println(test2);
         scene.getStylesheets().add("what2watch/default.css");

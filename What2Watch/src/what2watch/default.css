@@ -6,13 +6,47 @@ This file holds the default style of the app
     Author     : Raphaël
 */
 
-.root{
+.root {
     -fx-font-family: "Source Sans Pro";
-    -fx-font-size: 13px;
+    -fx-font-size: 14px;
+    
+    /*Getting rid of focus style, globally*/
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
 }
 
-.textElement{
-    -fx-font-family: "Source Sans Pro Bold";
-    -fx-font-size: 20px;
-    color: rgb(255, 0, 0);
+.textElement {
+    -fx-font-family: "Montserrat";
+    -fx-font-size: 21px;
+    font-weight: bold;
+}
+
+
+/* Elements customization */
+
+.taSynopsis {
+    -fx-highlight-fill: #6d6d6d;
+    -fx-highlight-text-fill: rgb(250, 250, 250);
+    -fx-background-color: null;
+}
+
+/* textArea content background*/
+.taSynopsis .content,
+.taSynopsis .content: focused  {
+    -fx-background-color: #d2d2d2;
+}
+
+
+.listMovie,
+.listMovie: focused{
+    -fx-background-color: #d2d2d2;
+}
+
+.tfSearch {
+    -fx-control-inner-background: #d2d2d2;
+}
+
+.list-cell: odd: selected,
+.list-cell: even: selected {
+    -fx-background-color: #ababab;
 }
