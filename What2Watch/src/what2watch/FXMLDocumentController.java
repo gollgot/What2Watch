@@ -162,7 +162,7 @@ public class FXMLDocumentController implements Initializable {
         Scene scene = new Scene(root);
         settingStage.setScene(scene);
         
-        settingStage.getIcons().add(new Image("what2watch/ressources/images/W2W_Logo.png"));
+        settingStage.getIcons().add(new Image("what2watch/resources/images/W2W_Logo.png"));
         settingStage.showAndWait();
     }
 
@@ -274,7 +274,7 @@ public class FXMLDocumentController implements Initializable {
         lblDirectorsValue.setText(directors);
 
         // Movie poster handling
-        Image moviePoster = new Image("what2watch/images/placeHolder.png");
+        Image moviePoster = new Image("what2watch/resources/images/placeHolder.png");
         if (!selectedMovie.getPoster().equals("Unknown")) {
             moviePoster = new Image("http://image.tmdb.org/t/p/w300" + selectedMovie.getPoster());
         }
@@ -377,7 +377,7 @@ public class FXMLDocumentController implements Initializable {
         String buttonInfos = event.getSource().toString();
         String buttonId = buttonInfos.substring(buttonInfos.indexOf("id=") + 3, buttonInfos.indexOf(","));
         Button hoveredButton = (Button)event.getSource();
-        hoveredButton.setStyle("-fx-background-color: null; -fx-graphic: url(\"what2watch/ressources/images/" + buttonId + iconSuffix +".png\")");
+        hoveredButton.setStyle("-fx-background-color: null; -fx-graphic: url(\"what2watch/resources/images/" + buttonId + iconSuffix +".png\")");
     }
 
     @FXML

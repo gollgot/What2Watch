@@ -43,7 +43,7 @@ public class Main extends Application {
         stage.setScene(scene);
         stage.setResizable(false);
         stage.setTitle("What 2 Watch");
-        stage.getIcons().add(new Image("what2watch/images/W2W_Logo.png"));
+        stage.getIcons().add(new Image("what2watch/resources/images/W2W_Logo.png"));
         stage.show();
     }
 
