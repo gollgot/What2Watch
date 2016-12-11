@@ -12,16 +12,6 @@
 
 <AnchorPane id="AnchorPane" prefHeight="602.0" prefWidth="801.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="what2watch.FXMLDocumentController">
     <children>
-      <Pane fx:id="paneBlackOpacity" layoutX="497.0" layoutY="151.0" onMouseClicked="#paneBlackOpacityClicked" opacity="0.8" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #000;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="-0.0" AnchorPane.topAnchor="0.0">
-         <cursor>
-            <Cursor fx:constant="HAND" />
-         </cursor>
-      </Pane>
-      <ImageView fx:id="imageViewBigPoster" fitHeight="490.0" fitWidth="345.0" layoutX="228.0" layoutY="56.0" onKeyPressed="#bigPosterKeyPressed" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@images/placeHolder.png" />
-         </image>
-      </ImageView>
       <Pane prefHeight="602.0" prefWidth="801.0" style="-fx-background-color: #eee;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
       <GridPane prefHeight="602.0" prefWidth="757.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <columnConstraints>
@@ -37,25 +27,39 @@
             <RowConstraints maxHeight="448.0" minHeight="10.0" prefHeight="18.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+            <HBox prefHeight="100.0" prefWidth="200.0">
                <children>
-                  <Button fx:id="btnSettings" mnemonicParsing="false" onAction="#showSettings" prefHeight="22.0" prefWidth="66.0" text="Set Path">
+                  <Button fx:id="btnSettings" mnemonicParsing="false" onAction="#showSettings" onMouseEntered="#enableHoveredIcon" onMouseExited="#disableHoveredIcon" prefHeight="22.0" prefWidth="30.0" style="-fx-background-color: null;">
                      <HBox.margin>
                         <Insets top="10.0" />
                      </HBox.margin>
+                     <graphic>
+                        <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@images/btnSettings.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
                   </Button>
-                  <Button fx:id="btnScanFolder" onAction="#browseFiles" prefHeight="22.0" prefWidth="94.0" text="Scan directory">
+                  <Button fx:id="btnRefresh" onAction="#browseFiles" onMouseEntered="#enableHoveredIcon" onMouseExited="#disableHoveredIcon" prefHeight="0.0" prefWidth="0.0" style="-fx-background-color: null;">
                      <HBox.margin>
                         <Insets top="10.0" />
                      </HBox.margin>
+                     <graphic>
+                        <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@images/btnRefresh.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
                   </Button>
                </children>
                <GridPane.margin>
-                  <Insets bottom="5.0" />
+                  <Insets bottom="10.0" />
                </GridPane.margin>
-               <padding>
-                  <Insets left="10.0" />
-               </padding>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
             </HBox>
             <ComboBox fx:id="cbxSearchCriterias" onAction="#updateSearchMode" prefHeight="27.0" prefWidth="395.0" promptText="Search by title" GridPane.rowIndex="1">
                <GridPane.margin>
@@ -166,7 +170,10 @@
                            <font>
                               <Font name="System Bold" size="11.0" />
                            </font></Label>
-                        <Label fx:id="lblDirectorsValue" alignment="TOP_LEFT" prefHeight="14.0" prefWidth="393.0" text="George Lucas, Rick McCulm" />
+                        <Label fx:id="lblDirectorsValue" alignment="TOP_LEFT" prefHeight="14.0" prefWidth="393.0" text="George Lucas, Rick McCulm">
+                           <font>
+                              <Font size="12.0" />
+                           </font></Label>
                      </children>
                      <padding>
                         <Insets bottom="10.0" />
@@ -201,5 +208,15 @@
             </ProgressIndicator>
          </children>
       </GridPane>
+      <Pane fx:id="paneBlackOpacity" layoutX="497.0" layoutY="151.0" onMouseClicked="#paneBlackOpacityClicked" opacity="0.8" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #000;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="-0.0" AnchorPane.topAnchor="0.0">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </Pane>
+      <ImageView fx:id="imageViewBigPoster" fitHeight="490.0" fitWidth="345.0" layoutX="228.0" layoutY="56.0" onKeyPressed="#bigPosterKeyPressed" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@images/placeHolder.png" />
+         </image>
+      </ImageView>
     </children>
 </AnchorPane>

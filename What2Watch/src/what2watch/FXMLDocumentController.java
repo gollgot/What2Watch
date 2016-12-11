@@ -51,8 +51,6 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private Button btnSettings;
     @FXML
-    private Button btnScanFolder;
-    @FXML
     private TextArea taSynopsis;
     @FXML
     private ListView<String> listMovie;
@@ -66,10 +64,6 @@ public class FXMLDocumentController implements Initializable {
     private TextField tfStartingYear;
     @FXML
     private TextField tfEndingYear;
-    @FXML
-    private Label lblTitleValue;
-    @FXML
-    private Label lblYearValue;
     @FXML
     private Label lblGenreValue;
     @FXML
@@ -96,12 +90,14 @@ public class FXMLDocumentController implements Initializable {
     private Text txtTitle;
     @FXML
     private Text txtYear;
+    @FXML
+    private Button btnRefresh;
     
     private UserPreferences prefs = new UserPreferences();
     private int activeSearchMode = 0;
     
     
-
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // Displaying the settings window before the main one if no path has been saved in the app
@@ -351,7 +347,7 @@ public class FXMLDocumentController implements Initializable {
 
     @FXML
     private void imgPlayerClicked(MouseEvent event) {
-        String title = lblTitleValue.getText();
+        String title = txtTitle.getText();
         String rawTitle = DbHandler.getRawTitle(title);
         String path = FileBrowser.getFilePath(rawTitle);
         
@@ -375,5 +371,23 @@ public class FXMLDocumentController implements Initializable {
             });
         }
     }
+    
+    private void toggleHoveredIcon(MouseEvent event, String iconSuffix) {
+        String buttonInfos = event.getSource().toString();
+        String buttonId = buttonInfos.substring(buttonInfos.indexOf("id=") + 3, buttonInfos.indexOf(","));
+        Button hoveredButton = (Button)event.getSource();
+        hoveredButton.setStyle("-fx-background-color: null; -fx-graphic: url(\"what2watch/images/" + buttonId + iconSuffix +".png\")");
+    }
 
+    @FXML
+    private void disableHoveredIcon(MouseEvent event) {
+        String iconSuffix = "";
+        toggleHoveredIcon(event, iconSuffix);
+    }
+
+    @FXML
+    private void enableHoveredIcon(MouseEvent event) {
+        String iconSuffix = "Hovered";
+        toggleHoveredIcon(event, iconSuffix);
+    }
 }
