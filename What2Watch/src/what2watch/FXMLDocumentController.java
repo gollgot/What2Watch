@@ -157,11 +157,12 @@ public class FXMLDocumentController implements Initializable {
         // Window customization
         settingStage.setResizable(false);
         settingStage.initModality(Modality.APPLICATION_MODAL);
-        settingStage.setTitle("Sélection du répertoire de films");
+        settingStage.setTitle("Movie directory selection");
 
         Scene scene = new Scene(root);
         settingStage.setScene(scene);
-
+        
+        settingStage.getIcons().add(new Image("what2watch/ressources/images/W2W_Logo.png"));
         settingStage.showAndWait();
     }
 
@@ -376,7 +377,7 @@ public class FXMLDocumentController implements Initializable {
         String buttonInfos = event.getSource().toString();
         String buttonId = buttonInfos.substring(buttonInfos.indexOf("id=") + 3, buttonInfos.indexOf(","));
         Button hoveredButton = (Button)event.getSource();
-        hoveredButton.setStyle("-fx-background-color: null; -fx-graphic: url(\"what2watch/images/" + buttonId + iconSuffix +".png\")");
+        hoveredButton.setStyle("-fx-background-color: null; -fx-graphic: url(\"what2watch/ressources/images/" + buttonId + iconSuffix +".png\")");
     }
 
     @FXML

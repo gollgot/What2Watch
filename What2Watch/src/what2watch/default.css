@@ -1,0 +1,18 @@
+/*
+This file holds the default style of the app
+*/
+/* 
+    Created on : 11 déc. 2016, 15:49:51
+    Author     : Raphaël
+*/
+
+.root{
+    -fx-font-family: "Source Sans Pro";
+    -fx-font-size: 13px;
+}
+
+.textElement{
+    -fx-font-family: "Source Sans Pro Bold";
+    -fx-font-size: 20px;
+    color: rgb(255, 0, 0);
+}

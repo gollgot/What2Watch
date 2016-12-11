@@ -13,6 +13,8 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.json.JSONException;
@@ -29,10 +31,19 @@ public class Main extends Application {
         Parent root = FXMLLoader.load(getClass().getResource("FXMLDocument.fxml"));
         
         Scene scene = new Scene(root);
+        
+        Font test = Font.loadFont(getClass().getResourceAsStream("resources/fonts/SourceSansPro-Regular.otf"), 12);
+        Font test2 = Font.loadFont(getClass().getResourceAsStream("resources/fonts/SourceSansPro-Bold.otf"), 12);
+        System.out.println(test);
+        System.out.println(test2);
+        scene.getStylesheets().add("what2watch/default.css");
+        
         // StageStyle.UNIFIED is for remove the basic blue border of the windows
         stage.initStyle(StageStyle.UNIFIED);
         stage.setScene(scene);
         stage.setResizable(false);
+        stage.setTitle("What 2 Watch");
+        stage.getIcons().add(new Image("what2watch/images/W2W_Logo.png"));
         stage.show();
     }
 
