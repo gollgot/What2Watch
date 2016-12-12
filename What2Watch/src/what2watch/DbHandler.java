@@ -28,8 +28,9 @@ public class DbHandler {
     private ArrayList<String> originalMovieNames;
     private ArrayList<String> rawMovieNames;
     private Thread updateThread;
-    // It's static because we have to call it on the "Platform.runLater" on the "updateThread"
-    private static float pourcent;
+    // variable we have to call it on the "Platform.runLater" on the "updateThread"
+    private float pourcent;
+    private int n;
 
     public DbHandler(CacheDb dataBase, ArrayList<String> originalMovieNames, ArrayList<String> rawMovieNames) {
         this.dataBase = dataBase;
@@ -37,43 +38,55 @@ public class DbHandler {
         this.rawMovieNames = rawMovieNames;
     }
 
-    public void update(FXMLDocumentController controller, ListView movieListView, ProgressIndicator searchProgressIndicator) {
+    public void update(FXMLDocumentController controller, ListView movieListView, ProgressIndicator searchProgressIndicator, Label lblNbFilesProcessed) {
+        lblNbFilesProcessed.setVisible(true);
         // Thread for update the database, because we have to get the datas from the
         //API and wait x ms after each request (see method "getAllMovieInfos" in class "ApiHandler" for more infos
         updateThread = new Thread(new Runnable() {
             @Override
             public void run() {
                 // Check if the movie already exists on the DB, if not, we put on all the datas
-                for (int i = 0; i < originalMovieNames.size(); i++) {
+                for (n = 0; n < originalMovieNames.size(); n++) {
+                    
+                    // Update label for follow the process
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            int nb = n+1;
+                            lblNbFilesProcessed.setText("Fichier(s) traité(s) : "+nb+" / "+originalMovieNames.size());
+                        }
+                    });
                     
                     // The pourcent is set between 0 and 1 (0 and 100%)
                     // So we get only one step pourcent (exemple 4 movies, one step is 0.25)
                     float oneStepPourcent = 100 * (1) / originalMovieNames.size();
                     oneStepPourcent = oneStepPourcent / 100;
 
-                    if (movieExistsOnDb(rawMovieNames.get(i))) {
-                        System.out.println(originalMovieNames.get(i) + " Existe !");
+                    if (movieExistsOnDb(rawMovieNames.get(n))) {
+                        System.out.println(originalMovieNames.get(n) + " Existe !");
                     } else {
-                        System.out.println(originalMovieNames.get(i) + " Existe pas !");
-                        Movie movie = ApiHandler.getAllMovieInfos(originalMovieNames.get(i), rawMovieNames.get(i), oneStepPourcent, searchProgressIndicator);
+                        System.out.println(originalMovieNames.get(n) + " Existe pas !");
+                        Movie movie = ApiHandler.getAllMovieInfos(originalMovieNames.get(n), rawMovieNames.get(n), oneStepPourcent, searchProgressIndicator);
                         insertMovieOnDb(movie);
                     }
                     
                     // We add this setProgress, because it's a round number, so it's a step with different progress number than before
                     // (Pourcent is static, like that we can get it on the platform.runLater)
-                    DbHandler.pourcent = 100 * (i+1) / originalMovieNames.size();
-                    DbHandler.pourcent = DbHandler.pourcent / 100;
+                    pourcent = 100 * (n+1) / originalMovieNames.size();
+                    pourcent = pourcent / 100;
                     // For do an update Graphic on a "logical method" we have to do this on the Application Thread
                     // So, Platform.runLater is the Application Thread
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
-                            searchProgressIndicator.setProgress(DbHandler.pourcent);
+                            searchProgressIndicator.setProgress(pourcent);
                         }
                     });
                     
                 }
                 deleteMovieOnDb();
+                
+                lblNbFilesProcessed.setVisible(false);                
                 
                 // For do an update Graphic on a "logical method" we have to do this on the Application Thread
                 // So, Platform.runLater is the Application Thread

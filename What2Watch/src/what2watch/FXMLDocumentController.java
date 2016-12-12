@@ -99,9 +99,12 @@ public class FXMLDocumentController implements Initializable {
     private ImageView imageViewBigPoster;
     @FXML
     private ImageView imgPlayer;
+    @FXML
+    private Label lblNbFilesProcessed;
     
     private UserPreferences prefs = new UserPreferences();
     private int activeSearchMode = 0;
+    
     
 
     @Override
@@ -152,6 +155,7 @@ public class FXMLDocumentController implements Initializable {
         imageViewBigPoster.setVisible(false);
 
         searchProgressIndicator.setVisible(false);
+        lblNbFilesProcessed.setVisible(false);
     }
 
     @FXML
@@ -184,9 +188,10 @@ public class FXMLDocumentController implements Initializable {
         // Init progress indicator to 0 and display it
         searchProgressIndicator.setProgress(0);
         searchProgressIndicator.setVisible(true);
+        
         this.disableSearchUI(true);
         // We pass the current instance of "FXMLDocumentController" class, because we have to access the "disableSearchUI" method 
-        dbHandler.update(this, listMovie, searchProgressIndicator);
+        dbHandler.update(this, listMovie, searchProgressIndicator, lblNbFilesProcessed);
     }
 
     @FXML
