@@ -21,7 +21,7 @@
 - Premier langage
 - Multi plateforme
 - Simplicité de création d'interfaces
-- Présence de Java dans de nombreux systèmes
+- Présence de Java dans de titrebreux systèmes
 
   ###1.2 Bibliothèques externes
   **SQLite**
@@ -49,7 +49,29 @@
 
 ## 2.Fonctionnalités de l'application
 - recherche de fichiers (raph)
-- analyse de noms de fichiers (Loïc)
+
+**analyse des fichiers, récupération du titre du film**
+
+Pour que l'API puisse nous retourner les données du film que l'ont veut, il faut pouvoir lui passer le titre du film le plus épuré possible. Voivi donc comment nous procédons:
+
+Nous avons une première fonction qui va faire un remplacement par un espace de tout ce que l'on rentre à la main comme pattern, par exemple des termes comme : Xvid, bdrip, VOSTFR, etc. ainsi que des ponctuations : ".-_())". Nous pouvons donc l'affiner au fur et à mesure.
+
+Une seconde fonction va permettre de remplacer les possibles dates qu'elle trouve, par un espace.
+
+Note : vu qu'il y a forcément un espace ou un caractère séparateur (qui sera transformer en espace) entre les divers mots de la chaine de caractère, au moment ou l'on remplace nos pattern trouvé par un espace, cela créera forcément au minimum 2 espaces.
+
+une dernière fonction, que nous pensons la plus intéressante, va découper l'ensemble de la chaîne de caractère (après le passage dans la fonction 1 et 2) par tranche de double espace, pour en faire un tableau. Nous allons ensuite parcourir ce tableau et quand on va trouvé une case du tableau qui contient des caractères, nous la gardons car cela sera normalement le titre du film. Avec cette fonction, il suffit donc de trouver les patterns critiques soit : devant le titre du films (si il y en a), ou un seul qui est juste derrière le titre du film, et tous les autres pattern qui suivent ne seront même pas pris en compte, ce qui est interessant.
+
+Exemple :
+Nous avons le film : Colt.45.2014.FRENCH.BRRiP.XviD-CARPEDIEM
+Après le passage dans la fonction 1 et 2, il restera : Colt 45    BRRiP   CARPEDIEM
+tab[1] = "Colt 45", tab[2] = "", tab[3] = "BRRiP", tab[4] = " CARPEDIEM"
+Nous allons donc récupérer la première case non vide (donc le titre du film)
+
+Si il y avait eu un pattern devant le titre du film, cela fonctionne toujours (du moment qu'il est transformé en espace par notre RegEx) car la première case du tableau aurait été vide et celle d'après serait le titre du film.
+
+Pour résumer, cette fonction est bien sûr dépendante de notre fonction 1 (RegEx), mais si l'on arrive à transformer un des patternes critique (ceux devant le titre [si il y en a] sinon, celui qui suit directement le titre), nous arrivons à récupérer le titre du film.
+
 - récupération d'infos (Loïc)
 - Recherche de films (raph)
 - UI (raph)
