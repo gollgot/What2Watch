@@ -1,3 +1,0 @@
-Choses qu'il ne faut pas oublié de faire:
-
-- Quand on lance le logiciel, il faut aller checker si le chemin vers notre dossier de film existe toujours ou non. (Soit lors du lancement du logiciel, soit lors du clique sur scan. à voir...)
