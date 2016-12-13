@@ -29,6 +29,7 @@ public class FileFinder extends SimpleFileVisitor<Path> {
     private ArrayList<String> movieFileNames = new ArrayList<String>();
     private ArrayList<String> movieFilePaths = new ArrayList<String>();
 
+    
     public FileFinder() {
     }
 
