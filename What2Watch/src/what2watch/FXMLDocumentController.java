@@ -101,9 +101,16 @@ public class FXMLDocumentController implements Initializable {
     private ImageView imgPlayer;
     @FXML
     private Label lblNbFilesProcessed;
+    @FXML
+    private ImageView ivConnectionLost;
+    @FXML
+    private ImageView ivConnectionOk;
     
     private UserPreferences prefs = new UserPreferences();
     private int activeSearchMode = 0;
+    public static boolean exit = false; // Change if we close the application (see -> Main class)
+ 
+    
     
     
 
@@ -156,6 +163,12 @@ public class FXMLDocumentController implements Initializable {
 
         searchProgressIndicator.setVisible(false);
         lblNbFilesProcessed.setVisible(false);
+        
+        // Initialize things about the internet connecion signal
+        ivConnectionLost.setVisible(false);
+        ivConnectionOk.setVisible(false);
+        checkInternetConnection();
+
     }
 
     @FXML
@@ -285,7 +298,8 @@ public class FXMLDocumentController implements Initializable {
 
         // Movie poster handling
         Image moviePoster = new Image("what2watch/images/placeHolder.png");
-        if (!selectedMovie.getPoster().equals("Unknown")) {
+        if (!selectedMovie.getPoster().equals("Unknown") && InternetConnection.isEnable()) {
+ 
             moviePoster = new Image("http://image.tmdb.org/t/p/w300" + selectedMovie.getPoster());
         }
         ivMovie.setImage(moviePoster);
@@ -381,6 +395,35 @@ public class FXMLDocumentController implements Initializable {
                 }
             });
         }
+    }
+    
+    private void checkInternetConnection() {
+ 
+        Thread checkInternetConnection = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                // Exit change if we close the application, this way we can close the thread
+                while(exit == false){
+                    try {
+                        if(InternetConnection.isEnable()){
+                            ivConnectionLost.setVisible(false); 
+                            ivConnectionOk.setVisible(true); 
+                        }else{
+                            ivConnectionLost.setVisible(true); 
+                            ivConnectionOk.setVisible(false);
+                        }
+ 
+                        Thread.sleep(15000);
+ 
+                    } catch (InterruptedException ex) { 
+                        System.out.println("Error on checkInternetConnection method in FXMLDocumentCOntroller class. Ex: "+ex.getMessage().toString());
+                    }
+                }
+            }
+        });
+ 
+        checkInternetConnection.start();
+ 
     }
 
 }

@@ -13,6 +13,8 @@ import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressIndicator;
@@ -43,6 +45,9 @@ public class DbHandler {
         // Thread for update the database, because we have to get the datas from the
         //API and wait x ms after each request (see method "getAllMovieInfos" in class "ApiHandler" for more infos
         updateThread = new Thread(new Runnable() {
+            // I used a variable because we have to browse all movies, and if we loose 
+            // The connection on the loop, we switch it to true. This way, we can display only one alert box 
+            boolean noInternet = false; 
             @Override
             public void run() {
                 // Check if the movie already exists on the DB, if not, we put on all the datas
@@ -66,8 +71,12 @@ public class DbHandler {
                         System.out.println(originalMovieNames.get(n) + " Existe !");
                     } else {
                         System.out.println(originalMovieNames.get(n) + " Existe pas !");
-                        Movie movie = ApiHandler.getAllMovieInfos(originalMovieNames.get(n), rawMovieNames.get(n), oneStepPourcent, searchProgressIndicator);
-                        insertMovieOnDb(movie);
+                        if(InternetConnection.isEnable()){ 
+                            Movie movie = ApiHandler.getAllMovieInfos(originalMovieNames.get(n), rawMovieNames.get(n), oneStepPourcent, searchProgressIndicator); 
+                            insertMovieOnDb(movie); 
+                        }else{ 
+                            noInternet = true; 
+                        }
                     }
                     
                     // We add this setProgress, because it's a round number, so it's a step with different progress number than before
@@ -86,7 +95,28 @@ public class DbHandler {
                 }
                 deleteMovieOnDb();
                 
-                lblNbFilesProcessed.setVisible(false);                
+                lblNbFilesProcessed.setVisible(false);
+
+                if(noInternet){ 
+                    // Displaying have to do on the Application main thread 
+                    Platform.runLater(new Runnable() { 
+                        @Override 
+                        public void run() { 
+                            Alert alert = new Alert(Alert.AlertType.WARNING); 
+                            alert.setTitle("Warning"); 
+                            alert.setHeaderText("No internet connection"); 
+                            alert.setContentText("We cannot collect the data of your new movie selection. \n" 
+                                    + "Please check your connection if you want to update the movie list."); 
+ 
+                            alert.showAndWait().ifPresent(response -> { 
+                                if (response == ButtonType.OK) { 
+                                    alert.close(); 
+                                } 
+                            }); 
+                        } 
+                    }); 
+                     
+                }                 
                 
                 // For do an update Graphic on a "logical method" we have to do this on the Application Thread
                 // So, Platform.runLater is the Application Thread
