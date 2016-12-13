@@ -24,7 +24,6 @@ public class ApiHandler {
     // We get all movie datas, and between each request, we wait 180ms, because we have a limit with the API...
     public static Movie getAllMovieInfos(String movieName, String rawMovieName, float oneStepPourcent, ProgressIndicator progressIndicator){
         
-        
         // We have 3 big process, so 33% of the oneStepPourcent.
         float pourcentToAdd = 33 * oneStepPourcent / 100;
             
@@ -33,16 +32,27 @@ public class ApiHandler {
             // Each time, we add this pourcentToAdd to the current progressNumber
             // Beacause we add all the time the same value to each step
             
-            String id = getMovieId(movieName);
-            progressIndicator.setProgress(progressIndicator.getProgress()+pourcentToAdd);
-            Thread.sleep(200);
-            
-            movie = getMovieDetails(movieName, rawMovieName, id);
-            progressIndicator.setProgress(progressIndicator.getProgress()+pourcentToAdd);
-            Thread.sleep(200);
-            
-            movie = getMovieActorsDirectors(movie, id);
-            progressIndicator.setProgress(progressIndicator.getProgress()+pourcentToAdd);
+            if(InternetConnection.isEnable()){
+                String id = getMovieId(movieName);
+                progressIndicator.setProgress(progressIndicator.getProgress()+pourcentToAdd);
+                Thread.sleep(200);
+
+                movie = getMovieDetails(movieName, rawMovieName, id);
+                progressIndicator.setProgress(progressIndicator.getProgress()+pourcentToAdd);
+                Thread.sleep(200);
+
+                movie = getMovieActorsDirectors(movie, id);
+                progressIndicator.setProgress(progressIndicator.getProgress()+pourcentToAdd);
+            }else{
+                movie.setActors("Unknown");
+                movie.setDirector("Unknown");
+                movie.setGenre("Unknown");
+                movie.setPoster("Unknown");
+                movie.setRawTitle(rawMovieName);
+                movie.setSynopsis("Unknown");
+                movie.setTitle(movieName);
+                movie.setYear("Unknown");
+            }
 
         } catch (InterruptedException ex) {
             Logger.getLogger(ApiHandler.class.getName()).log(Level.SEVERE, null, ex);
@@ -52,7 +62,6 @@ public class ApiHandler {
     
     
     private static String getMovieId(String movieName) {
-        Boolean internetError = false;
         String movieNameUrlFormat = movieName.replaceAll(" ", "%20");
         String id = "Unknown";
 
@@ -71,31 +80,18 @@ public class ApiHandler {
                 JSONObject jsonOject = jsonArray.getJSONObject(0);
                 id = String.valueOf(jsonOject.getInt("id"));
             }
-        
-        // Differents error (JSON / IO)
         } catch (JSONException ex) {
             System.out.println("ERROR on parsingJSON (JSON exception) : " + ex.getMessage());
-        } catch (IOException ex) {
+        } catch (IOException ex) { // InternetConnection lost
             System.out.println("ERROR on parsingJSON (IO exception) : " + ex.getMessage() + "\nVeuillez vérifier votre connexion internet");
-            internetError = true;
+            id = "Unknown";
         }
-        
-        // If there is no problem with internet connection
-        if (!internetError) {
 
-        } else {
-            System.out.println("Impossible de récupérer les informations du film "
-                    + "\"" + movieName + "\", Veuillez vérifié votre connexion "
-                    + "internet et relancer le programme.");
-        }
-        
         return id;
         
     }
     
-    private static Movie getMovieDetails(String movieName, String rawMovieName, String id){
-        Boolean internetError = false;
-        
+    private static Movie getMovieDetails(String movieName, String rawMovieName, String id){  
         String originalTitle = movieName;
         String year = "Unknown";
         String synopsis = "Unknown";
@@ -163,18 +159,12 @@ public class ApiHandler {
                 // Differents error (JSON / IO)
             } catch (JSONException ex) {
                 System.out.println("ERROR on parsingJSON (JSON exception) : " + ex.getMessage());
-            } catch (IOException ex) {
-                System.out.println("ERROR on parsingJSON (IO exception) : " + ex.getMessage() + "\nVeuillez vérifier votre connexion internet");
-                internetError = true;
-            }
-            
-            // If there is no problem with internet connection
-            if (!internetError) {
-                
-            } else {
-                System.out.println("Impossible de récupérer les informations du film "
-                        + "\"" + movieName + "\", Veuillez vérifié votre connexion "
-                        + "internet et relancer le programme.");
+            } catch (IOException ex) { // Internet connection lost
+                System.out.println("ERROR on parsingJSON (IO exception) : " + ex.getMessage() + "\nVeuillez vérifier votre connexion internet");          
+                year = "Unknown";
+                synopsis = "Unknown";
+                poster_link = "Unknown";
+                genres = "Unknown";
             }
 
         }
@@ -197,8 +187,6 @@ public class ApiHandler {
     }
     
     private static Movie getMovieActorsDirectors(Movie movie, String id){
-
-       Boolean internetError = false;
        String actors = "";
        String directors = "";
        
@@ -254,18 +242,10 @@ public class ApiHandler {
             // Differents error (JSON / IO)
             } catch (JSONException ex) {
                 System.out.println("ERROR on parsingJSON (JSON exception) : " + ex.getMessage());
-            } catch (IOException ex) {
+            } catch (IOException ex) { // Internet connection lost
                 System.out.println("ERROR on parsingJSON (IO exception) : " + ex.getMessage() + "\nVeuillez vérifier votre connexion internet");
-                internetError = true;
-            }
-
-            // If there is no problem with internet connection
-            if (!internetError) {
-
-            } else {
-                System.out.println("Impossible de récupérer les informations du film "
-                        + "\"" + movie.getTitle() + "\", Veuillez vérifié votre connexion "
-                        + "internet et relancer le programme.");
+                actors = "Unknown";
+                directors = "Unknown";
             }
        }
        // If id == Unknown
@@ -276,25 +256,6 @@ public class ApiHandler {
         
         movie.setActors(actors);
         movie.setDirector(directors);
-        
-        
-        /*DEBUG */
-        /*String d = "";
-        String[] a = movie.getGenre();
-        for (int i = 0; i < a.length; i++) {
-            d+= a[i]+ " ";
-        }
-        
-        System.out.println("\n------------------------------------------");
-        System.out.println("Titre : "+movie.getTitle());
-        System.out.println("Year : "+movie.getYear());
-        System.out.println("Poster Link : "+movie.getPoster());
-        System.out.println("Genres : "+d);
-        System.out.println("Actors : "+actors);
-        System.out.println("Directors : "+directors);
-        System.out.println("Synopsis : "+movie.getSynopsis());
-        System.out.println("------------------------------------------");
-        */
         
         return movie;
     }

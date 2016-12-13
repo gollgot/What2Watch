@@ -10,11 +10,13 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.stage.WindowEvent;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -34,6 +36,17 @@ public class Main extends Application {
         stage.setScene(scene);
         stage.setResizable(false);
         stage.show();
+        
+        // When we close the application, we assign true to the exit variable on the controler.
+        // This way, the controller class know we exit the programm, then, we can close all thread
+        // This case, the thread who check the internet connection.
+        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+                // We close the programm
+                FXMLDocumentController.exit = true;
+            }
+        });
     }
 
     /**
@@ -75,12 +88,12 @@ public class Main extends Application {
             System.out.println("Nom : "+finalListFiles.get(i));
         }*/
        //DbHandler dbHandler = new DbHandler(cacheDb,finalListFiles);
-        
-        
-        
-        
-        
-        /* After : Launch the window */
+
+       
+       
+       
+       
+       /* After : Launch the window */
         launch(args);
     }
     
