@@ -9,23 +9,6 @@
 
 <AnchorPane id="AnchorPane" prefHeight="584.0" prefWidth="872.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="what2watch.FXMLDocumentController">
     <children>
-      <Button fx:id="settingsButton" layoutY="1.0" mnemonicParsing="false" onAction="#showSettings" text="Set path" />
-      <Button fx:id="scanFolder" layoutX="80.0" layoutY="1.0" onAction="#browseFiles" text="Scan directory" />
-      <ImageView fx:id="ivConnectionLost" fitHeight="31.0" fitWidth="53.0" layoutX="220.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@images/no_connection.png" />
-         </image>
-      </ImageView>
-      <ImageView fx:id="ivConnectionOk" fitHeight="31.0" fitWidth="33.0" layoutX="220.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@images/connection.png" />
-         </image>
-      </ImageView>
-      <TextArea fx:id="synopsisTextArea" editable="false" layoutX="14.0" layoutY="408.0" prefHeight="162.0" prefWidth="423.0" text="Malgré la destruction de l'Etoile Noire, l'Empire maintient son emprise sur la galaxie, et poursuit sans relâche sa lutte contre l'Alliance rebelle. Basés sur la planète glacée de Hoth, les rebelles essuient un assaut des troupes impériales. Parvenus à s'échapper, la princesse Leia, Han Solo, Chewbacca et C-3P0 se dirigent vers Bespin, la cité des nuages gouvernée par Lando Calrissian, ancien compagnon de Han. Suivant les instructions d'Obi-Wan Kenobi, Luke Skywalker se rend quant à lui vers le système de Dagobah, planète marécageuse où il doit recevoir l'enseignement du dernier maître Jedi, Yoda. Apprenant l'arrestation de ses compagnons par les stormtroopers de Dark Vador après la trahison de Lando, Luke décide d'interrompre son entraînement pour porter secours à ses amis et affronter le sombre seigneur Sith..." wrapText="true" />
-      <ListView fx:id="movieListView" layoutX="457.0" layoutY="130.0" onKeyReleased="#updateDisplayedInfos" onMouseClicked="#getMovieInformations" prefHeight="440.0" prefWidth="401.0" />
-      <TextField fx:id="searchTextField" layoutX="457.0" layoutY="89.0" onKeyReleased="#searchForMatchingMovies" prefHeight="27.0" prefWidth="401.0" promptText="Titanic" />
-      <ComboBox fx:id="searchCriteriasComboBox" layoutX="457.0" layoutY="44.0" onAction="#updateSearchMode" prefHeight="27.0" prefWidth="401.0" promptText="Rechercher par..." />
-      <ImageView fx:id="movieImageView" fitHeight="191.0" fitWidth="154.0" layoutX="14.0" layoutY="86.0" onMouseClicked="#displayBigPoster" pickOnBounds="true" preserveRatio="true">
       <Button fx:id="btnSettings" layoutY="1.0" mnemonicParsing="false" onAction="#showSettings" text="Set path" />
       <Button fx:id="btnScanFolder" layoutX="80.0" layoutY="1.0" onAction="#browseFiles" text="Scan directory" />
       <TextArea fx:id="taSynopsis" editable="false" layoutX="14.0" layoutY="408.0" prefHeight="162.0" prefWidth="423.0" text="Malgré la destruction de l'Etoile Noire, l'Empire maintient son emprise sur la galaxie, et poursuit sans relâche sa lutte contre l'Alliance rebelle. Basés sur la planète glacée de Hoth, les rebelles essuient un assaut des troupes impériales. Parvenus à s'échapper, la princesse Leia, Han Solo, Chewbacca et C-3P0 se dirigent vers Bespin, la cité des nuages gouvernée par Lando Calrissian, ancien compagnon de Han. Suivant les instructions d'Obi-Wan Kenobi, Luke Skywalker se rend quant à lui vers le système de Dagobah, planète marécageuse où il doit recevoir l'enseignement du dernier maître Jedi, Yoda. Apprenant l'arrestation de ses compagnons par les stormtroopers de Dark Vador après la trahison de Lando, Luke décide d'interrompre son entraînement pour porter secours à ses amis et affronter le sombre seigneur Sith..." wrapText="true" />
