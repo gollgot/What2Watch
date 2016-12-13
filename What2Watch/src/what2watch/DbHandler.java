@@ -105,7 +105,7 @@ public class DbHandler {
                             Alert alert = new Alert(Alert.AlertType.WARNING); 
                             alert.setTitle("Warning"); 
                             alert.setHeaderText("No internet connection"); 
-                            alert.setContentText("We cannot collect the datas of your new movie selection. \n" 
+                            alert.setContentText("We cannot collect the data of your new movie selection. \n" 
                                     + "Please check your connection if you want to update the movie list."); 
  
                             alert.showAndWait().ifPresent(response -> { 
