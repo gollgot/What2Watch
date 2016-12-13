@@ -105,7 +105,6 @@ public class FXMLDocumentController implements Initializable {
     private UserPreferences prefs = new UserPreferences();
     private int activeSearchMode = 0;
     
-    
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
