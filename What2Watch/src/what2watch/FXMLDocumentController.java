@@ -85,8 +85,6 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private ImageView imageViewBigPoster;
     @FXML
-    private ImageView imgPlayer;
-    @FXML
     private Text txtTitle;
     @FXML
     private Text txtYear;
@@ -247,43 +245,45 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private void getMovieInformations() {
         String movieTitle = listMovie.getSelectionModel().getSelectedItem();
-        Movie selectedMovie = DbHandler.getMovie(movieTitle);
-        
-        // getActors / Directors / Genres, return an array, so we have to format that
-        // to have a String with a comma for separate data Ex : data1, data2, data3
-        String actors = "";
-        for (int i = 0; i < selectedMovie.getActors().length; i++) {
-            actors += selectedMovie.getActors()[i]+", ";
-        }
-        actors = actors.replaceAll(", $", ""); // Delete last comma
-        
-        String genres = "";
-        for (int i = 0; i < selectedMovie.getGenre().length; i++) {
-            genres += selectedMovie.getGenre()[i]+", ";
-        }
-        genres = genres.replaceAll(", $", "");
-        
-        String directors = "";
-        for (int i = 0; i < selectedMovie.getDirector().length; i++) {
-            directors += selectedMovie.getDirector()[i]+", ";
-        }
-        directors = directors.replaceAll(", $", "");
+        if (movieTitle != null) {
+            Movie selectedMovie = DbHandler.getMovie(movieTitle);
 
-        // Set texts on the labels
-        txtTitle.setText(selectedMovie.getTitle());
-        txtYear.setText(" (" + selectedMovie.getYear() + ")");
-        taSynopsis.setText(selectedMovie.getSynopsis());
-        lblActorsValue.setText(actors);
-        lblGenreValue.setText(genres);
-        lblDirectorsValue.setText(directors);
+            // getActors / Directors / Genres, return an array, so we have to format that
+            // to have a String with a comma for separate data Ex : data1, data2, data3
+            String actors = "";
+            for (int i = 0; i < selectedMovie.getActors().length; i++) {
+                actors += selectedMovie.getActors()[i] + ", ";
+            }
+            actors = actors.replaceAll(", $", ""); // Delete last comma
 
-        // Movie poster handling
-        Image moviePoster = new Image("what2watch/resources/images/placeHolder.png");
-        if (!selectedMovie.getPoster().equals("Unknown")) {
-            moviePoster = new Image("http://image.tmdb.org/t/p/w300" + selectedMovie.getPoster());
+            String genres = "";
+            for (int i = 0; i < selectedMovie.getGenre().length; i++) {
+                genres += selectedMovie.getGenre()[i] + ", ";
+            }
+            genres = genres.replaceAll(", $", "");
+
+            String directors = "";
+            for (int i = 0; i < selectedMovie.getDirector().length; i++) {
+                directors += selectedMovie.getDirector()[i] + ", ";
+            }
+            directors = directors.replaceAll(", $", "");
+
+            // Set texts on the labels
+            txtTitle.setText(selectedMovie.getTitle());
+            txtYear.setText(" (" + selectedMovie.getYear() + ")");
+            taSynopsis.setText(selectedMovie.getSynopsis());
+            lblActorsValue.setText(actors);
+            lblGenreValue.setText(genres);
+            lblDirectorsValue.setText(directors);
+
+            // Movie poster handling
+            Image moviePoster = new Image("what2watch/resources/images/placeHolder.png");
+            if (!selectedMovie.getPoster().equals("Unknown")) {
+                moviePoster = new Image("http://image.tmdb.org/t/p/w300" + selectedMovie.getPoster());
+            }
+            ivMovie.setImage(moviePoster);
+            imageViewBigPoster.setImage(moviePoster);
         }
-        ivMovie.setImage(moviePoster);
-        imageViewBigPoster.setImage(moviePoster);
     }
 
     @FXML

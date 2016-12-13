@@ -33,7 +33,7 @@ This file holds the default style of the app
 /* textArea content background*/
 .taSynopsis .content,
 .taSynopsis .content:focused  {
-    -fx-background-color: #d2d2d2;
+    -fx-background-color: #e3e3e3;
 }
 
 
