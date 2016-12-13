@@ -285,7 +285,8 @@ public class FXMLDocumentController implements Initializable {
 
         // Movie poster handling
         Image moviePoster = new Image("what2watch/images/placeHolder.png");
-        if (!selectedMovie.getPoster().equals("Unknown")) {
+        if (!selectedMovie.getPoster().equals("Unknown") && InternetConnection.isEnable()) {
+ 
             moviePoster = new Image("http://image.tmdb.org/t/p/w300" + selectedMovie.getPoster());
         }
         ivMovie.setImage(moviePoster);
