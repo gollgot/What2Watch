@@ -32,13 +32,13 @@ This file holds the default style of the app
 
 /* textArea content background*/
 .taSynopsis .content,
-.taSynopsis .content: focused  {
+.taSynopsis .content:focused  {
     -fx-background-color: #d2d2d2;
 }
 
 
 .listMovie,
-.listMovie: focused{
+.listMovie:focused{
     -fx-background-color: #d2d2d2;
 }
 
@@ -46,7 +46,7 @@ This file holds the default style of the app
     -fx-control-inner-background: #d2d2d2;
 }
 
-.list-cell: odd: selected,
-.list-cell: even: selected {
+.list-cell:odd:selected,
+.list-cell:even:selected {
     -fx-background-color: #ababab;
 }

@@ -194,11 +194,13 @@ public class FXMLDocumentController implements Initializable {
                 setYearSearchMode(false);
                 this.tfSearch.requestFocus();
                 this.activeSearchMode = 0;
+                this.tfSearch.setPromptText("e.g. Star Wars, Titanic, ...");
                 break;
             case 1: // Genre
                 setYearSearchMode(false);
                 this.tfSearch.requestFocus();
                 this.activeSearchMode = 1;
+                this.tfSearch.setPromptText("e.g. Drama, Action, ...");
                 break;
             case 2: // Year
                 setYearSearchMode(true);
@@ -209,11 +211,13 @@ public class FXMLDocumentController implements Initializable {
                 setYearSearchMode(false);
                 this.tfSearch.requestFocus();
                 this.activeSearchMode = 3;
+                this.tfSearch.setPromptText("e.g. George Lucas, Guillermo del Toro, ...");
                 break;
             case 4: // Actor
                 setYearSearchMode(false);
                 this.tfSearch.requestFocus();
                 this.activeSearchMode = 4;
+                this.tfSearch.setPromptText("e.g. Leonardo DiCaprio, fdsaf, Mila Kunis, ...");
                 break;
             default:
                 break;

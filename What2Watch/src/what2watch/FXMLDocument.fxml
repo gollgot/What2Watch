@@ -28,7 +28,7 @@
          <children>
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.rowIndex="1">
                <children>
-                  <TextField fx:id="tfSearch" onKeyReleased="#searchForMatchingMovies" prefHeight="27.0" prefWidth="732.0" promptText="Titanic" styleClass="tfSearch" />
+                  <TextField fx:id="tfSearch" onKeyReleased="#searchForMatchingMovies" prefHeight="27.0" prefWidth="732.0" promptText="e.g. Star Wars, Titanic, ..." styleClass="tfSearch" />
                </children>
                <GridPane.margin>
                   <Insets left="10.0" right="10.0" />
@@ -60,7 +60,7 @@
                   <Insets left="10.0" />
                </padding>
             </HBox>
-            <ListView fx:id="listMovie" fixedCellSize="30.0" onKeyReleased="#updateDisplayedInfos" onMouseClicked="#getMovieInformations" prefHeight="476.0" prefWidth="278.0" styleClass="listMovie" GridPane.rowIndex="2" GridPane.rowSpan="2">
+            <ListView fx:id="listMovie" fixedCellSize="40.0" onKeyReleased="#updateDisplayedInfos" onMouseClicked="#getMovieInformations" prefHeight="476.0" prefWidth="278.0" styleClass="listMovie" GridPane.rowIndex="2" GridPane.rowSpan="2">
                <GridPane.margin>
                   <Insets left="10.0" right="10.0" />
                </GridPane.margin>
@@ -202,7 +202,8 @@
                         <Insets />
                      </opaqueInsets>
                   </HBox>
-                  <ComboBox fx:id="cbxSearchCriterias" onAction="#updateSearchMode" prefHeight="27.0" prefWidth="211.0" promptText="Search by title" styleClass="cbxSearchCriterias">
+                  <Label alignment="CENTER_RIGHT" contentDisplay="CENTER" prefHeight="27.0" prefWidth="133.0" text="Search by:" />
+                  <ComboBox fx:id="cbxSearchCriterias" onAction="#updateSearchMode" prefHeight="27.0" prefWidth="211.0" promptText="title" styleClass="cbxSearchCriterias">
                      <HBox.margin>
                         <Insets left="15.0" />
                      </HBox.margin>
