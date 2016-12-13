@@ -59,9 +59,9 @@
       <Label fx:id="lblEndingYear" layoutX="554.0" layoutY="95.0" text="à" visible="false" />
       <Label fx:id="labelDirectors" layoutX="168.0" layoutY="263.0" text="Réalisateur(s):" />
       <Label fx:id="lblDirectorsValue" alignment="TOP_LEFT" layoutX="251.0" layoutY="263.0" prefHeight="43.0" prefWidth="162.0" text="George Lucas, Rick McCulm" />
-      <ProgressIndicator fx:id="searchProgressIndicator" layoutX="594.0" layoutY="205.0" prefHeight="116.0" prefWidth="128.0" progress="0.0" />
-      <Label fx:id="lblNbFilesProcessed" layoutX="575.0" layoutY="330.0" text="Fichier(s) traité(s) : 1 / 10" />
-      <Pane fx:id="paneBlackOpacity" layoutX="497.0" layoutY="151.0" onMouseClicked="#paneBlackOpacityClicked" opacity="0.8" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #000;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="-0.0" AnchorPane.topAnchor="0.0">
+      <ProgressBar fx:id="progressBarProcess" layoutX="558.0" layoutY="225.0" prefWidth="200.0" progress="0.0" />
+      <Label fx:id="lblNbFilesProcessed" layoutX="576.0" layoutY="253.0" text="Fichier(s) traité(s) : 1 / 10" />
+      <Pane fx:id="paneBlackOpacity" onMouseClicked="#paneBlackOpacityClicked" opacity="0.8" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #000;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor>

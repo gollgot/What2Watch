@@ -29,6 +29,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -92,8 +93,6 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private Label lblDirectorsValue;
     @FXML
-    private ProgressIndicator searchProgressIndicator;
-    @FXML
     private Pane paneBlackOpacity;
     @FXML
     private ImageView imageViewBigPoster;
@@ -105,10 +104,13 @@ public class FXMLDocumentController implements Initializable {
     private ImageView ivConnectionLost;
     @FXML
     private ImageView ivConnectionOk;
+    @FXML
+    private ProgressBar progressBarProcess;
     
     private UserPreferences prefs = new UserPreferences();
     private int activeSearchMode = 0;
     public static boolean exit = false; // Change if we close the application (see -> Main class)
+    
  
     
     
@@ -161,7 +163,7 @@ public class FXMLDocumentController implements Initializable {
         paneBlackOpacity.setVisible(false);
         imageViewBigPoster.setVisible(false);
 
-        searchProgressIndicator.setVisible(false);
+        progressBarProcess.setVisible(false);
         lblNbFilesProcessed.setVisible(false);
         
         // Initialize things about the internet connecion signal
@@ -199,12 +201,12 @@ public class FXMLDocumentController implements Initializable {
         DbHandler dbHandler = new DbHandler(cacheDb, fileNames, rawFileNames);
         listMovie.getItems().clear();
         // Init progress indicator to 0 and display it
-        searchProgressIndicator.setProgress(0);
-        searchProgressIndicator.setVisible(true);
+        progressBarProcess.setProgress(0);
+        progressBarProcess.setVisible(true);
         
         this.disableSearchUI(true);
         // We pass the current instance of "FXMLDocumentController" class, because we have to access the "disableSearchUI" method 
-        dbHandler.update(this, listMovie, searchProgressIndicator, lblNbFilesProcessed);
+        dbHandler.update(this, listMovie, progressBarProcess, lblNbFilesProcessed);
     }
 
     @FXML

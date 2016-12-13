@@ -17,6 +17,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.image.Image;
 
@@ -40,7 +41,7 @@ public class DbHandler {
         this.rawMovieNames = rawMovieNames;
     }
 
-    public void update(FXMLDocumentController controller, ListView movieListView, ProgressIndicator searchProgressIndicator, Label lblNbFilesProcessed) {
+    public void update(FXMLDocumentController controller, ListView movieListView, ProgressBar progressBarProcess, Label lblNbFilesProcessed) {
         lblNbFilesProcessed.setVisible(true);
         // Thread for update the database, because we have to get the datas from the
         //API and wait x ms after each request (see method "getAllMovieInfos" in class "ApiHandler" for more infos
@@ -72,7 +73,7 @@ public class DbHandler {
                     } else {
                         System.out.println(originalMovieNames.get(n) + " Existe pas !");
                         if(InternetConnection.isEnable()){ 
-                            Movie movie = ApiHandler.getAllMovieInfos(originalMovieNames.get(n), rawMovieNames.get(n), oneStepPourcent, searchProgressIndicator); 
+                            Movie movie = ApiHandler.getAllMovieInfos(originalMovieNames.get(n), rawMovieNames.get(n), oneStepPourcent, progressBarProcess); 
                             insertMovieOnDb(movie); 
                         }else{ 
                             noInternet = true; 
@@ -88,7 +89,7 @@ public class DbHandler {
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
-                            searchProgressIndicator.setProgress(pourcent);
+                            progressBarProcess.setProgress(pourcent);
                         }
                     });
                     
@@ -132,7 +133,7 @@ public class DbHandler {
                         movieFileNames.clear();
                         movieFileNames.addAll(realTitles);
                         movieListView.setItems(movieFileNames);
-                        searchProgressIndicator.setVisible(false);
+                        progressBarProcess.setVisible(false);
                         
                         // Providing the search hander with informations needed to process movie searches
                         SearchHandler.initializeSearchHandler(movieListView, movieFileNames);

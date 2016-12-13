@@ -8,6 +8,8 @@ package what2watch;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ProgressIndicator;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -22,7 +24,7 @@ public class ApiHandler {
     private static String apiKey = "9a52628ae3939c738592ac50fdd73f7c";
 
     // We get all movie datas, and between each request, we wait 180ms, because we have a limit with the API...
-    public static Movie getAllMovieInfos(String movieName, String rawMovieName, float oneStepPourcent, ProgressIndicator progressIndicator){
+    public static Movie getAllMovieInfos(String movieName, String rawMovieName, float oneStepPourcent, ProgressBar progressBarProcess){
         
         
         // We have 3 big process, so 33% of the oneStepPourcent.
@@ -34,16 +36,18 @@ public class ApiHandler {
             // Beacause we add all the time the same value to each step
             
             if(InternetConnection.isEnable()){ 
+                
                 String id = getMovieId(movieName); 
-                progressIndicator.setProgress(progressIndicator.getProgress()+pourcentToAdd); 
-                Thread.sleep(200); 
- 
+                updateProgressBar(progressBarProcess, pourcentToAdd);
+                Thread.sleep(200);           
+                
                 movie = getMovieDetails(movieName, rawMovieName, id); 
-                progressIndicator.setProgress(progressIndicator.getProgress()+pourcentToAdd); 
+                updateProgressBar(progressBarProcess, pourcentToAdd);
                 Thread.sleep(200); 
  
                 movie = getMovieActorsDirectors(movie, id); 
-                progressIndicator.setProgress(progressIndicator.getProgress()+pourcentToAdd); 
+                updateProgressBar(progressBarProcess, pourcentToAdd);
+                
             }else{ 
                 movie.setActors("Unknown"); 
                 movie.setDirector("Unknown"); 
@@ -59,6 +63,17 @@ public class ApiHandler {
             Logger.getLogger(ApiHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
         return movie;
+    }
+    
+    private static void updateProgressBar(ProgressBar progressBarProcess, float pourcentToAdd){
+        // For do an update Graphic on a "logical method" we have to do this on the Application Thread
+        // So, Platform.runLater is the Application Thread
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                progressBarProcess.setProgress(progressBarProcess.getProgress()+pourcentToAdd);
+            }
+        });
     }
     
     
