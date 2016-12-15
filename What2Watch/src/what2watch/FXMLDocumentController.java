@@ -20,6 +20,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -215,7 +216,7 @@ public class FXMLDocumentController implements Initializable {
                 setYearSearchMode(false);
                 this.tfSearch.requestFocus();
                 this.activeSearchMode = 4;
-                this.tfSearch.setPromptText("e.g. Leonardo DiCaprio, fdsaf, Mila Kunis, ...");
+                this.tfSearch.setPromptText("e.g. Leonardo DiCaprio, Mila Kunis, ...");
                 break;
             default:
                 break;
@@ -378,10 +379,10 @@ public class FXMLDocumentController implements Initializable {
     }
     
     private void toggleHoveredIcon(MouseEvent event, String iconSuffix) {
-        String buttonInfos = event.getSource().toString();
-        String buttonId = buttonInfos.substring(buttonInfos.indexOf("id=") + 3, buttonInfos.indexOf(","));
-        Button hoveredButton = (Button)event.getSource();
-        hoveredButton.setStyle("-fx-background-color: null; -fx-graphic: url(\"what2watch/resources/images/" + buttonId + iconSuffix +".png\")");
+        String elementInfos = event.getSource().toString();
+        String elementId = elementInfos.substring(elementInfos.indexOf("id=") + 3, elementInfos.indexOf(","));
+        Node hoveredElement = (Node)event.getSource();
+        hoveredElement.setStyle("-fx-background-color: null; -fx-graphic: url(\"what2watch/resources/images/" + elementId + iconSuffix +".png\")");
     }
 
     @FXML

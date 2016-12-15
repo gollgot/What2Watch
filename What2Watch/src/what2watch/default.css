@@ -19,10 +19,17 @@ This file holds the default style of the app
     -fx-font-family: "Montserrat";
     -fx-font-size: 21px;
     font-weight: bold;
+    -fx-text-fill: #434242;
 }
 
 
 /* Elements customization */
+
+/*******************************************************************************
+ *                                                                             *
+ * textArea                                                                    *
+ *                                                                             *
+ ******************************************************************************/
 
 .taSynopsis {
     -fx-highlight-fill: #6d6d6d;
@@ -32,21 +39,78 @@ This file holds the default style of the app
 
 /* textArea content background*/
 .taSynopsis .content,
-.taSynopsis .content:focused  {
+.taSynopsis .content:focused {
     -fx-background-color: #e3e3e3;
 }
 
 
 .listMovie,
-.listMovie:focused{
-    -fx-background-color: #d2d2d2;
+.listMovie:focused {
+    -fx-background-color: #e3e3e3;
 }
 
-.tfSearch {
-    -fx-control-inner-background: #d2d2d2;
+
+/*******************************************************************************
+ *                                                                             *
+ * textField                                                                   *
+ *                                                                             *
+ ******************************************************************************/
+
+.tfSearch, .tfStartingYear, .tfEndingYear {
+    -fx-control-inner-background: #e3e3e3;
+    -fx-text-fill: #434242;
+    -fx-text-box-border: transparent;
+    -fx-highlight-fill: #6d6d6d;
 }
 
-.list-cell:odd:selected,
-.list-cell:even:selected {
+
+/*******************************************************************************
+ *                                                                             *
+ * listView                                                                    *
+ *                                                                             *
+ ******************************************************************************/
+
+.listMovie .list-cell:odd:selected,
+.listMovie .list-cell:even:selected {
     -fx-background-color: #ababab;
 }
+
+/*Out of focus style (listView unfocused)*/
+.listMovie .list-cell:filled:selected {
+    -fx-text-fill: white;
+}
+
+
+/*******************************************************************************
+ *                                                                             *
+ * comboBox                                                                    *
+ *                                                                             *
+ ******************************************************************************/
+
+.cbxSearchCriterias,
+.cbxSearchCriterias:disabled,
+.cbxSearchCriterias .arrow-button,
+.cbxSearchCriterias .cell:selected {
+    -fx-background-color: #e3e3e3;
+}
+
+.cbxSearchCriterias .cell:hover {
+    -fx-background-color: #ababab;
+}
+
+.cbxSearchCriterias .combo-box-popup .list-view .list-cell:selected {
+    -fx-background-color: #ababab;
+}
+
+.cbxSearchCriterias .list-cell {
+    -fx-background-color: #fafafa;
+}
+
+
+/*******************************************************************************
+ *                                                                             *
+ * imageView                                                                   *
+ *                                                                             *
+ ******************************************************************************/
+
+/* TODO: add border radius */

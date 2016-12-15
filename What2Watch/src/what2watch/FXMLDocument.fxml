@@ -12,16 +12,6 @@
 
 <AnchorPane id="AnchorPane" prefHeight="591.0" prefWidth="948.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="what2watch.FXMLDocumentController">
     <children>
-      <Pane fx:id="paneBlackOpacity" layoutX="497.0" layoutY="151.0" onMouseClicked="#paneBlackOpacityClicked" opacity="0.8" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #000;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="-0.0" AnchorPane.topAnchor="0.0">
-         <cursor>
-            <Cursor fx:constant="HAND" />
-         </cursor>
-      </Pane>
-      <ImageView fx:id="imageViewBigPoster" fitHeight="490.0" fitWidth="345.0" layoutX="228.0" layoutY="56.0" onKeyPressed="#bigPosterKeyPressed" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@resources/images/placeHolder.png" />
-         </image>
-      </ImageView>
       <Pane prefHeight="602.0" prefWidth="801.0" style="-fx-background-color: #eee;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
       <GridPane prefHeight="602.0" prefWidth="757.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <columnConstraints>
@@ -47,7 +37,7 @@
             <HBox alignment="CENTER_LEFT" pickOnBounds="false" prefHeight="54.0" prefWidth="298.0" spacing="10.0" style="-fx-background-color: null;" GridPane.rowIndex="1">
                <children>
                   <Label fx:id="lblStartingYear" prefHeight="26.0" prefWidth="37.0" text="from" visible="false" />
-                  <TextField fx:id="tfStartingYear" onKeyReleased="#searchForMatchingMovies" prefHeight="27.0" prefWidth="52.0" promptText="1990" visible="false">
+                  <TextField fx:id="tfStartingYear" onKeyReleased="#searchForMatchingMovies" prefHeight="27.0" prefWidth="52.0" promptText="1990" styleClass="tfStartingYear" visible="false">
                      <HBox.margin>
                         <Insets />
                      </HBox.margin>
@@ -57,7 +47,7 @@
                         <Insets left="10.0" />
                      </HBox.margin>
                   </Label>
-                  <TextField fx:id="tfEndingYear" onKeyReleased="#searchForMatchingMovies" prefHeight="27.0" prefWidth="52.0" promptText="2000" visible="false">
+                  <TextField fx:id="tfEndingYear" onKeyReleased="#searchForMatchingMovies" prefHeight="27.0" prefWidth="52.0" promptText="2000" styleClass="tfEndingYear" visible="false">
                      <HBox.margin>
                         <Insets />
                      </HBox.margin>
@@ -109,7 +99,7 @@
                                     </Text>
                                  </children>
                               </TextFlow>
-                              <Label fx:id="lblGenreValue" alignment="TOP_LEFT" prefHeight="23.0" prefWidth="376.0" text="Science fiction, Aventure, Fantastique" wrapText="true">
+                              <Label fx:id="lblGenreValue" alignment="TOP_LEFT" prefHeight="23.0" prefWidth="376.0" text="Science fiction, Aventure, Fantastique" textFill="#434242" wrapText="true">
                                  <VBox.margin>
                                     <Insets top="15.0" />
                                  </VBox.margin>
@@ -126,7 +116,7 @@
                                           <Font name="System Bold" size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label fx:id="lblDirectorsValue" alignment="TOP_LEFT" prefHeight="20.0" prefWidth="290.0" text="George Lucas, Rick McCulm">
+                                    <Label fx:id="lblDirectorsValue" alignment="TOP_LEFT" prefHeight="20.0" prefWidth="290.0" text="George Lucas, Rick McCulm" textFill="#434242">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -143,20 +133,20 @@
                                           <Font name="System Bold" size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label fx:id="lblActorsValue" alignment="TOP_LEFT" prefHeight="97.0" prefWidth="445.0" text="Mark Hamill, Harrison Ford, Carrie Fisher, David Prowse, Anthony Daniels, Kenny Baker, Peter Mayhew, Frank Oz" wrapText="true" />
+                                    <Label fx:id="lblActorsValue" alignment="TOP_LEFT" prefHeight="97.0" prefWidth="445.0" text="Mark Hamill, Harrison Ford, Carrie Fisher, David Prowse, Anthony Daniels, Kenny Baker, Peter Mayhew, Frank Oz" textFill="#434242" wrapText="true" />
                                  </children>
                                  <padding>
                                     <Insets top="15.0" />
                                  </padding>
                               </HBox>
-                              <Label onMouseClicked="#imgPlayerClicked" text="Play this movie now !">
+                              <Label fx:id="lblPlay" onMouseClicked="#imgPlayerClicked" onMouseEntered="#enableHoveredIcon" onMouseExited="#disableHoveredIcon" text="Play this movie now !" textFill="#434242">
                                  <VBox.margin>
                                     <Insets top="15.0" />
                                  </VBox.margin>
                                  <graphic>
                                     <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
-                                          <Image url="@resources/images/ivPlay.png" />
+                                          <Image url="@resources/images/lblPlay.png" />
                                        </image></ImageView>
                                  </graphic>
                                  <cursor>
@@ -219,7 +209,7 @@
                      </opaqueInsets>
                   </HBox>
                   <Label alignment="CENTER_RIGHT" contentDisplay="CENTER" prefHeight="27.0" prefWidth="133.0" text="Search by:" />
-                  <ComboBox fx:id="cbxSearchCriterias" onAction="#updateSearchMode" prefHeight="27.0" prefWidth="171.0" promptText="title" styleClass="cbxSearchCriterias">
+                  <ComboBox fx:id="cbxSearchCriterias" onAction="#updateSearchMode" prefHeight="27.0" prefWidth="204.0" promptText="Title" styleClass="cbxSearchCriterias">
                      <HBox.margin>
                         <Insets left="15.0" />
                      </HBox.margin>
@@ -234,5 +224,15 @@
             </HBox>
          </children>
       </GridPane>
+      <Pane fx:id="paneBlackOpacity" layoutX="497.0" layoutY="151.0" onMouseClicked="#paneBlackOpacityClicked" opacity="0.8" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #000;" styleClass=".ivPoster" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="-0.0" AnchorPane.topAnchor="0.0">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </Pane>
+      <ImageView fx:id="imageViewBigPoster" fitHeight="484.0" fitWidth="394.0" layoutX="304.0" layoutY="54.0" onKeyPressed="#bigPosterKeyPressed" pickOnBounds="true" preserveRatio="true" style="-fx-border-radius: 10 10 10 10;" styleClass="ivPoster">
+         <image>
+            <Image url="@resources/images/placeHolder.png" />
+         </image>
+      </ImageView>
     </children>
 </AnchorPane>
