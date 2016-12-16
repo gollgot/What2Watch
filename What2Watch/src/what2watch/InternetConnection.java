@@ -7,6 +7,7 @@ package what2watch;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.Socket;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
@@ -21,7 +22,7 @@ public class InternetConnection {
     
     /**
      * Check if there is an internet connection,
-     * We check if we can ping google's DNS, certainly
+     * We check if we can open a socket with google's DNS, certainly
      * always up ;)
 
      * @return  {@code true} if internet in enable,
@@ -32,17 +33,16 @@ public class InternetConnection {
         boolean enable = false;
         
         try {
-            InetAddress add = InetAddress.getByName("8.8.8.8");
-            if(add.isReachable(500)){
+            Socket socket = new Socket("8.8.8.8", 80);
+            if(socket.isConnected()){
                 enable = true;
             }else{
                 enable = false;
             }
-        } catch (UnknownHostException ex) {
-            Logger.getLogger(InternetConnection.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(InternetConnection.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
         return enable;
     }
     
