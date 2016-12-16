@@ -371,21 +371,35 @@ public class FXMLDocumentController implements Initializable {
         // Desktop open is for open the file with the linked application launcher on the OS
         File movieFile = new File(path);
         Desktop desktop = Desktop.getDesktop();
-        try {
-            desktop.open(movieFile);
-        } catch (IOException ex) {
-            System.out.println("Error in 'imgPlayerClicked' method in 'FXMLDocumentController' classe. EX:" + ex.getMessage().toString());
+        // Check if the Operating system car use Desktop open action or not
+        if(desktop.isSupported(Desktop.Action.OPEN)){
+            try {
+                desktop.open(movieFile);
+            } catch (IOException ex) {
+                System.out.println("Error in 'imgPlayerClicked' method in 'FXMLDocumentController' classe. EX:" + ex.getMessage().toString());
 
-            Alert alert = new Alert(AlertType.WARNING);
-            alert.setTitle("Warning");
-            alert.setHeaderText("This file cannot be read");
-            alert.setContentText("No program handling this type of file has been found on your system");
+                Alert alert = new Alert(AlertType.WARNING);
+                alert.setTitle("Warning");
+                alert.setHeaderText("This file cannot be read");
+                alert.setContentText("No program handling this type of file has been found on your system");
 
-            alert.showAndWait().ifPresent(response -> {
-                if (response == ButtonType.OK) {
-                    alert.close();
-                }
-            });
+                alert.showAndWait().ifPresent(response -> {
+                    if (response == ButtonType.OK) {
+                        alert.close();
+                    }
+                });
+            }
+        }else{
+            Alert alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText("What 2 Watch cannot open this movie file");
+                alert.setContentText("Your operating system doesn't allow What 2 Watch to open this movie file. Please open it manually.");
+
+                alert.showAndWait().ifPresent(response -> {
+                    if (response == ButtonType.OK) {
+                        alert.close();
+                    }
+                });
         }
     }
 
@@ -403,7 +417,7 @@ public class FXMLDocumentController implements Initializable {
                             ivConnectionStatus.setStyle("-fx-background-color: null; -fx-image: url(\"what2watch/resources/images/redDot.png\")");
                         }
 
-                        Thread.sleep(15000);
+                        Thread.sleep(1000);
 
                     } catch (InterruptedException ex) {
                         System.out.println("Error on checkInternetConnection method in FXMLDocumentCOntroller class. Ex: " + ex.getMessage().toString());

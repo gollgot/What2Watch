@@ -13,16 +13,6 @@
 
 <AnchorPane id="AnchorPane" prefHeight="591.0" prefWidth="948.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="what2watch.FXMLDocumentController">
     <children>
-      <Pane fx:id="paneBlackOpacity" layoutX="497.0" layoutY="151.0" onMouseClicked="#paneBlackOpacityClicked" opacity="0.8" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #000;" styleClass=".ivPoster" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="-0.0" AnchorPane.topAnchor="0.0">
-         <cursor>
-            <Cursor fx:constant="HAND" />
-         </cursor>
-      </Pane>
-      <ImageView fx:id="imageViewBigPoster" fitHeight="484.0" fitWidth="394.0" layoutX="304.0" layoutY="54.0" onKeyPressed="#bigPosterKeyPressed" pickOnBounds="true" preserveRatio="true" style="-fx-border-radius: 10 10 10 10;" styleClass="ivPoster">
-         <image>
-            <Image url="@resources/images/placeHolder.png" />
-         </image>
-      </ImageView>
       <Pane prefHeight="602.0" prefWidth="801.0" style="-fx-background-color: #eee;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
       <GridPane prefHeight="602.0" prefWidth="757.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <columnConstraints>
@@ -253,5 +243,15 @@
             </VBox>
          </children>
       </GridPane>
+      <Pane fx:id="paneBlackOpacity" layoutX="497.0" layoutY="151.0" onMouseClicked="#paneBlackOpacityClicked" opacity="0.8" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #000;" styleClass=".ivPoster" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="-0.0" AnchorPane.topAnchor="0.0">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </Pane>
+      <ImageView fx:id="imageViewBigPoster" fitHeight="484.0" fitWidth="394.0" layoutX="304.0" layoutY="54.0" onKeyPressed="#bigPosterKeyPressed" pickOnBounds="true" preserveRatio="true" style="-fx-border-radius: 10 10 10 10;" styleClass="ivPoster">
+         <image>
+            <Image url="@resources/images/placeHolder.png" />
+         </image>
+      </ImageView>
     </children>
 </AnchorPane>
