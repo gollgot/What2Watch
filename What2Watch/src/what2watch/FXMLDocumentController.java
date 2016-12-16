@@ -20,6 +20,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -39,6 +40,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -50,8 +52,6 @@ public class FXMLDocumentController implements Initializable {
 
     @FXML
     private Button btnSettings;
-    @FXML
-    private Button btnScanFolder;
     @FXML
     private TextArea taSynopsis;
     @FXML
@@ -67,23 +67,11 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private TextField tfEndingYear;
     @FXML
-    private Label lblTitle;
-    @FXML
-    private Label lblTitleValue;
-    @FXML
-    private Label lblYear;
-    @FXML
-    private Label lblYearValue;
-    @FXML
-    private Label lblGenre;
-    @FXML
     private Label lblGenreValue;
     @FXML
     private Label lblActors;
     @FXML
     private Label lblActorsValue;
-    @FXML
-    private Label lblSynopsis;
     @FXML
     private Label lblStartingYear;
     @FXML
@@ -97,25 +85,29 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private ImageView imageViewBigPoster;
     @FXML
-    private ImageView imgPlayer;
+    private Text txtTitle;
     @FXML
-    private Label lblNbFilesProcessed;
+    private Text txtYear;
     @FXML
-    private ImageView ivConnectionLost;
+    private Button btnRefresh;
+    @FXML
+    private Label lblPlay;
     @FXML
     private ImageView ivConnectionOk;
     @FXML
+    private ImageView ivConnectionLost;
+    @FXML
     private ProgressBar progressBarProcess;
+    @FXML
+    private Label lblNbFilesProcessed;
     
     private UserPreferences prefs = new UserPreferences();
     private int activeSearchMode = 0;
     public static boolean exit = false; // Change if we close the application (see -> Main class)
-    
- 
-    
+   
     
     
-
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // Displaying the settings window before the main one if no path has been saved in the app
@@ -182,11 +174,12 @@ public class FXMLDocumentController implements Initializable {
         // Window customization
         settingStage.setResizable(false);
         settingStage.initModality(Modality.APPLICATION_MODAL);
-        settingStage.setTitle("Sélection du répertoire de films");
+        settingStage.setTitle("Movie directory selection");
 
         Scene scene = new Scene(root);
         settingStage.setScene(scene);
-
+        
+        settingStage.getIcons().add(new Image("what2watch/resources/images/W2W_Logo.png"));
         settingStage.showAndWait();
     }
 
@@ -219,11 +212,13 @@ public class FXMLDocumentController implements Initializable {
                 setYearSearchMode(false);
                 this.tfSearch.requestFocus();
                 this.activeSearchMode = 0;
+                this.tfSearch.setPromptText("e.g. Star Wars, Titanic, ...");
                 break;
             case 1: // Genre
                 setYearSearchMode(false);
                 this.tfSearch.requestFocus();
                 this.activeSearchMode = 1;
+                this.tfSearch.setPromptText("e.g. Drama, Action, ...");
                 break;
             case 2: // Year
                 setYearSearchMode(true);
@@ -234,11 +229,13 @@ public class FXMLDocumentController implements Initializable {
                 setYearSearchMode(false);
                 this.tfSearch.requestFocus();
                 this.activeSearchMode = 3;
+                this.tfSearch.setPromptText("e.g. George Lucas, Guillermo del Toro, ...");
                 break;
             case 4: // Actor
                 setYearSearchMode(false);
                 this.tfSearch.requestFocus();
                 this.activeSearchMode = 4;
+                this.tfSearch.setPromptText("e.g. Leonardo DiCaprio, Mila Kunis, ...");
                 break;
             default:
                 break;
@@ -268,44 +265,46 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private void getMovieInformations() {
         String movieTitle = listMovie.getSelectionModel().getSelectedItem();
-        Movie selectedMovie = DbHandler.getMovie(movieTitle);
-        
-        // getActors / Directors / Genres, return an array, so we have to format that
-        // to have a String with a comma for separate data Ex : data1, data2, data3
-        String actors = "";
-        for (int i = 0; i < selectedMovie.getActors().length; i++) {
-            actors += selectedMovie.getActors()[i]+", ";
-        }
-        actors = actors.replaceAll(", $", ""); // Delete last comma
-        
-        String genres = "";
-        for (int i = 0; i < selectedMovie.getGenre().length; i++) {
-            genres += selectedMovie.getGenre()[i]+", ";
-        }
-        genres = genres.replaceAll(", $", "");
-        
-        String directors = "";
-        for (int i = 0; i < selectedMovie.getDirector().length; i++) {
-            directors += selectedMovie.getDirector()[i]+", ";
-        }
-        directors = directors.replaceAll(", $", "");
+        if (movieTitle != null) {
+            Movie selectedMovie = DbHandler.getMovie(movieTitle);
 
-        // Set texts on the labels
-        lblTitleValue.setText(selectedMovie.getTitle());
-        lblYearValue.setText(selectedMovie.getYear());
-        taSynopsis.setText(selectedMovie.getSynopsis());
-        lblActorsValue.setText(actors);
-        lblGenreValue.setText(genres);
-        lblDirectorsValue.setText(directors);
+            // getActors / Directors / Genres, return an array, so we have to format that
+            // to have a String with a comma for separate data Ex : data1, data2, data3
+            String actors = "";
+            for (int i = 0; i < selectedMovie.getActors().length; i++) {
+                actors += selectedMovie.getActors()[i] + ", ";
+            }
+            actors = actors.replaceAll(", $", ""); // Delete last comma
+
+            String genres = "";
+            for (int i = 0; i < selectedMovie.getGenre().length; i++) {
+                genres += selectedMovie.getGenre()[i] + ", ";
+            }
+            genres = genres.replaceAll(", $", "");
+
+            String directors = "";
+            for (int i = 0; i < selectedMovie.getDirector().length; i++) {
+                directors += selectedMovie.getDirector()[i] + ", ";
+            }
+            directors = directors.replaceAll(", $", "");
+
+            // Set texts on the labels
+            txtTitle.setText(selectedMovie.getTitle());
+            txtYear.setText(" (" + selectedMovie.getYear() + ")");
+            taSynopsis.setText(selectedMovie.getSynopsis());
+            lblActorsValue.setText(actors);
+            lblGenreValue.setText(genres);
+            lblDirectorsValue.setText(directors);
 
         // Movie poster handling
         Image moviePoster = new Image("what2watch/images/placeHolder.png");
         if (!selectedMovie.getPoster().equals("Unknown") && InternetConnection.isEnable()) {
  
             moviePoster = new Image("http://image.tmdb.org/t/p/w300" + selectedMovie.getPoster());
+            }
+            ivMovie.setImage(moviePoster);
+            imageViewBigPoster.setImage(moviePoster);
         }
-        ivMovie.setImage(moviePoster);
-        imageViewBigPoster.setImage(moviePoster);
     }
 
     @FXML
@@ -374,7 +373,7 @@ public class FXMLDocumentController implements Initializable {
 
     @FXML
     private void imgPlayerClicked(MouseEvent event) {
-        String title = lblTitleValue.getText();
+        String title = txtTitle.getText();
         String rawTitle = DbHandler.getRawTitle(title);
         String path = FileBrowser.getFilePath(rawTitle);
         
@@ -427,5 +426,23 @@ public class FXMLDocumentController implements Initializable {
         checkInternetConnection.start();
  
     }
+    
+    private void toggleHoveredIcon(MouseEvent event, String iconSuffix) {
+        String elementInfos = event.getSource().toString();
+        String elementId = elementInfos.substring(elementInfos.indexOf("id=") + 3, elementInfos.indexOf(","));
+        Node hoveredElement = (Node)event.getSource();
+        hoveredElement.setStyle("-fx-background-color: null; -fx-graphic: url(\"what2watch/resources/images/" + elementId + iconSuffix +".png\")");
+    }
 
+    @FXML
+    private void disableHoveredIcon(MouseEvent event) {
+        String iconSuffix = "";
+        toggleHoveredIcon(event, iconSuffix);
+    }
+
+    @FXML
+    private void enableHoveredIcon(MouseEvent event) {
+        String iconSuffix = "Hovered";
+        toggleHoveredIcon(event, iconSuffix);
+    }
 }
