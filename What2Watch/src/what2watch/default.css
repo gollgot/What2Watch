@@ -147,3 +147,7 @@ This file holds the default style of the app
 .settingButton:hover  {
     -fx-background-color: #d1d1d1;
 }
+
+.lblPlay:hover {
+    -fx-text-fill: #c0c0c0;
+}

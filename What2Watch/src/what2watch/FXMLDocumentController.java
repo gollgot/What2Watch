@@ -16,7 +16,10 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.animation.FadeTransition;
+import javafx.animation.ParallelTransition;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -44,6 +47,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 /**
  *
@@ -338,11 +342,48 @@ public class FXMLDocumentController implements Initializable {
         imageViewBigPoster.setVisible(true);
         // We set the focus to the BigPoster (like that we can check if we presse the escape key or not)
         imageViewBigPoster.requestFocus();
+        
+        FadeTransition ft = new FadeTransition(Duration.millis(300), paneBlackOpacity);
+        ft.setFromValue(0.0);
+        ft.setToValue(0.8);
+        ft.setAutoReverse(true);
+        
+        FadeTransition ft2 = new FadeTransition(Duration.millis(300), imageViewBigPoster);
+        ft2.setFromValue(0.0);
+        ft2.setToValue(1.0);
+        ft2.setAutoReverse(true);
+
+        ParallelTransition pt = new ParallelTransition(ft, ft2);
+        pt.play();
     }
 
     private void closeBigPoster() {
-        paneBlackOpacity.setVisible(false);
-        imageViewBigPoster.setVisible(false);
+        paneBlackOpacity.setVisible(true);
+        imageViewBigPoster.setVisible(true);
+        // We set the focus to the BigPoster (like that we can check if we presse the escape key or not)
+        imageViewBigPoster.requestFocus();
+        
+        FadeTransition ft = new FadeTransition(Duration.millis(300), paneBlackOpacity);
+        ft.setFromValue(0.8);
+        ft.setToValue(0.0);
+        ft.setAutoReverse(true);
+        
+        FadeTransition ft2 = new FadeTransition(Duration.millis(300), imageViewBigPoster);
+        ft2.setFromValue(1.0);
+        ft2.setToValue(0.0);
+        ft2.setAutoReverse(true);
+        
+        ParallelTransition pt = new ParallelTransition(ft, ft2);
+        
+        pt.setOnFinished(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                paneBlackOpacity.setVisible(false);
+                imageViewBigPoster.setVisible(false);
+            }
+        });
+        
+        pt.play();
     }
 
     // Close the bigPoster when we clicked on the black opac pane
