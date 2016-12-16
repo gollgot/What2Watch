@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import com.jfoenix.controls.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.effect.*?>
 <?import javafx.scene.text.*?>
@@ -12,6 +13,16 @@
 
 <AnchorPane id="AnchorPane" prefHeight="591.0" prefWidth="948.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="what2watch.FXMLDocumentController">
     <children>
+      <Pane fx:id="paneBlackOpacity" layoutX="497.0" layoutY="151.0" onMouseClicked="#paneBlackOpacityClicked" opacity="0.8" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #000;" styleClass=".ivPoster" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="-0.0" AnchorPane.topAnchor="0.0">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </Pane>
+      <ImageView fx:id="imageViewBigPoster" fitHeight="484.0" fitWidth="394.0" layoutX="304.0" layoutY="54.0" onKeyPressed="#bigPosterKeyPressed" pickOnBounds="true" preserveRatio="true" style="-fx-border-radius: 10 10 10 10;" styleClass="ivPoster">
+         <image>
+            <Image url="@resources/images/placeHolder.png" />
+         </image>
+      </ImageView>
       <Pane prefHeight="602.0" prefWidth="801.0" style="-fx-background-color: #eee;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
       <GridPane prefHeight="602.0" prefWidth="757.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <columnConstraints>
@@ -22,8 +33,8 @@
           <RowConstraints maxHeight="591.0" minHeight="10.0" prefHeight="46.0" vgrow="SOMETIMES" />
           <RowConstraints maxHeight="474.0" minHeight="0.0" prefHeight="45.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="448.0" minHeight="10.0" prefHeight="334.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="448.0" minHeight="10.0" prefHeight="152.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="448.0" minHeight="10.0" prefHeight="18.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="448.0" minHeight="10.0" prefHeight="117.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="448.0" minHeight="8.0" prefHeight="52.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.rowIndex="1">
@@ -222,17 +233,11 @@
                   <Insets top="10.0" />
                </padding>
             </HBox>
+            <ImageView fx:id="ivConnectionOk" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <ImageView fx:id="ivConnectionLost" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <ProgressBar fx:id="progressBarProcess" prefWidth="200.0" progress="0.0" GridPane.rowIndex="4" />
+            <Label fx:id="lblNbFilesProcessed" contentDisplay="RIGHT" text="processed files 1 / 100" GridPane.halignment="RIGHT" GridPane.rowIndex="4" />
          </children>
       </GridPane>
-      <Pane fx:id="paneBlackOpacity" layoutX="497.0" layoutY="151.0" onMouseClicked="#paneBlackOpacityClicked" opacity="0.8" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #000;" styleClass=".ivPoster" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="-0.0" AnchorPane.topAnchor="0.0">
-         <cursor>
-            <Cursor fx:constant="HAND" />
-         </cursor>
-      </Pane>
-      <ImageView fx:id="imageViewBigPoster" fitHeight="484.0" fitWidth="394.0" layoutX="304.0" layoutY="54.0" onKeyPressed="#bigPosterKeyPressed" pickOnBounds="true" preserveRatio="true" style="-fx-border-radius: 10 10 10 10;" styleClass="ivPoster">
-         <image>
-            <Image url="@resources/images/placeHolder.png" />
-         </image>
-      </ImageView>
     </children>
 </AnchorPane>

@@ -30,6 +30,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -91,9 +92,20 @@ public class FXMLDocumentController implements Initializable {
     private Text txtYear;
     @FXML
     private Button btnRefresh;
+    @FXML
+    private Label lblPlay;
+    @FXML
+    private ImageView ivConnectionOk;
+    @FXML
+    private ImageView ivConnectionLost;
+    @FXML
+    private ProgressBar progressBarProcess;
+    @FXML
+    private Label lblNbFilesProcessed;
     
     private UserPreferences prefs = new UserPreferences();
     private int activeSearchMode = 0;
+   
     
     
     
