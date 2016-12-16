@@ -71,7 +71,7 @@
                   <Insets left="10.0" />
                </padding>
             </HBox>
-            <ListView fx:id="listMovie" fixedCellSize="30.0" onKeyReleased="#updateDisplayedInfos" onMouseClicked="#getMovieInformations" prefHeight="476.0" prefWidth="278.0" styleClass="listMovie" GridPane.rowIndex="2" GridPane.rowSpan="2">
+            <ListView fx:id="listMovie" fixedCellSize="40.0" onKeyReleased="#updateDisplayedInfos" onMouseClicked="#getMovieInformations" prefHeight="476.0" prefWidth="278.0" styleClass="listMovie" GridPane.rowIndex="2" GridPane.rowSpan="2">
                <GridPane.margin>
                   <Insets left="20.0" right="10.0" />
                </GridPane.margin>
@@ -248,7 +248,7 @@
             <VBox alignment="CENTER" pickOnBounds="false" prefHeight="200.0" prefWidth="100.0" spacing="5.0" GridPane.rowIndex="2">
                <children>
                   <Label fx:id="lblNbFilesProcessed" contentDisplay="RIGHT" text="processed files 1 / 100" textFill="#434242" />
-                  <ProgressBar fx:id="progressBarProcess" prefWidth="200.0" progress="0.0" />
+                  <ProgressBar fx:id="progressBarProcess" prefWidth="200.0" progress="0.0" styleClass="progressBar" />
                </children>
             </VBox>
          </children>

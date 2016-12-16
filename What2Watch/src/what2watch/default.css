@@ -75,6 +75,13 @@ This file holds the default style of the app
     -fx-background-color: #ababab;
 }
 
+/*.listMovie .list-cell:odd,
+.listMovie .list-cell:even {
+    -fx-background-color: #f7f7f7;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: #c8c8c8;
+}*/
+
 /*Out of focus style (listView unfocused)*/
 .listMovie .list-cell:filled:selected {
     -fx-text-fill: white;
@@ -114,3 +121,14 @@ This file holds the default style of the app
  ******************************************************************************/
 
 /* TODO: add border radius */
+
+
+/*******************************************************************************
+ *                                                                             *
+ * progressBar                                                                   *
+ *                                                                             *
+ ******************************************************************************/
+
+.progressBar .bar {
+    -fx-background-color: #ababab;
+}
