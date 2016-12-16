@@ -40,6 +40,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -169,6 +170,8 @@ public class FXMLDocumentController implements Initializable {
         settingStage.setTitle("Movie directory selection");
 
         Scene scene = new Scene(root);
+        Font.loadFont(getClass().getResourceAsStream("resources/fonts/SourceSansPro-Regular.otf"), 12);
+        scene.getStylesheets().add("what2watch/default.css");
         settingStage.setScene(scene);
 
         settingStage.getIcons().add(new Image("what2watch/resources/images/W2W_Logo.png"));
