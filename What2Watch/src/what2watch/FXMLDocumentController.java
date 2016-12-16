@@ -290,7 +290,6 @@ public class FXMLDocumentController implements Initializable {
             // Movie poster handling
             Image moviePoster = new Image("what2watch/resources/images/placeHolder.png");
             if (!selectedMovie.getPoster().equals("Unknown") && InternetConnection.isEnable()) {
-
                 moviePoster = new Image("http://image.tmdb.org/t/p/w300" + selectedMovie.getPoster());
             }
             ivMovie.setImage(moviePoster);
@@ -367,40 +366,58 @@ public class FXMLDocumentController implements Initializable {
         String title = txtTitle.getText();
         String rawTitle = DbHandler.getRawTitle(title);
         String path = FileBrowser.getFilePath(rawTitle);
+        String os = System.getProperty("os.name").toLowerCase();
+        System.out.println(os);
+        showErrorOS();
+        if(isMac(os) || isWindows(os)){
+            // Check if the Operating system can use Desktop open action or not
+            if(Desktop.isDesktopSupported()){
+                // Desktop open is for open the file with the linked application launcher on the OS
+                File movieFile = new File(path);
+                Desktop desktop = Desktop.getDesktop();
+                try {
+                    desktop.open(movieFile);
+                } catch (IOException ex) {
+                    System.out.println("Error in 'imgPlayerClicked' method in 'FXMLDocumentController' classe. EX:" + ex.getMessage().toString());
 
-        // Desktop open is for open the file with the linked application launcher on the OS
-        File movieFile = new File(path);
-        Desktop desktop = Desktop.getDesktop();
-        // Check if the Operating system car use Desktop open action or not
-        if(desktop.isSupported(Desktop.Action.OPEN)){
-            try {
-                desktop.open(movieFile);
-            } catch (IOException ex) {
-                System.out.println("Error in 'imgPlayerClicked' method in 'FXMLDocumentController' classe. EX:" + ex.getMessage().toString());
+                    Alert alert = new Alert(AlertType.WARNING);
+                    alert.setTitle("Warning");
+                    alert.setHeaderText("This file cannot be read");
+                    alert.setContentText("No program handling this type of file has been found on your system");
 
-                Alert alert = new Alert(AlertType.WARNING);
-                alert.setTitle("Warning");
-                alert.setHeaderText("This file cannot be read");
-                alert.setContentText("No program handling this type of file has been found on your system");
-
-                alert.showAndWait().ifPresent(response -> {
-                    if (response == ButtonType.OK) {
-                        alert.close();
-                    }
-                });
+                    alert.showAndWait().ifPresent(response -> {
+                        if (response == ButtonType.OK) {
+                            alert.close();
+                        }
+                    });
+                }
+            }else{
+                showErrorOS();
             }
         }else{
-            Alert alert = new Alert(AlertType.ERROR);
-                alert.setTitle("Error");
-                alert.setHeaderText("What 2 Watch cannot open this movie file");
-                alert.setContentText("Your operating system doesn't allow What 2 Watch to open this movie file. Please open it manually.");
-
-                alert.showAndWait().ifPresent(response -> {
-                    if (response == ButtonType.OK) {
-                        alert.close();
-                    }
-                });
+            showErrorOS();
         }
+    }
+    
+    private boolean isWindows(String os) {
+        return (os.indexOf("win") >= 0);
+    }
+
+    private boolean isMac(String os) {
+        return (os.indexOf("mac") >= 0);
+    }
+    
+    private void showErrorOS(){
+        Alert alert = new Alert(AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText("What 2 Watch cannot open this movie file");
+        alert.setContentText("Your operating system doesn't allow What 2 Watch to open this movie file. Please open it manually.");
+
+        alert.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                alert.close();
+            }
+        });
     }
 
     private void checkInternetConnection() {
@@ -408,7 +425,7 @@ public class FXMLDocumentController implements Initializable {
         Thread checkInternetConnection = new Thread(new Runnable() {
             @Override
             public void run() {
-                // Exit change if we close the application, this way we can close the thread
+                // Exit changeed  if we close the application (look at Main class), this way we can close the thread
                 while (exit == false) {
                     try {
                         if (InternetConnection.isEnable()) {
@@ -416,7 +433,8 @@ public class FXMLDocumentController implements Initializable {
                         } else {
                             ivConnectionStatus.setStyle("-fx-background-color: null; -fx-image: url(\"what2watch/resources/images/redDot.png\")");
                         }
-
+                        
+                        // Check every second
                         Thread.sleep(1000);
 
                     } catch (InterruptedException ex) {
