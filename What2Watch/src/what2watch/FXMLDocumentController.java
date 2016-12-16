@@ -114,7 +114,7 @@ public class FXMLDocumentController implements Initializable {
                 Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else if (!Files.exists(Paths.get(movieFolderPath))) {
-            Alert alert = new Alert(AlertType.WARNING);
+            Alert alert = new Alert(AlertType.ERROR);
             alert.setTitle("Error");
             alert.setHeaderText("Missing movie folder");
             alert.setContentText("The folder containing your movies has been moved or deleted.\n"
@@ -367,8 +367,7 @@ public class FXMLDocumentController implements Initializable {
         String rawTitle = DbHandler.getRawTitle(title);
         String path = FileBrowser.getFilePath(rawTitle);
         String os = System.getProperty("os.name").toLowerCase();
-        System.out.println(os);
-        showErrorOS();
+        
         if(isMac(os) || isWindows(os)){
             // Check if the Operating system can use Desktop open action or not
             if(Desktop.isDesktopSupported()){
