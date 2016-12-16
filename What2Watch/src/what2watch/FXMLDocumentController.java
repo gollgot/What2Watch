@@ -398,9 +398,9 @@ public class FXMLDocumentController implements Initializable {
                 while (exit == false) {
                     try {
                         if (InternetConnection.isEnable()) {
-                            ivConnectionStatus.setStyle("-fx-background-color: null; -fx-graphic: url(\"what2watch/resources/images/connection.png\")");
+                            ivConnectionStatus.setStyle("-fx-background-color: null; -fx-image: url(\"what2watch/resources/images/greenDot.png\")");
                         } else {
-                            ivConnectionStatus.setStyle("-fx-background-color: null; -fx-graphic: url(\"what2watch/resources/images/no_connection.png\")");
+                            ivConnectionStatus.setStyle("-fx-background-color: null; -fx-image: url(\"what2watch/resources/images/redDot.png\")");
                         }
 
                         Thread.sleep(15000);
