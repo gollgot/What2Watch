@@ -24,7 +24,7 @@ public class ParsingFiles {
         String listExcludeTeam = "Ganesh-AC3|Dieudonne|Cpasbien|\\[www\\.Cpasbien\\.me\\]|GraNPa|byPhilou";
         String listExcludeFileResolution = "720p|1080p";        
         String listExcludeTypeRecord = "BluRay|DVDRIP|dvdrip|HD|3D|3d|Version|BDRip|Xvid|AC3|EDITION EXCLUSIVE|XviD";
-        String listExcludeTypePonctuation = "\\.|-|;|,|_";
+        String listExcludeTypePonctuation = "\\.|-|;|,|_|\\(|\\)";
         String listExclude = listExcludeExtension +"|" + 
                              listExcludeTypeExtension + "|" +
                              listExcludeLanguage + "|" +

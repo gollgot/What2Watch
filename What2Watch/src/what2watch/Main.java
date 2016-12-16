@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -17,6 +18,7 @@ import javafx.scene.image.Image;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.stage.WindowEvent;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -34,8 +36,6 @@ public class Main extends Application {
         
         Font test = Font.loadFont(getClass().getResourceAsStream("resources/fonts/SourceSansPro-Regular.otf"), 12);
         Font test2 = Font.loadFont(getClass().getResourceAsStream("resources/fonts/Montserrat-Bold.ttf"), 12);
-        System.out.println(test);
-        System.out.println(test2);
         scene.getStylesheets().add("what2watch/default.css");
         
         // StageStyle.UNIFIED is for remove the basic blue border of the windows
@@ -45,6 +45,17 @@ public class Main extends Application {
         stage.setTitle("What 2 Watch");
         stage.getIcons().add(new Image("what2watch/resources/images/W2W_Logo.png"));
         stage.show();
+        
+        // When we close the application, we assign true to the exit variable on the controler. 
+        // This way, the controller class know we exit the programm, then, we can close all thread 
+        // This case, the thread who check the internet connection. 
+        stage.setOnCloseRequest(new EventHandler<WindowEvent>() { 
+            @Override 
+            public void handle(WindowEvent event) { 
+                // We close the programm 
+                FXMLDocumentController.exit = true; 
+            } 
+        });
     }
 
     /**

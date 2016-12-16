@@ -81,8 +81,6 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private Label lblDirectorsValue;
     @FXML
-    private ProgressIndicator searchProgressIndicator;
-    @FXML
     private Pane paneBlackOpacity;
     @FXML
     private ImageView imageViewBigPoster;
@@ -95,20 +93,16 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private Label lblPlay;
     @FXML
-    private ImageView ivConnectionOk;
-    @FXML
-    private ImageView ivConnectionLost;
+    private ImageView ivConnectionStatus;
     @FXML
     private ProgressBar progressBarProcess;
     @FXML
     private Label lblNbFilesProcessed;
-    
+
     private UserPreferences prefs = new UserPreferences();
     private int activeSearchMode = 0;
-   
-    
-    
-    
+    public static boolean exit = false; // Change if we close the application (see -> Main class)
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // Displaying the settings window before the main one if no path has been saved in the app
@@ -156,7 +150,11 @@ public class FXMLDocumentController implements Initializable {
         paneBlackOpacity.setVisible(false);
         imageViewBigPoster.setVisible(false);
 
-        searchProgressIndicator.setVisible(false);
+        progressBarProcess.setVisible(false);
+        lblNbFilesProcessed.setVisible(false);
+
+        checkInternetConnection();
+
     }
 
     @FXML
@@ -172,7 +170,7 @@ public class FXMLDocumentController implements Initializable {
 
         Scene scene = new Scene(root);
         settingStage.setScene(scene);
-        
+
         settingStage.getIcons().add(new Image("what2watch/resources/images/W2W_Logo.png"));
         settingStage.showAndWait();
     }
@@ -188,11 +186,12 @@ public class FXMLDocumentController implements Initializable {
         DbHandler dbHandler = new DbHandler(cacheDb, fileNames, rawFileNames);
         listMovie.getItems().clear();
         // Init progress indicator to 0 and display it
-        searchProgressIndicator.setProgress(0);
-        searchProgressIndicator.setVisible(true);
+        progressBarProcess.setProgress(0);
+        progressBarProcess.setVisible(true);
+
         this.disableSearchUI(true);
         // We pass the current instance of "FXMLDocumentController" class, because we have to access the "disableSearchUI" method 
-        dbHandler.update(this, listMovie, searchProgressIndicator);
+        dbHandler.update(this, listMovie, progressBarProcess, lblNbFilesProcessed);
     }
 
     @FXML
@@ -233,7 +232,7 @@ public class FXMLDocumentController implements Initializable {
             default:
                 break;
         }
-        
+
         this.searchForMatchingMovies(null);
     }
 
@@ -252,9 +251,8 @@ public class FXMLDocumentController implements Initializable {
         tfEndingYear.setVisible(on);
         tfSearch.setVisible(!on);
     }
-    
-    // Clic on an items on the list
 
+    // Clic on an items on the list
     @FXML
     private void getMovieInformations() {
         String movieTitle = listMovie.getSelectionModel().getSelectedItem();
@@ -288,10 +286,11 @@ public class FXMLDocumentController implements Initializable {
             lblActorsValue.setText(actors);
             lblGenreValue.setText(genres);
             lblDirectorsValue.setText(directors);
-
+            
             // Movie poster handling
             Image moviePoster = new Image("what2watch/resources/images/placeHolder.png");
-            if (!selectedMovie.getPoster().equals("Unknown")) {
+            if (!selectedMovie.getPoster().equals("Unknown") && InternetConnection.isEnable()) {
+
                 moviePoster = new Image("http://image.tmdb.org/t/p/w300" + selectedMovie.getPoster());
             }
             ivMovie.setImage(moviePoster);
@@ -301,7 +300,7 @@ public class FXMLDocumentController implements Initializable {
 
     @FXML
     private void searchForMatchingMovies(KeyEvent event) {
-            // Calling the right search methods according to the active search mode
+        // Calling the right search methods according to the active search mode
         switch (activeSearchMode) {
             case 0: // Title
                 SearchHandler.findMovieByTitle(this.tfSearch.getText());
@@ -356,7 +355,7 @@ public class FXMLDocumentController implements Initializable {
             closeBigPoster();
         }
     }
-    
+
     public void disableSearchUI(boolean toggleValue) {
         this.disableSearchBars(toggleValue);
         this.cbxSearchCriterias.setDisable(toggleValue);
@@ -368,15 +367,15 @@ public class FXMLDocumentController implements Initializable {
         String title = txtTitle.getText();
         String rawTitle = DbHandler.getRawTitle(title);
         String path = FileBrowser.getFilePath(rawTitle);
-        
+
         // Desktop open is for open the file with the linked application launcher on the OS
         File movieFile = new File(path);
         Desktop desktop = Desktop.getDesktop();
         try {
             desktop.open(movieFile);
         } catch (IOException ex) {
-            System.out.println("Error in 'imgPlayerClicked' method in 'FXMLDocumentController' classe. EX:"+ex.getMessage().toString());
-            
+            System.out.println("Error in 'imgPlayerClicked' method in 'FXMLDocumentController' classe. EX:" + ex.getMessage().toString());
+
             Alert alert = new Alert(AlertType.WARNING);
             alert.setTitle("Warning");
             alert.setHeaderText("This file cannot be read");
@@ -389,12 +388,39 @@ public class FXMLDocumentController implements Initializable {
             });
         }
     }
-    
+
+    private void checkInternetConnection() {
+
+        Thread checkInternetConnection = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                // Exit change if we close the application, this way we can close the thread
+                while (exit == false) {
+                    try {
+                        if (InternetConnection.isEnable()) {
+                            ivConnectionStatus.setStyle("-fx-background-color: null; -fx-image: url(\"what2watch/resources/images/greenDot.png\")");
+                        } else {
+                            ivConnectionStatus.setStyle("-fx-background-color: null; -fx-image: url(\"what2watch/resources/images/redDot.png\")");
+                        }
+
+                        Thread.sleep(15000);
+
+                    } catch (InterruptedException ex) {
+                        System.out.println("Error on checkInternetConnection method in FXMLDocumentCOntroller class. Ex: " + ex.getMessage().toString());
+                    }
+                }
+            }
+        });
+
+        checkInternetConnection.start();
+
+    }
+
     private void toggleHoveredIcon(MouseEvent event, String iconSuffix) {
         String elementInfos = event.getSource().toString();
         String elementId = elementInfos.substring(elementInfos.indexOf("id=") + 3, elementInfos.indexOf(","));
-        Node hoveredElement = (Node)event.getSource();
-        hoveredElement.setStyle("-fx-background-color: null; -fx-graphic: url(\"what2watch/resources/images/" + elementId + iconSuffix +".png\")");
+        Node hoveredElement = (Node) event.getSource();
+        hoveredElement.setStyle("-fx-background-color: null; -fx-graphic: url(\"what2watch/resources/images/" + elementId + iconSuffix + ".png\")");
     }
 
     @FXML
