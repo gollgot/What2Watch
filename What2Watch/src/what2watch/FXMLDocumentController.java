@@ -114,22 +114,7 @@ public class FXMLDocumentController implements Initializable {
                 Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else if (!Files.exists(Paths.get(movieFolderPath))) {
-            Alert alert = new Alert(AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("Missing movie folder");
-            alert.setContentText("The folder containing your movies has been moved or deleted.\n"
-                    + "Please select the folder containing your movies.");
-
-            alert.showAndWait().ifPresent(response -> {
-                if (response == ButtonType.OK) {
-                    alert.close();
-                    try {
-                        showSettings(null);
-                    } catch (IOException ex) {
-                        Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-            });
+            displayMissingFolderError();
         }
 
         // Combobox search criterias configuration
@@ -177,21 +162,26 @@ public class FXMLDocumentController implements Initializable {
 
     @FXML
     private void browseFiles(ActionEvent event) throws IOException {
-        CacheDb cacheDb = new CacheDb();
-        // Update the cache db (add or remove movies on DB, it depend on the
-        // browser.getMovieFileNames) and get real titles of all the movies on 
-        // the DB.
-        ArrayList<String> fileNames = ParsingFiles.parse(FileBrowser.getMovieFileNames());
-        ArrayList<String> rawFileNames = FileBrowser.getMovieFileNames();
-        DbHandler dbHandler = new DbHandler(cacheDb, fileNames, rawFileNames);
-        listMovie.getItems().clear();
-        // Init progress indicator to 0 and display it
-        progressBarProcess.setProgress(0);
-        progressBarProcess.setVisible(true);
+        String movieFolderPath = this.prefs.getPath();
+        if (Files.exists(Paths.get(movieFolderPath))) {
+            CacheDb cacheDb = new CacheDb();
+            // Update the cache db (add or remove movies on DB, it depend on the
+            // browser.getMovieFileNames) and get real titles of all the movies on 
+            // the DB.
+            ArrayList<String> fileNames = ParsingFiles.parse(FileBrowser.getMovieFileNames());
+            ArrayList<String> rawFileNames = FileBrowser.getMovieFileNames();
+            DbHandler dbHandler = new DbHandler(cacheDb, fileNames, rawFileNames);
+            listMovie.getItems().clear();
+            // Init progress indicator to 0 and display it
+            progressBarProcess.setProgress(0);
+            progressBarProcess.setVisible(true);
 
-        this.disableSearchUI(true);
-        // We pass the current instance of "FXMLDocumentController" class, because we have to access the "disableSearchUI" method 
-        dbHandler.update(this, listMovie, progressBarProcess, lblNbFilesProcessed);
+            this.disableSearchUI(true);
+            // We pass the current instance of "FXMLDocumentController" class, because we have to access the "disableSearchUI" method 
+            dbHandler.update(this, listMovie, progressBarProcess, lblNbFilesProcessed);
+        } else {
+            displayMissingFolderError();
+        }
     }
 
     @FXML
@@ -464,5 +454,24 @@ public class FXMLDocumentController implements Initializable {
     private void enableHoveredIcon(MouseEvent event) {
         String iconSuffix = "Hovered";
         toggleHoveredIcon(event, iconSuffix);
+    }
+    
+    private void displayMissingFolderError() {
+        Alert alert = new Alert(AlertType.ERROR);
+        alert.setTitle("What 2 Watch - Error");
+        alert.setHeaderText("Missing movie folder");
+        alert.setContentText("The folder containing your movies has been moved or deleted.\n"
+                + "Please select the folder containing your movies.");
+
+        alert.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                alert.close();
+                try {
+                    showSettings(null);
+                } catch (IOException ex) {
+                    Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
     }
 }
