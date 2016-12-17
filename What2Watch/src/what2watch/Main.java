@@ -5,8 +5,13 @@
  */
 package what2watch;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
@@ -97,9 +102,7 @@ public class Main extends Application {
             System.out.println("Nom : "+finalListFiles.get(i));
         }*/
        //DbHandler dbHandler = new DbHandler(cacheDb,finalListFiles);
-        
-        
-        
+       
         
         
         /* After : Launch the window */

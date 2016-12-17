@@ -5,7 +5,12 @@
  */
 package what2watch;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
@@ -21,11 +26,10 @@ import org.json.JSONObject;
  */
 public class ApiHandler {
     
-    private static String apiKey = "9a52628ae3939c738592ac50fdd73f7c";
-
+    private static String apiKey = getApiKey();
+    
     // We get all movie datas, and between each request, we wait 180ms, because we have a limit with the API...
     public static Movie getAllMovieInfos(String movieName, String rawMovieName, float oneStepPourcent, ProgressBar progressBarProcess){
-        
         
         // We have 3 big process, so 33% of the oneStepPourcent.
         float pourcentToAdd = 33 * oneStepPourcent / 100;
@@ -278,6 +282,32 @@ public class ApiHandler {
 
         
         return movie;
+    }
+    
+    // We put the key on an external file. This way, we don't have our key on the repo.
+    private static String getApiKey(){
+        String envPath = ".env";
+        String content = "";
+        String[] contents = null;
+        String apiKey = "";
+
+         try {
+             Scanner fileIn = new Scanner(new File(envPath));
+             while(fileIn.hasNextLine()){
+                 content += fileIn.nextLine();
+             }
+         } catch (FileNotFoundException ex) {
+             System.out.println("Error on ApiHandler.getApiKey() Ex: "+ex.getMessage().toString());
+         }
+
+         contents = content.split(":");
+         for(int i = 0; i < contents.length; i++){
+             if(contents[i].equals("api_key")){
+                 apiKey = contents[i+1];
+             }
+         }
+
+         return apiKey;
     }
     
     

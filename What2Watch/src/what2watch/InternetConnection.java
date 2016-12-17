@@ -22,7 +22,7 @@ public class InternetConnection {
     
     /**
      * Check if there is an internet connection,
-     * We check if we can open a socket with google's DNS, certainly
+     * We check if we can open a socket with google, certainly
      * always up ;)
 
      * @return  {@code true} if internet in enable,
@@ -33,14 +33,14 @@ public class InternetConnection {
         boolean enable = false;
         
         try {
-            Socket socket = new Socket("8.8.8.8", 80);
+            Socket socket = new Socket("www.google.com", 80);
             if(socket.isConnected()){
                 enable = true;
             }else{
                 enable = false;
             }
         } catch (IOException ex) {
-            Logger.getLogger(InternetConnection.class.getName()).log(Level.SEVERE, null, ex);
+            enable = false;
         }
         
         return enable;
