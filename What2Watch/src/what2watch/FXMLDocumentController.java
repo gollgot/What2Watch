@@ -164,13 +164,16 @@ public class FXMLDocumentController implements Initializable {
     private void browseFiles(ActionEvent event) throws IOException {
         String movieFolderPath = this.prefs.getPath();
         if (Files.exists(Paths.get(movieFolderPath))) {
+            FileBrowser.getMovieFileInfos();
+            
             CacheDb cacheDb = new CacheDb();
             // Update the cache db (add or remove movies on DB, it depend on the
             // browser.getMovieFileNames) and get real titles of all the movies on 
             // the DB.
-            ArrayList<String> fileNames = ParsingFiles.parse(FileBrowser.getMovieFileNames());
             ArrayList<String> rawFileNames = FileBrowser.getMovieFileNames();
-            DbHandler dbHandler = new DbHandler(cacheDb, fileNames, rawFileNames);
+            ArrayList<String> cleanFileNames = ParsingFiles.parse(rawFileNames);
+            
+            DbHandler dbHandler = new DbHandler(cacheDb, cleanFileNames, rawFileNames);
             listMovie.getItems().clear();
             // Init progress indicator to 0 and display it
             progressBarProcess.setProgress(0);

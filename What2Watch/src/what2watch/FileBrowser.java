@@ -24,27 +24,18 @@ public class FileBrowser{
     // Custom methods
     
     public static ArrayList<String> getMovieFileNames() {
-        getMovieFileInfos();
         return finder.getMovieFileNames();
     }
     
-    public static ArrayList<String> getMovieFilePaths() {
-        getMovieFileInfos();
-        return finder.getMovieFilePaths();
-    }
-    
     public static String getFilePath(String rawMovieName) {
-        getMovieFileInfos();
         return finder.findPathOf(rawMovieName);
     }
     
     public static void getMovieFileInfos() {
         try {
-            finder = new FileFinder();
             String path = prefs.getPath();
             Path startingDir = Paths.get(path);
-            finder.setInitialDirectory(startingDir);
-            finder.setPattern(pattern);
+            finder = new FileFinder(startingDir, pattern);
             Files.walkFileTree(startingDir, finder);
         } catch (IOException ex) {
             Logger.getLogger(FileBrowser.class.getName()).log(Level.SEVERE, null, ex);
