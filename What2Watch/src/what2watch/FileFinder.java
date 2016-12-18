@@ -5,6 +5,8 @@
  */
 package what2watch;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
@@ -17,6 +19,7 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.DosFileAttributes;
 import java.util.ArrayList;
+import static javax.xml.bind.DatatypeConverter.printHexBinary;
 
 /**
  *
@@ -28,15 +31,17 @@ public class FileFinder extends SimpleFileVisitor<Path> {
     private PathMatcher matcher;
     private ArrayList<String> movieFileNames = new ArrayList<String>();
     private ArrayList<String> movieFilePaths = new ArrayList<String>();
+    private String[] fileSignatures;
 
     
     public FileFinder() {
     }
 
-    public FileFinder(Path initialDirectory, String givenPattern) {
+    public FileFinder(Path initialDirectory, String givenPattern, String[] fileSignatures) {
         this.initialDirectory = initialDirectory;
         this.pattern = givenPattern;
         this.matcher = FileSystems.getDefault().getPathMatcher("glob:" + givenPattern);
+        this.fileSignatures = fileSignatures;
     }
 
     public Path getInitialDirectory() {
@@ -114,7 +119,7 @@ public class FileFinder extends SimpleFileVisitor<Path> {
     // Compares the glob pattern against the file or directory name.
     void find(Path file) {
         Path fileName = file.getFileName();
-        if (fileName != null && this.matcher.matches(fileName)) {
+        if (fileName != null && this.matcher.matches(fileName) || isVideoFile(file.toFile())) {
             if (!ParsingFiles.containsTVShowPattern(fileName.toString())) {
                 this.movieFileNames.add(fileName.toString());
                 this.movieFilePaths.add(file.toString());
@@ -134,5 +139,44 @@ public class FileFinder extends SimpleFileVisitor<Path> {
             }
         }
         return "";
+    }
+    
+    private String getFileSignature(File path) {
+        try {
+            byte[] sigToVerify = new byte[4];
+            String fileSignature = "";
+
+            FileInputStream fileReader = new FileInputStream(path);
+
+            fileReader.read(sigToVerify);
+            fileReader.close();
+
+            for (byte b : sigToVerify) {
+                byte[] singleByteHolder = {b};
+                fileSignature += printHexBinary(singleByteHolder);
+            }
+
+            return fileSignature;
+
+        } catch (Exception e) {
+            System.out.println("An error occured during the file signature recognition process " + e);
+        }
+
+        return "";
+    }
+
+    private boolean isVideoFile(File path) {
+        String passedFileSignature = getFileSignature(path);
+
+//        System.out.println("===========================");
+//        System.out.println(path + " " + passedFileSignature + "\n");
+
+        for (String signature: fileSignatures) {
+            if (passedFileSignature.equals(signature)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
