@@ -35,12 +35,13 @@ This file holds the default style of the app
     -fx-highlight-fill: #6d6d6d;
     -fx-highlight-text-fill: rgb(250, 250, 250);
     -fx-background-color: null;
+    -fx-text-fill: #9c9c9c;
 }
 
 /* textArea content background*/
 .taSynopsis .content,
 .taSynopsis .content:focused {
-    -fx-background-color: #e3e3e3;
+    -fx-background-color: #181818;
 }
 
 
@@ -57,10 +58,12 @@ This file holds the default style of the app
  ******************************************************************************/
 
 .tfSearch, .tfStartingYear, .tfEndingYear, .tfPath {
-    -fx-control-inner-background: #e3e3e3;
-    -fx-text-fill: #434242;
+    -fx-control-inner-background: #181818;
+    -fx-text-fill: #9c9c9c;
     -fx-text-box-border: transparent;
     -fx-highlight-fill: #6d6d6d;
+    -fx-highlight-text-fill: rgb(250, 250, 250);
+    -fx-prompt-text-fill: #404040;
 }
 
 
@@ -70,9 +73,14 @@ This file holds the default style of the app
  *                                                                             *
  ******************************************************************************/
 
+.listMovie,
+.listMovie:focused {
+    -fx-background-color: #181818;
+}
+
 .listMovie .list-cell:odd:selected,
 .listMovie .list-cell:even:selected {
-    -fx-background-color: #ababab;
+    -fx-background-color: #404040;
 }
 
 /*.listMovie .list-cell:odd,
@@ -82,10 +90,36 @@ This file holds the default style of the app
     -fx-border-color: #c8c8c8;
 }*/
 
+.listMovie .list-cell:odd {
+    -fx-background-color: #181818;
+    -fx-text-fill: #9c9c9c;
+}
+
+.listMovie .list-cell:even {
+    -fx-background-color: #181818; /*#1a1a1a*/
+    -fx-text-fill: #9c9c9c;
+}
+
+
 /*Out of focus style (listView unfocused)*/
 .listMovie .list-cell:filled:selected {
     -fx-text-fill: white;
 }
+
+.listMovie .scroll-bar{
+ -fx-background-color: #1d1d1d;
+}
+
+.listMovie .thumb {
+    -fx-background-color: #404040;
+}
+
+.scroll-bar:horizontal .track ,
+.scroll-bar:vertical .track{
+     -fx-background-color: transparent;
+     -fx-background-radius: 0em;
+}
+
 
 
 /*******************************************************************************
@@ -98,19 +132,23 @@ This file holds the default style of the app
 .cbxSearchCriterias:disabled,
 .cbxSearchCriterias .arrow-button,
 .cbxSearchCriterias .cell:selected {
-    -fx-background-color: #e3e3e3;
+    -fx-background-color: #181818;
+    -fx-text-fill: #9c9c9c;
 }
 
 .cbxSearchCriterias .cell:hover {
     -fx-background-color: #ababab;
+    -fx-text-fill: rgb(250, 250, 250);
 }
 
 .cbxSearchCriterias .combo-box-popup .list-view .list-cell:selected {
     -fx-background-color: #ababab;
+    -fx-text-fill: rgb(250, 250, 250);
 }
 
 .cbxSearchCriterias .list-cell {
-    -fx-background-color: #fafafa;
+    -fx-background-color: #202020;
+    -fx-text-fill: #9c9c9c;
 }
 
 
@@ -130,7 +168,12 @@ This file holds the default style of the app
  ******************************************************************************/
 
 .progressBar .bar {
-    -fx-background-color: #ababab;
+    -fx-background-color: #00ff00;
+}
+
+.progress-bar .bar { 
+    -fx-padding: 6px; 
+    -fx-background-insets: 0; 
 }
 
 
@@ -141,11 +184,13 @@ This file holds the default style of the app
  ******************************************************************************/
 
 .settingButton  {
-    -fx-background-color: #e3e3e3;
+    -fx-background-color: #1e1e1e;
+    -fx-text-fill: #9c9c9c;
 }
 
 .settingButton:hover  {
-    -fx-background-color: #d1d1d1;
+    -fx-background-color: #282828;
+    -fx-text-fill: rgb(250, 250, 250);
 }
 
 .lblPlay:hover {
