@@ -1,62 +1,121 @@
-#What 2 Watch - Documentation technique
-***
-1. Technologies
+# What 2 Watch - Documentation technique
 
-    1.1 Librairies externes (JSON, SQLite etc..)
+---
 
-2. Fonctionnalités de l'application
+**OU METTRE UI ? Raph**
 
-3. Architecture: schéma + explication du fonctionnement de l'application
+## Sommaire
 
-4. Reprise de projet
-    - Environnement de développement
+1. Architecture
 
-5. Conclusion
+2. Language
 
+3.  Bibliothèques externes
 
+    3.1 SQLite
 
-## 1.Technologies
+    3.2 JSON-java
 
-  ###1.1 Java
+4. Fonctionnalités importantes
+
+    4.1 Recherche de fichiers
+
+    4.2 Magic Numbers
+
+    4.3 Analyse des fichiers, récupération du titre du film
+
+    4.4 API: récupération des informations
+
+    4.5 Utilisation "offline" de l'application
+
+5. Installation
+
+    5.1 Windows
+
+    5.2 Mac OS
+
+    5.2 Linux
+
+6. Reprise du projet
+
+    6.1 GitHub
+
+    6.2 JDK
+
+    6.3 IDE
+
+    6.4 API Key
+
+7. Conclusion
+
+---
+
+## 1. Architecture
+
+À compléter
+
+---
+
+## 2. Language
+
+À compléter
+
+Java
 - Premier langage
 - Multi plateforme
 - Simplicité de création d'interfaces
 - Présence de Java dans de titrebreux systèmes
 
-  ###1.2 Bibliothèques externes
-  **SQLite**
+---
+### 3.  Bibliothèques externes
 
-  Sqlite est une bibliothèque écrite en C qui propose un moteur de base de données relationnelle accessible par le langage SQL.
+Nous avons choisi d'utiliser deux bibliothèques externes, voici lesquelles ont été choisi et pour quelle raison.
 
-  Nous avons choisi d'intégrer cette bibliothèque car elle permet de ne pas reproduire un schéma habituel de client - serveur, mais d'être directement intégrée au programme où l'intégralité de la base de données est stockés dans un fichier indépendant de la plateforme. Ce qui permet d'une part de pouvoir la consulter et d'y faire des opération sans avoir besoin d'une connexion internet et d'une autre part de profiter de son fonctionnement multiplateforme.
+#### 3.1 SQLite
 
-  De plus, SQLite est une bibliothèque open source et extrêmement légère. C'est pour cela que c'est le moteur de base de données le plus utilisé au monde, surtout dans des logiciels grand public ou des systèmes embarqués. 
+Sqlite est une bibliothèque écrite en C qui propose un moteur de base de données relationnelle accessible par le langage SQL.
 
-  SQLite nous paraît donc très adapté pour ce genre de projet qui de plus ne demandera pas une gestion d'une immense quantité de films.
+Nous avons choisi d'intégrer cette bibliothèque car elle permet de ne pas reproduire un schéma habituel de client - serveur, mais d'être directement intégrée au programme où l'intégralité de la base de données est stockés dans un fichier indépendant de la plateforme. Ce qui permet d'une part de pouvoir la consulter et d'y faire des opération sans avoir besoin d'une connexion internet et d'une autre part de profiter de son fonctionnement multiplateforme.
 
-  Dans notre projet, vous pouvez retrouver la base de données qui est à l'emplacement : `cache/cache.db`. Nous avons décider de l'appelée ainsi, car elle fait vaiment office de cache, l'utilisateur peut la supprimer si elle serait corrompue, ou même par inadvertance et lors du lancement de l'application elle sera recrée automatiquement dans le dossier cache.
+De plus, SQLite est une bibliothèque open source et extrêmement légère. C'est pour cela que c'est le moteur de base de données le plus utilisé au monde, surtout dans des logiciels grand public ou des systèmes embarqués.
 
-  Liens vers la bibliothèque : [SQLite] (https://bitbucket.org/xerial/sqlite-jdbc)
+SQLite nous paraît donc très adapté pour ce genre de projet qui de plus ne demandera pas une gestion d'une immense quantité de films.
 
- **JSON-java**
+Dans notre projet, vous pouvez retrouver la base de données qui est à l'emplacement : `cache/cache.db`. Nous avons décider de l'appelée ainsi, car elle fait vaiment office de cache, l'utilisateur peut la supprimer si elle serait corrompue, ou même par inadvertance et lors du lancement de l'application elle sera recrée automatiquement dans le dossier cache.
 
-  JSON-java est une bibliothèque open source et populaire qui permet de décoder / encoder des fichiers JSON.
+Liens vers la bibliothèque : [SQLite] (https://bitbucket.org/xerial/sqlite-jdbc)
 
-  Nous avons choisi d'intégrer cette bibliothèque car elle est très légère et son utilisation est très simple.
+#### 3.2 JSON-java
 
-  Dans notre programme, nous devons décoder à plusieurs reprises des fichier JSON qui nous sont retournés par l'API, de ce fait nous avons pensé utile de l'utiliser.
+JSON-java est une bibliothèque open source et populaire qui permet de décoder / encoder des fichiers JSON.
 
-  Liens vers la bibliothèque : [JSON-java] (https://github.com/stleary/JSON-java)
+Nous avons choisi d'intégrer cette bibliothèque car elle est très légère et son utilisation est très simple.
 
+Dans notre programme, nous devons décoder à plusieurs reprises des fichier JSON qui nous sont retournés par l'API, de ce fait nous avons pensé utile de l'utiliser.
 
-## 2.Fonctionnalités de l'application
-- recherche de fichiers (raph)
+Liens vers la bibliothèque : [JSON-java] (https://github.com/stleary/JSON-java)
 
-**analyse des fichiers, récupération du titre du film**
+---
+
+### 4. Fonctionnalités importantes
+
+Nous allons vous expliquer le fonctionnement des fonctionnalités que nous pensons être les plus importantes et pertinentes.
+
+Les informations porteront plus sur la logique en elle-même et non l'explication du code. Pour voir le code source, vous pouvez le retrouver à l'emplacement : `What2Watch/src/what2watch`.
+
+#### 4.1 Recherche de fichiers
+
+À compléter
+
+#### 4.2 Magic Numbers
+
+À compléter
+
+#### 4.3 Analyse des fichiers, récupération du titre du film
 
 Pour que l'API puisse nous retourner les données du film que l'ont veut, il faut pouvoir lui passer le titre du film le plus épuré possible. Voici donc comment nous procédons:
 
-Nous avons une première fonction qui va faire un remplacement par un espace de tout ce que l'on rentre à la main comme pattern, par exemple des termes comme : Xvid, bdrip, VOSTFR, etc. ainsi que des ponctuations : ".-_()". Nous pouvons donc l'affiner au fur et à mesure.
+Nous avons une première fonction qui va faire un remplacement par un espace de tout ce que l'on rentre à la main comme pattern, par exemple des termes comme : Xvid, bdrip, VOSTFR, etc. ainsi que des ponctuations : ".-\_()". Nous pouvons donc l'affiner au fur et à mesure.
 
 Une seconde fonction va permettre de remplacer les possibles dates qu'elle trouve, par un espace.
 
@@ -66,7 +125,7 @@ une dernière fonction, que nous pensons la plus intéressante, va découper l'e
 
 *Exemple :
 Nous avons le film : Colt.45.2014.FRENCH.BRRiP.XviD-CARPEDIEM
-Après le passage dans la fonction 1 et 2, il restera : Colt 45 (4 espaces) BRRiP (3 espaces) CARPEDIEM. Donc => 
+Après le passage dans la fonction 1 et 2, il restera : Colt 45 (4 espaces) BRRiP (3 espaces) CARPEDIEM. Donc =>
 tab[1] = "Colt 45", tab[2] = "", tab[3] = "BRRiP", tab[4] = " CARPEDIEM"
 Nous allons donc récupérer la première case non vide (donc le titre du film)*
 
@@ -74,17 +133,14 @@ Si il y avait eu un pattern devant le titre du film, cela fonctionne toujours (d
 
 Pour résumer, cette fonction est bien sûr dépendante de notre fonction 1 (RegEx), mais si l'on arrive à transformer un des patternes critique (ceux devant le titre [si il y en a] sinon, celui qui suit directement le titre), nous arrivons à récupérer le titre du film sans se soucier des autres patternes qui suivent.
 
-**API: récupération des informations**
+#### 4.4 API: récupération des informations
 
 Concernant la récupération d'informations sur un film, nous utilisons l'API du site "www.themoviedb.org" : liens vers la documentation de l'API : [TMDB API] (https://developers.themoviedb.org/3/getting-started).
-Pour utiliser cette API nous devons utiliser une clef, nous avons donc stocké cette clef dans un fichier .env qui n'est pas à disposition dans le repository (question de sécurité durant la phase de développement). 
+Pour utiliser cette API nous devons utiliser une clef, nous avons donc stocké cette clef dans un fichier .env qui n'est pas à disposition dans le repository (question de sécurité durant la phase de développement).
 
 Nous somme également limité au niveau du nombre de requête par seconde, ce qui implique une certaine attente supérieure à celle que nous aurions voulu au départ. Mais nous avons quand même décidé d'utiliser cette API car elle apporte tous ce que nous cherchons. Nous lui envoyons le titre du film (autant en Français qu'en Anglais) dont nous recherchons les informations, et l'API nous retourne tous ce dont nous avons besoin, en format JSON et dans la langue souhaitée. Il nous reste donc plus qu'à parser le tout et à l'afficher dans notre application.
 
-- Recherche de films (raph)
-- UI (raph)
-
-**Utilisation "offline" de l'application** 
+#### 4.5 Utilisation "offline" de l'application
 
 Un point que nous trouvons très intéressant et important dans notre application, est le fait qu'elle soit utilisable sans avoir de connection internet.
 
@@ -93,6 +149,72 @@ Avoir choisi d'utiliser une base de données en SQLite nous permet de pouvoir la
 Nous avons donc mis en place toute une gestion de la connection à internet. Nous avons une méthode qui permet d'ouvrir un socket vers le site "www.google.com" et qui nous retourne true ou false, respectivement: internet accessible ou non. Nous regardons donc à chaque début de scan si l'utilisateur à accès à internet ou non. Dans le cas ou il ne l'a pas, nous affichons on message d'alert. Notre application gère aussi le cas ou il serait possible que l'utilisateur perde la connection au milieu d'une recherche. Si cela arrive, toutes les données non-trouvées seront égale à "Unknown" et l'application affiche un message d'alert.
 
 Nous avons de plus intégré en bas à droite de l'application, un voyant vert ou rouge qui permet d'indiquer à l'utilisateur si il a une connection internet ou pas. Au niveau du code, c'est un thread lancé au lancement de l'application et qui vérifie chaque seconde si internet est accessible ou pas. Ce thread se ferme correctement lorsque l'application se ferme.
+
+---
+
+### 5. Installation
+
+À compléter
+
+#### 5.1 Windows
+
+À compléter
+
+#### 5.2 Mac OS
+
+À compléter
+
+#### 5.2 Linux
+
+À compléter
+
+---
+
+### 6. Reprise du projet
+
+Nous avons découpé la reprise du projet en plusieurs étapes, pour pouvoir les expliquer comme il faut. Il suffit de suivre les points un par un et vous pourrez reprendre le projet sans aucun problème.
+
+#### 6.1 GitHub
+
+L'ensemble du projet est disponible sur GitHub : ** Mettre le lien du repo **
+
+Vous pouvez donc récupérer l'ensemble du repository et par exemple l'ouvrir avec un outil de versionning (nous avons utilisé GitKraken).
+
+Voici comment notre système de branches fonctionne :
+
+- ** Master ** : Cette branche contient uniquement des versions livrables du projet.
+- ** Develop ** : Cette branche contient des versions stables du projet, mais toujours en cours de développement.
+- ** Toutes les autres branches ** : Pour chaque grande fonctionnalité (généralement plus de un ou deux commits) nous avons créé une branche spécifique à celle-ci et travaillions dessus jusqu'à avoir une version stable et ensuite faire un merge sur la branche develop.
+
+#### 6.2 JDK
+
+Nous avons utilisé le JDK 8u111 pour complilé notre application. Il est donc impératif de prendre la même version. Voici le lien vers le JDK 8u111 ** Liens à mettre **
+
+Il suffit de télécharger et installer le JDK 8u111 prévu pour l'OS de votre choix.
+
+#### 6.3 IDE
+
+À compléter
+
+#### 6.4 API Key
+
+À compléter
+
+---
+
+** A VOIR S'IL FAUT AJOUTER LES LIBRAIRIE DANS UN DOSSIER ETC...DéPENDANCE ... **
+
+---
+
+### 7. Conclusion
+
+---
+
+
+
+
+
+
 
 
 #W2W
