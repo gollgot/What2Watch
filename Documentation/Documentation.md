@@ -28,13 +28,13 @@
 
     4.5 Utilisation "offline" de l'application
 
-5. Installation
+5. Installation de What2Watch
 
-    5.1 Windows
+    5.1 JDK
 
-    5.2 Mac OS
+    5.2 Application What2Watch
 
-    5.2 Linux
+    5.2 Lancement de l'application
 
 6. Reprise du projet
 
@@ -152,21 +152,36 @@ Nous avons de plus intégré en bas à droite de l'application, un voyant vert o
 
 ---
 
-### 5. Installation
+### 5. Installation de What2Watch
 
-À compléter
+Voici toutes les étapes à suivre pour installer notre application sur votre ordinateur. Que vous soyez sur Windows, Mac OS ou Linux il n'y aura aucun problème, car l'application ets entièrement multiplateforme.
 
-#### 5.1 Windows
 
-À compléter
+#### 5.1 JDK
 
-#### 5.2 Mac OS
+Pour pouvoir exécuter des programmes Java (.jar) vous êtes obligé d'installer un JDK (Java SE Development Kit). Il vous faut obligatoirement le JDK 8u111.
 
-À compléter
+Voici le lien de téléchargement : [JDK 8u111] (http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) 
 
-#### 5.2 Linux
+Il suffit de télécharger et installer le JDK 8u111 prévu pour l'OS de votre choix.
 
-À compléter
+Pour l'installation en ligne de commande via Linux Ubuntu et Linux Debian, voici deux très bon tutoriels :
+- [Ubuntu] (http://www.webupd8.org/2012/09/install-oracle-java-8-in-ubuntu-via-ppa.html)
+- [Debian] (http://www.webupd8.org/2014/03/how-to-install-oracle-java-8-in-debian.html)
+
+#### 5.2 Application What2Watch
+
+Pour installer notre application sur votre ordinateur, que vous ayez Windows, Mac OS ou Linux, c'est le même procédé. Il faut télécharger l'archive "What2Watch-deployment.zip" qui se trouve sur [GitHub](https://github.com/raph-u/What2Watch/tree/A CHANGER !!). Pour cela cliquez simplement sur le bouton "Clone or download" et choisir "Download ZIP". 
+
+Une fois l'archive extraite, vous pouvez renommer et placer le dossier ou vous le voulez (par exemple dans votre dossier de programmes). À l'intérieur du dossier, vous trouverez un fichier nommer "What2Watch-raccourci.jar", vous pouvez le déplacer où vous le voulez (par exemple sur votre Bureau) et même le renommer.
+
+#### 5.2 Lancement de l'application
+
+Si vous avez une interface graphique : 
+- Ouvrez le fichier "What2Watch-raccourci.jar" en double cliquant dessus. (Si le fichier s'ouvre pas, veuillez l'ouvrir avec le programme : "Java(TM) Platform SE binary").
+
+Si vous utilisez un terminal :
+- Lancer votre terminal préféré et tapper la commande : `java -jar <nom_du_fichier.jar>`
 
 ---
 
@@ -176,37 +191,55 @@ Nous avons découpé la reprise du projet en plusieurs étapes, pour pouvoir les
 
 #### 6.1 GitHub
 
-L'ensemble du projet est disponible sur GitHub : ** Mettre le lien du repo **
+L'ensemble du projet est disponible sur GitHub : [What2Watch] (https://github.com/raph-u/What2Watch)
 
 Vous pouvez donc récupérer l'ensemble du repository et par exemple l'ouvrir avec un outil de versionning (nous avons utilisé GitKraken).
 
+Ou récupérer la branche de votre choix, pour ensuite en modifier le contenu.
+
 Voici comment notre système de branches fonctionne :
 
-- ** Master ** : Cette branche contient uniquement des versions livrables du projet.
-- ** Develop ** : Cette branche contient des versions stables du projet, mais toujours en cours de développement.
-- ** Toutes les autres branches ** : Pour chaque grande fonctionnalité (généralement plus de un ou deux commits) nous avons créé une branche spécifique à celle-ci et travaillions dessus jusqu'à avoir une version stable et ensuite faire un merge sur la branche develop.
+- **Master** : Cette branche contient uniquement des versions livrables du projet.
+- **Develop** : Cette branche contient des versions stables du projet, mais toujours en cours de développement.
+- **Toutes les autres branches** : Pour chaque grande fonctionnalité (généralement plus de un ou deux commits) nous avons créé une branche spécifique à celle-ci et travaillions dessus jusqu'à avoir une version stable et ensuite faire un merge sur la branche develop.
 
 #### 6.2 JDK
 
-Nous avons utilisé le JDK 8u111 pour complilé notre application. Il est donc impératif de prendre la même version. Voici le lien vers le JDK 8u111 ** Liens à mettre **
+Nous avons utilisé le JDK 8u111 pour complilé notre application. Il est donc impératif de prendre la même version. Voici le lien de téléchargement : [JDK 8u111] (http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) 
 
 Il suffit de télécharger et installer le JDK 8u111 prévu pour l'OS de votre choix.
 
+Pour l'installation en ligne de commande via Linux Ubuntu et Linux Debian, voici deux très bon tutoriels :
+- [Ubuntu] (http://www.webupd8.org/2012/09/install-oracle-java-8-in-ubuntu-via-ppa.html)
+- [Debian] (http://www.webupd8.org/2014/03/how-to-install-oracle-java-8-in-debian.html)
+
 #### 6.3 IDE
 
-À compléter
+Vous pouvez utiliser n'importe quel IDE qui permet de reprendre un projet Java, mais nous vous recommandons tout de même d'utiliser le même que nous qui est Netbeans (version 8.2 ).
+
+Liens de téléchargement : [Netbeans] (https://netbeans.org/downloads/)
+
+*Note : Ne pas oublié d'indiquer le chemin vers le JDK installé au point "6.2 JDK" lors de l'installation*
+
+Il ne vous reste donc plus qu'à ouvrir le projet Java de la branche que vous voulez (téléchargé au préalable, voir point "6.1 GitHub"). Exemple : `What2Watch-develop/What2Watch`
+
+Si vous utilisez Netbeans, il n'y a rien d'autre à faire. Toutes les bibliothèques sont déjà liées au projet etc. Si vous utilisez un autre IDE, il se peut qu'il faudra lié les bibliothèques au projet. Vous pouvez les retrouvées dans le dossier `What2Watch/libraries`.
 
 #### 6.4 API Key
 
-À compléter
+Notre application utilise une clef d'API et pour ne pas qu'elle se retrouve publiquement sur le repository, nous avons décider de la stocker dans un fichier ".env" lui-même stocké sur notre ordinateur (le fichier .env est ignoré lors des commits grâce au fichier .gitignore).
 
----
+D'abbord, vous devez récupérer votre propre clef d'API sur le site [The Movie DB](https://www.themoviedb.org/) car nous ne fournissons pas la clef d'API avec notre application. Pour cela il suffit de s'incrire sur le site et de demander une API KEY, c'est entièrement gratuit et instantané.
 
-** A VOIR S'IL FAUT AJOUTER LES LIBRAIRIE DANS UN DOSSIER ETC...DéPENDANCE ... **
+Ensuite, il faut que vous créiez un fichier ".env" dans le dossier du projet What2Watch (à la même hauteur que le dossier "src"). À l'intérieur de ce fichier, il faut écrire cette ligne : `api_key:xxxxxxxxxxxxxxxxx` en remplaçant les "x" par votre clef.
+
+Pour finir, il faut que vous sachiez encore une chose, aller dans le code source de la classe "ApiHandler". Il y a un attribut de classe qui s'appelle "apiKey", sa valeure est égale à "getApiKey()". C'est une méthode de classe qui va permettre d'aller récupérer le contenu du fichier ".env" et donc de récupérer la valeur de la clef d'API. Si vous déployez votre application, n'oubliez pas de changer la valeur de l'attribut "apiKey" par la valeur de la clef d'API et non par la méthode, car le fichier ".env" ne sera pas disponible chez l'utilisateur.
 
 ---
 
 ### 7. Conclusion
+
+À compléter 
 
 ---
 
