@@ -42,7 +42,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
@@ -103,10 +105,17 @@ public class FXMLDocumentController implements Initializable {
     private ProgressBar progressBarProcess;
     @FXML
     private Label lblNbFilesProcessed;
+    @FXML
+    private GridPane gridPane;
+    @FXML
+    private VBox vbxLeftContainer;
 
     private UserPreferences prefs = new UserPreferences();
     private int activeSearchMode = 0;
     public static boolean exit = false; // Change if we close the application (see -> Main class)
+    private ImageView instructionHolder;
+    
+    
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -159,7 +168,9 @@ public class FXMLDocumentController implements Initializable {
         lblNbFilesProcessed.setVisible(false);
 
         checkInternetConnection();
-
+        
+        // Display the instruction picture in the UI and sets up "this.instructionHolder" for later use
+        initInstructionPicture();
     }
 
     @FXML
@@ -184,6 +195,7 @@ public class FXMLDocumentController implements Initializable {
 
     @FXML
     private void browseFiles(ActionEvent event) throws IOException {
+        displayMovieInfos(false);
         CacheDb cacheDb = new CacheDb();
         // Update the cache db (add or remove movies on DB, it depend on the
         // browser.getMovieFileNames) and get real titles of all the movies on 
@@ -302,6 +314,9 @@ public class FXMLDocumentController implements Initializable {
             }
             ivMovie.setImage(moviePoster);
             imageViewBigPoster.setImage(moviePoster);
+            
+            // Hide the instruction picture ; display the movie infos
+            displayMovieInfos(true);
         }
     }
 
@@ -478,4 +493,27 @@ public class FXMLDocumentController implements Initializable {
         String iconSuffix = "Hovered";
         toggleHoveredIcon(event, iconSuffix);
     }
+    
+    // Sets up the instruction picture for later use at startup
+    // This will place the instruction picture at the right spot so that the app is able to show or hide it
+    private void initInstructionPicture() {
+        this.instructionHolder = new ImageView();
+
+        Image instructions = new Image("what2watch/resources/images/instructions.png");
+        this.instructionHolder.setImage(instructions);
+        
+        gridPane.add(this.instructionHolder, 1, 0, 1, 4);
+        
+        this.instructionHolder.setTranslateX(15);
+        
+        this.vbxLeftContainer.setVisible(false);
+    }
+    
+    // Either displays or hides the UI movie informations to draw the instruction
+    // picture instead, depending on the value passed by parameter
+    public void displayMovieInfos(boolean display) {
+        this.vbxLeftContainer.setVisible(display);
+        this.instructionHolder.setVisible(!display);
+    }
+    
 }
