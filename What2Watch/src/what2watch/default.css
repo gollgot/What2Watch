@@ -1,0 +1,207 @@
+/*
+This file holds the default style of the app
+*/
+/* 
+    Created on : 11 déc. 2016, 15:49:51
+    Author     : Raphaël
+*/
+
+.root {
+    -fx-font-family: "Source Sans Pro";
+    -fx-font-size: 14px;
+    
+    /*Getting rid of focus style, globally*/
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.textElement {
+    -fx-font-family: "Montserrat";
+    -fx-font-size: 21px;
+    font-weight: bold;
+    -fx-text-fill: #434242;
+}
+
+
+/* Elements customization */
+
+/*******************************************************************************
+ *                                                                             *
+ * textArea                                                                    *
+ *                                                                             *
+ ******************************************************************************/
+
+.taSynopsis {
+    -fx-highlight-fill: #6d6d6d;
+    -fx-highlight-text-fill: rgb(250, 250, 250);
+    -fx-background-color: null;
+    -fx-text-fill: #9c9c9c;
+}
+
+/* textArea content background*/
+.taSynopsis .content,
+.taSynopsis .content:focused {
+    -fx-background-color: #343434;
+}
+
+
+.listMovie,
+.listMovie:focused {
+    -fx-background-color: #e3e3e3;
+}
+
+
+/*******************************************************************************
+ *                                                                             *
+ * textField                                                                   *
+ *                                                                             *
+ ******************************************************************************/
+
+.tfSearch, .tfStartingYear, .tfEndingYear, .tfPath {
+    -fx-control-inner-background: #343434;
+    -fx-text-fill: #9c9c9c;
+    -fx-text-box-border: transparent;
+    -fx-highlight-fill: #6d6d6d;
+    -fx-highlight-text-fill: rgb(250, 250, 250);
+    -fx-prompt-text-fill: #585858;
+}
+
+
+/*******************************************************************************
+ *                                                                             *
+ * listView                                                                    *
+ *                                                                             *
+ ******************************************************************************/
+
+.listMovie,
+.listMovie:focused {
+    -fx-background-color: #343434;
+}
+
+.listMovie .list-cell:odd:selected,
+.listMovie .list-cell:even:selected {
+    -fx-background-color: #404040;
+}
+
+.listMovie .list-cell:odd,
+.listMovie .list-cell:even {
+/*    -fx-background-color: #f7f7f7;*/
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: #404040;
+}
+
+.listMovie .list-cell:odd {
+    -fx-background-color: #343434;
+    -fx-text-fill: #9c9c9c;
+}
+
+.listMovie .list-cell:even {
+    -fx-background-color: #343434; /*#1a1a1a*/
+    -fx-text-fill: #9c9c9c;
+}
+
+/*Out of focus style (listView unfocused)*/
+.listMovie .list-cell:filled:selected {
+    -fx-text-fill: white;
+}
+
+.listMovie .scroll-bar{
+ -fx-background-color: #2f2f2f;
+}
+
+.listMovie .thumb {
+    -fx-background-color: #777777;
+}
+
+.scroll-bar:horizontal .track ,
+.scroll-bar:vertical .track{
+     -fx-background-color: transparent;
+     -fx-background-radius: 0em;
+}
+
+
+/*******************************************************************************
+ *                                                                             *
+ * comboBox                                                                    *
+ *                                                                             *
+ ******************************************************************************/
+
+.cbxSearchCriterias,
+.cbxSearchCriterias:disabled,
+.cbxSearchCriterias .arrow-button,
+.cbxSearchCriterias .cell:selected {
+    -fx-background-color: #343434;
+    -fx-text-fill: #9c9c9c;
+}
+
+.cbxSearchCriterias .cell:hover {
+    -fx-background-color: #404040;
+    -fx-text-fill: rgb(250, 250, 250);
+}
+
+.cbxSearchCriterias .combo-box-popup .list-view .list-cell:selected {
+    -fx-background-color: #ababab;
+    -fx-text-fill: rgb(250, 250, 250);
+}
+
+.cbxSearchCriterias .list-cell {
+    -fx-background-color: #303030;
+    -fx-text-fill: #9c9c9c;
+}
+
+
+/*******************************************************************************
+ *                                                                             *
+ * imageView                                                                   *
+ *                                                                             *
+ ******************************************************************************/
+
+/* TODO: add border radius */
+
+
+/*******************************************************************************
+ *                                                                             *
+ * progressBar                                                                 *
+ *                                                                             *
+ ******************************************************************************/
+
+.progressBar .bar {
+    -fx-background-color: #777777;
+}
+
+.progress-bar > .bar { 
+    -fx-padding: 10px; 
+}
+
+.progress-bar > .track {
+  -fx-control-inner-background: #343434;
+   -fx-text-box-border: #777777;
+}
+
+
+/*******************************************************************************
+ *                                                                             *
+ * Button                                                                      *
+ *                                                                             *
+ ******************************************************************************/
+
+.settingButton  {
+    -fx-background-color: #454545;
+    -fx-text-fill: #9c9c9c;
+}
+
+.settingButton:hover  {
+    -fx-background-color: #505050;
+    -fx-text-fill: rgb(250, 250, 250);
+}
+
+
+/*******************************************************************************
+ *                                                                             *
+ * Label                                                                      *
+ *                                                                             *
+ ******************************************************************************/
+
+.lblPlay:hover {
+    -fx-text-fill: #c0c0c0;
+}

@@ -7,6 +7,8 @@ package what2watch;
 
 import java.io.File;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -25,20 +27,20 @@ import javafx.stage.Stage;
 public class FXMLSettingsController implements Initializable {
 
     @FXML
-    private Label instructionLabel;
+    private Label lblInstruction;
     @FXML
-    private Button cancelButton;
+    private Button btnCancel;
     @FXML
-    private Button pathButton;
+    private Button btnPathDefiner;
     @FXML
-    private Button browseButton;
+    private Button btnBrowse;
     @FXML
-    private TextField pathTextField;
+    private TextField tfPath;
     @FXML
-    private Label emptyPathErrorLabel;
+    private Label lblEmptyPathError;
     
     private static UserPreferences prefs = new UserPreferences();
-
+    
     /**
      * Initializes the controller class.
      */
@@ -50,26 +52,26 @@ public class FXMLSettingsController implements Initializable {
 
         // Filling the textfield with the saved movie folder path
         if(! this.prefs.getPath().equals("")) {
-            this.pathTextField.setText(this.prefs.getPath());
+            this.tfPath.setText(this.prefs.getPath());
         }
     }    
 
     @FXML
     private void closeWindow(ActionEvent event) {
-        closeStage(cancelButton);
+        closeStage(btnCancel);
     }
 
     @FXML
     private void setPath(ActionEvent event) {
         // Making sure the user specified a path for his movie folder
-        if (!this.pathTextField.getText().equals("")) {
-            this.prefs.savePath(this.pathTextField.getText());
-            this.emptyPathErrorLabel.setVisible(false);
+        if (!this.tfPath.getText().equals("")) {
+            this.prefs.savePath(this.tfPath.getText());
+            this.lblEmptyPathError.setVisible(false);
             
             // Closing the settings window
-            closeStage(pathButton);
+            closeStage(btnPathDefiner);
         } else {
-            this.emptyPathErrorLabel.setVisible(true);
+            this.lblEmptyPathError.setVisible(true);
         }
     }
 
@@ -84,7 +86,7 @@ public class FXMLSettingsController implements Initializable {
         
         // Filling the path textfield if the user chose a directory
         if (file != null) {
-            this.pathTextField.setText(file.getAbsolutePath());
+            this.tfPath.setText(file.getAbsolutePath());
         }
     }
     
@@ -92,9 +94,13 @@ public class FXMLSettingsController implements Initializable {
         String initialDirectory = System.getProperty("user.home");
         directoryChooser.setTitle("Select directory");
         
+        String movieFolderPath = prefs.getPath();
+        
         // Sets the default folder opened by directory chooser to be the one saved by the user
-        if(! prefs.getPath().equals("")) { 
-            initialDirectory = prefs.getPath();
+        if(!movieFolderPath.equals("")) { 
+            if (Files.exists(Paths.get(movieFolderPath))) {
+                initialDirectory = movieFolderPath;
+            }
         }
         
         directoryChooser.setInitialDirectory(new File(initialDirectory));
