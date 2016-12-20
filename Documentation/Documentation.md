@@ -1,6 +1,7 @@
 # What 2 Watch - Documentation technique
 
----
+[Repository GitHub] (https://github.com/raph-u/What2Watch/)
+
 
 **OU METTRE UI ? Raph**
 
@@ -154,31 +155,44 @@ Nous avons de plus intégré en bas à droite de l'application, un voyant vert o
 
 ### 5. Installation de What2Watch
 
-Voici toutes les étapes à suivre pour installer notre application sur votre ordinateur. Que vous soyez sur Windows, Mac OS ou Linux il n'y aura aucun problème, car l'application ets entièrement multiplateforme.
+Voici toutes les étapes à suivre pour installer notre application sur votre ordinateur. Que vous soyez sur Windows, Mac OS ou Linux il n'y aura aucun problème, car l'application est entièrement multiplateforme.
 
 
-#### 5.1 JDK
+#### 5.1 JRE
 
-Pour pouvoir exécuter des programmes Java (.jar) vous êtes obligé d'installer un JDK (Java SE Development Kit). Il vous faut obligatoirement le JDK 8u111.
+Pour pouvoir exécuter des programmes Java (.jar) vous êtes obligé d'installer le JRE (Java SE Runtime Environment). Il vous faut obligatoirement le JRE 8u111.
 
-Voici le lien de téléchargement : [JDK 8u111] (http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) 
+*Note : Si vous avaz déjà Java 8 d'installer vu pouvez sauter cette étape.*
 
-Il suffit de télécharger et installer le JDK 8u111 prévu pour l'OS de votre choix.
+Pour voir la version de java installer :
 
-Pour l'installation en ligne de commande via Linux Ubuntu et Linux Debian, voici deux très bon tutoriels :
+- Sous Windows : Aller dans le panneau de configuration -> Programmes -> Programmes et fonctionnalités. Puis rechercher Java et vous allez voir la version installée.
+- Sous Unix : Ouvrez un terminal puis tapper la commande : `java -version`. Si vous avez un message d'erreur c'est que java n'est pas installé, sinon il faut que vous ayez un message : "Java version 1.8.x".
+
+Téléchargement du JRE : 
+
+Voici le lien de téléchargement : [JRE 8u111] (http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html) 
+
+Il suffit de télécharger et installer le JRE 8u111 prévu pour l'OS de votre choix.
+
+Pour l'installation en ligne de commande via Linux Ubuntu et Linux Debian, voici deux très bon tutoriels (c'est pour installer le JDK 8, qui intègre lui-même le JRE 8):
 - [Ubuntu] (http://www.webupd8.org/2012/09/install-oracle-java-8-in-ubuntu-via-ppa.html)
 - [Debian] (http://www.webupd8.org/2014/03/how-to-install-oracle-java-8-in-debian.html)
 
 #### 5.2 Application What2Watch
 
-Pour installer notre application sur votre ordinateur, que vous ayez Windows, Mac OS ou Linux, c'est le même procédé. Il faut télécharger l'archive "What2Watch-deployment.zip" qui se trouve sur [GitHub](https://github.com/raph-u/What2Watch/tree/A CHANGER !!). Pour cela cliquez simplement sur le bouton "Clone or download" et choisir "Download ZIP". 
+Pour installer notre application sur votre ordinateur, que vous ayez Windows, Mac OS ou Linux, c'est le même procédé. Il faut télécharger l'archive "What2Watch-deployment.zip" qui se trouve sur [GitHub](https://github.com/raph-u/What2Watch/tree/deployment). Pour cela cliquez simplement sur le bouton "Clone or download" et choisir "Download ZIP". 
 
-Une fois l'archive extraite, vous pouvez renommer et placer le dossier ou vous le voulez (par exemple dans votre dossier de programmes). À l'intérieur du dossier, vous trouverez un fichier nommer "What2Watch-raccourci.jar", vous pouvez le déplacer où vous le voulez (par exemple sur votre Bureau) et même le renommer.
+Une fois l'archive extraite, vous trouverez à l'intérieur un dossier "What2Watch" vous pouvez le placer ou vous le voulez (par exemple dans votre dossier de programmes).
+
+À l'intérieur du dossier, vous trouverez un fichier nommer "What2Watch.jar". Ce fichier est le fichier à exécuter pour lancer l'application.
+
+L'ensemble des fichiers / dossiers présent dans le dossier What2Watch doivent y rester, si vous voulez avoir le fichier What2Watch.jar par exemple sur votre bureau, il suffit d'en créer un raccourci, puis vous pouvez placer ce raccourci ou bon vous semble.
 
 #### 5.2 Lancement de l'application
 
 Si vous avez une interface graphique : 
-- Ouvrez le fichier "What2Watch-raccourci.jar" en double cliquant dessus. (Si le fichier s'ouvre pas, veuillez l'ouvrir avec le programme : "Java(TM) Platform SE binary").
+- Ouvrez le fichier "What2Watch.jar" en double cliquant dessus. (Si le fichier s'ouvre pas, veuillez l'ouvrir avec le programme : "Java(TM) Platform SE binary").
 
 Si vous utilisez un terminal :
 - Lancer votre terminal préféré et tapper la commande : `java -jar <nom_du_fichier.jar>`
