@@ -109,11 +109,14 @@ public class FXMLDocumentController implements Initializable {
     private GridPane gridPane;
     @FXML
     private VBox vbxLeftContainer;
+    @FXML
+    private Label lblSearchBy;
 
     private UserPreferences prefs = new UserPreferences();
     private int activeSearchMode = 0;
     public static boolean exit = false; // Change if we close the application (see -> Main class)
     private ImageView instructionHolder;
+    
     
     
 
@@ -419,6 +422,7 @@ public class FXMLDocumentController implements Initializable {
         this.disableSearchBars(toggleValue);
         this.cbxSearchCriterias.setDisable(toggleValue);
         this.listMovie.setDisable(toggleValue);
+        this.lblSearchBy.setDisable(toggleValue);
     }
 
     @FXML
