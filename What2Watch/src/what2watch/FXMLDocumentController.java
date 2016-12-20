@@ -199,7 +199,9 @@ public class FXMLDocumentController implements Initializable {
         progressBarProcess.setProgress(0);
         progressBarProcess.setVisible(true);
 
+            this.disableRefreshButton(true);
             this.disableSearchUI(true);
+            
             // We pass the current instance of "FXMLDocumentController" class, because we have to access the "disableSearchUI" method 
             dbHandler.update(this, listMovie, progressBarProcess, lblNbFilesProcessed);
         } else {
@@ -413,6 +415,14 @@ public class FXMLDocumentController implements Initializable {
         this.cbxSearchCriterias.setDisable(toggleValue);
         this.listMovie.setDisable(toggleValue);
         this.lblSearchBy.setDisable(toggleValue);
+    }
+    
+    public void disableRefreshButton(boolean disabled) {
+        if (!disabled) {
+            // Forcing the button opacity to its original value
+            this.btnRefresh.setOpacity(1.0);
+        }
+        this.btnRefresh.setDisable(disabled);
     }
 
     @FXML

@@ -140,6 +140,7 @@ public class DbHandler {
 
                         // Allowing the user to interact with the search UI
                         controller.disableSearchUI(false);
+                        controller.disableRefreshButton(false);
                         
                     }
                 });
