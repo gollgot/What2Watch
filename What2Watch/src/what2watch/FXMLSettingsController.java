@@ -36,8 +36,6 @@ public class FXMLSettingsController implements Initializable {
     private Button btnBrowse;
     @FXML
     private TextField tfPath;
-    @FXML
-    private Label lblEmptyPathError;
     
     private static UserPreferences prefs = new UserPreferences();
     
@@ -66,12 +64,12 @@ public class FXMLSettingsController implements Initializable {
         // Making sure the user specified a path for his movie folder
         if (!this.tfPath.getText().equals("")) {
             this.prefs.savePath(this.tfPath.getText());
-            this.lblEmptyPathError.setVisible(false);
+            this.setLblErrorMode(false);
             
             // Closing the settings window
             closeStage(btnPathDefiner);
         } else {
-            this.lblEmptyPathError.setVisible(true);
+            this.setLblErrorMode(true);
         }
     }
 
@@ -110,5 +108,15 @@ public class FXMLSettingsController implements Initializable {
         // Getting a reference to the settings window and closing it
         Stage stage = (Stage) button.getScene().getWindow();
         stage.close();
+    }
+    
+    private void setLblErrorMode(boolean errorMode) {
+        if (!errorMode) {
+            this.lblInstruction.setStyle("-fx-text-fill: #9c9c9c;");
+            this.lblInstruction.setText("Select your movie directory");
+        } else {
+            this.lblInstruction.setStyle("-fx-text-fill: red;");
+            this.lblInstruction.setText("Please select the folder containing your movies");
+        } 
     }
 }
