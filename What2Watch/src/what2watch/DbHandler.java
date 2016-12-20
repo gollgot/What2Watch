@@ -51,48 +51,59 @@ public class DbHandler {
             boolean noInternet = false; 
             @Override
             public void run() {
-                // Check if the movie already exists on the DB, if not, we put on all the datas
-                for (n = 0; n < originalMovieNames.size(); n++) {
-                    
-                    // Update label for follow the process
+                // if no movie founded
+                if(originalMovieNames.size() < 1){
+                    // Update UI on Platform main app thread because we are on a Thread
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
-                            int nb = n+1;
-                            lblNbFilesProcessed.setText("Loading movie "+nb+" / "+originalMovieNames.size());
+                            lblNbFilesProcessed.setText("No movie founded");
                         }
                     });
-                    
-                    // The pourcent is set between 0 and 1 (0 and 100%)
-                    // So we get only one step pourcent (exemple 4 movies, one step is 0.25)
-                    float oneStepPourcent = 100 * (1) / originalMovieNames.size();
-                    oneStepPourcent = oneStepPourcent / 100;
+                }else{
+                    // Each movie founded on the user's folder
+                    for (n = 0; n < originalMovieNames.size(); n++) {
+                        // Update label for follow the process
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                int nb = n+1;
+                                lblNbFilesProcessed.setText("Loading movie "+nb+" / "+originalMovieNames.size());
+                            }
+                        });
 
-                    if (movieExistsOnDb(rawMovieNames.get(n))) {
-                        System.out.println(originalMovieNames.get(n) + " Existe !");
-                    } else {
-                        System.out.println(originalMovieNames.get(n) + " Existe pas !");
-                        if(InternetConnection.isEnable()){ 
-                            Movie movie = ApiHandler.getAllMovieInfos(originalMovieNames.get(n), rawMovieNames.get(n), oneStepPourcent, progressBarProcess); 
-                            insertMovieOnDb(movie); 
-                        }else{ 
-                            noInternet = true; 
+                        // The pourcent is set between 0 and 1 (0 and 100%)
+                        // So we get only one step pourcent (exemple 4 movies, one step is 0.25)
+                        float oneStepPourcent = 100 * (1) / originalMovieNames.size();
+                        oneStepPourcent = oneStepPourcent / 100;
+
+                        // Check if the movie already exists on the DB, if not, we put on all the datas
+                        if (movieExistsOnDb(rawMovieNames.get(n))) {
+                            System.out.println(originalMovieNames.get(n) + " Existe !");
+                        } else {
+                            System.out.println(originalMovieNames.get(n) + " Existe pas !");
+                            if(InternetConnection.isEnable()){ 
+                                Movie movie = ApiHandler.getAllMovieInfos(originalMovieNames.get(n), rawMovieNames.get(n), oneStepPourcent, progressBarProcess); 
+                                insertMovieOnDb(movie); 
+                            }else{ 
+                                noInternet = true; 
+                            }
                         }
+
+                        // We add this setProgress, because it's a round number, so it's a step with different progress number than before
+                        // (Pourcent is static, like that we can get it on the platform.runLater)
+                        pourcent = 100 * (n+1) / originalMovieNames.size();
+                        pourcent = pourcent / 100;
+                        // For do an update Graphic on a "logical method" we have to do this on the Application Thread
+                        // So, Platform.runLater is the Application Thread
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                progressBarProcess.setProgress(pourcent);
+                            }
+                        });
+
                     }
-                    
-                    // We add this setProgress, because it's a round number, so it's a step with different progress number than before
-                    // (Pourcent is static, like that we can get it on the platform.runLater)
-                    pourcent = 100 * (n+1) / originalMovieNames.size();
-                    pourcent = pourcent / 100;
-                    // For do an update Graphic on a "logical method" we have to do this on the Application Thread
-                    // So, Platform.runLater is the Application Thread
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            progressBarProcess.setProgress(pourcent);
-                        }
-                    });
-                    
                 }
                 deleteMovieOnDb();
                 
