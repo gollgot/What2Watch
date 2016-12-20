@@ -133,9 +133,11 @@ Les informations porteront plus sur la logique en elle-même et non l'explicatio
 
 #### 4.3 Analyse des fichiers, récupération du titre du film
 
+**Emplacement de la classe :** `What2Watch/src/ParsingFiles.java`
+
 Pour que l'API puisse nous retourner les données du film que l'ont veut, il faut pouvoir lui passer le titre du film le plus épuré possible. Voici donc comment nous procédons:
 
-Nous avons une première fonction qui va faire un remplacement par un espace de tout ce que l'on rentre à la main comme pattern, par exemple des termes comme : Xvid, bdrip, VOSTFR, etc. ainsi que des ponctuations : ".-\_()". Nous pouvons donc l'affiner au fur et à mesure.
+Nous avons une première fonction qui va faire un remplacement par un espace de tout ce que l'on rentre à la main comme pattern, par exemple des termes comme : Xvid, bdrip, VOSTFR, etc. ainsi que des ponctuations : ".-\_()" (chaque "famille" de pattern sont séparées les unes des autres). Nous pouvons donc l'affiner au fur et à mesure.
 
 Une seconde fonction va permettre de remplacer les possibles dates qu'elle trouve, par un espace.
 
@@ -155,7 +157,9 @@ Pour résumer, cette fonction est bien sûr dépendante de notre fonction 1 (Reg
 
 #### 4.4 API: récupération des informations
 
-Concernant la récupération d'informations sur un film, nous utilisons l'API du site "www.themoviedb.org" : liens vers la documentation de l'API : [TMDB API] (https://developers.themoviedb.org/3/getting-started).
+**Emplacement de la classe :** `What2Watch/src/ApiHandler.java`
+
+Concernant la récupération d'informations sur un film, nous utilisons l'API du site "www.themoviedb.org" : liens vers la documentation de l'API : [TMDB API](https://developers.themoviedb.org/3/getting-started).
 Pour utiliser cette API nous devons utiliser une clef, nous avons donc stocké cette clef dans un fichier .env qui n'est pas à disposition dans le repository (question de sécurité durant la phase de développement).
 
 Nous somme également limité au niveau du nombre de requête par seconde, ce qui implique une certaine attente supérieure à celle que nous aurions voulu au départ. Mais nous avons quand même décidé d'utiliser cette API car elle apporte tous ce que nous cherchons. Nous lui envoyons le titre du film (autant en Français qu'en Anglais) dont nous recherchons les informations, et l'API nous retourne tous ce dont nous avons besoin, en format JSON et dans la langue souhaitée. Il nous reste donc plus qu'à parser le tout et à l'afficher dans notre application.
@@ -234,11 +238,12 @@ Voici comment notre système de branches fonctionne :
 
 - **Master :** Cette branche contient uniquement des versions livrables du projet.
 - **Develop :** Cette branche contient des versions stables du projet, mais toujours en cours de développement.
+- **Deployment :**Cette branche contient uniquement un dossier délivrable pour le client. Il contient donc le dossier lib et le fichier What2Watch.jar ("exécutable" de l'application). Ce dossier peut être généré automatiquement avec l'IDE Netbeans que nous utilisons. Avec cette branche nous pouvons donc télécharger facilement la version stable de notre choix que nous voulons lancer sur notre ordinateur.
 - **Toutes les autres branches :** Pour chaque grande fonctionnalité (généralement plus de un ou deux commits) nous avons créé une branche spécifique à celle-ci et travaillions dessus jusqu'à avoir une version stable et ensuite faire un merge sur la branche develop.
 
 #### 6.2 JDK
 
-Nous avons utilisé le JDK 8u111 pour complilé notre application. Il est donc impératif de prendre la même version. Voici le lien de téléchargement : [JDK 8u111] (http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) 
+Nous avons utilisé le JDK 8u111 pour complilé notre application. Il est donc impératif de prendre la même version. Voici le lien de téléchargement : [JDK 8u111](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) 
 
 Il suffit de télécharger et installer le JDK 8u111 prévu pour l'OS de votre choix.
 
@@ -256,7 +261,7 @@ Liens de téléchargement : [Netbeans](https://netbeans.org/downloads/)
 
 Il ne vous reste donc plus qu'à ouvrir le projet Java de la branche que vous voulez (téléchargé au préalable, voir point "6.1 GitHub"). Exemple : `What2Watch-develop/What2Watch`
 
-Si vous utilisez Netbeans, il n'y a rien d'autre à faire. Toutes les bibliothèques sont déjà liées au projet etc. Si vous utilisez un autre IDE, il se peut qu'il faudra lié les bibliothèques au projet. Vous pouvez les retrouvées dans le dossier `What2Watch/libraries`.
+Si vous utilisez Netbeans, il n'y a rien d'autre à faire. Toutes les bibliothèques sont déjà liées au projet etc. Si vous utilisez un autre IDE, il se peut qu'il faudra lier les bibliothèques au projet. Vous pouvez les retrouver dans le dossier `What2Watch/libraries`.
 
 #### 6.4 API Key
 
@@ -266,7 +271,10 @@ D'abbord, vous devez récupérer votre propre clef d'API sur le site [The Movie 
 
 Ensuite, il faut que vous créiez un fichier ".env" dans le dossier du projet What2Watch (à la même hauteur que le dossier "src"). À l'intérieur de ce fichier, il faut écrire cette ligne : `api_key:xxxxxxxxxxxxxxxxx` en remplaçant les "x" par votre clef.
 
-Pour finir, il faut que vous sachiez encore une chose, aller dans le code source de la classe "ApiHandler". Il y a un attribut de classe qui s'appelle "apiKey", sa valeure est égale à "getApiKey()". C'est une méthode de classe qui va permettre d'aller récupérer le contenu du fichier ".env" et donc de récupérer la valeur de la clef d'API. Si vous déployez votre application, n'oubliez pas de changer la valeur de l'attribut "apiKey" par la valeur de la clef d'API et non par la méthode, car le fichier ".env" ne sera pas disponible chez l'utilisateur.
+
+**Important:**
+
+Pour finir, il faut que vous sachiez encore une chose, aller dans le code source de la classe "ApiHandler". Il y a un attribut de classe qui s'appelle "apiKey", sa valeur est égale à "getApiKey()". C'est une méthode de classe qui va permettre d'aller récupérer le contenu du fichier ".env" et donc de récupérer la valeur de la clef d'API. **Si vous déployez votre application, n'oubliez pas de changer la valeur de l'attribut "apiKey" par la valeur de la clef d'API et non par la méthode, car le fichier ".env" ne sera pas disponible chez l'utilisateur final.**
 
 ---
 
