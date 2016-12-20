@@ -13,6 +13,16 @@
 
 <AnchorPane id="AnchorPane" prefHeight="591.0" prefWidth="948.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="what2watch.FXMLDocumentController">
     <children>
+      <Pane fx:id="paneBlackOpacity" layoutX="497.0" layoutY="151.0" onMouseClicked="#paneBlackOpacityClicked" opacity="0.8" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #000;" styleClass=".ivPoster" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="-0.0" AnchorPane.topAnchor="0.0">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </Pane>
+      <ImageView fx:id="imageViewBigPoster" fitHeight="484.0" fitWidth="394.0" layoutX="304.0" layoutY="54.0" onKeyPressed="#bigPosterKeyPressed" pickOnBounds="true" preserveRatio="true" styleClass="ivBigPoster">
+         <image>
+            <Image url="@resources/images/placeHolder.png" />
+         </image>
+      </ImageView>
       <Pane prefHeight="602.0" prefWidth="801.0" style="-fx-background-color: #2b2b2b;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
       <GridPane fx:id="gridPane" prefHeight="602.0" prefWidth="757.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <columnConstraints>
@@ -241,17 +251,15 @@
                   <ProgressBar fx:id="progressBarProcess" prefWidth="200.0" progress="0.0" styleClass="progressBar" />
                </children>
             </VBox>
+            <Label text="V 1.0.0" textFill="#bcbbbb" GridPane.rowIndex="4">
+               <font>
+                  <Font size="10.0" />
+               </font>
+               <GridPane.margin>
+                  <Insets left="20.0" />
+               </GridPane.margin>
+            </Label>
          </children>
       </GridPane>
-      <Pane fx:id="paneBlackOpacity" layoutX="497.0" layoutY="151.0" onMouseClicked="#paneBlackOpacityClicked" opacity="0.8" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #000;" styleClass=".ivPoster" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="-0.0" AnchorPane.topAnchor="0.0">
-         <cursor>
-            <Cursor fx:constant="HAND" />
-         </cursor>
-      </Pane>
-      <ImageView fx:id="imageViewBigPoster" fitHeight="484.0" fitWidth="394.0" layoutX="304.0" layoutY="54.0" onKeyPressed="#bigPosterKeyPressed" pickOnBounds="true" preserveRatio="true" styleClass="ivBigPoster">
-         <image>
-            <Image url="@resources/images/placeHolder.png" />
-         </image>
-      </ImageView>
     </children>
 </AnchorPane>
