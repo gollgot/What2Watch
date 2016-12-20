@@ -204,7 +204,7 @@
                         <Insets />
                      </opaqueInsets>
                   </HBox>
-                  <Label alignment="CENTER_RIGHT" contentDisplay="CENTER" prefHeight="27.0" prefWidth="133.0" text="Search by:" textFill="#9c9c9c" />
+                  <Label fx:id="lblSearchBy" alignment="CENTER_RIGHT" contentDisplay="CENTER" prefHeight="27.0" prefWidth="133.0" text="Search by:" textFill="#9c9c9c" />
                   <ComboBox fx:id="cbxSearchCriterias" onAction="#updateSearchMode" prefHeight="27.0" prefWidth="204.0" promptText="Title" styleClass="cbxSearchCriterias">
                      <HBox.margin>
                         <Insets left="15.0" />
@@ -248,7 +248,7 @@
             <Cursor fx:constant="HAND" />
          </cursor>
       </Pane>
-      <ImageView fx:id="imageViewBigPoster" fitHeight="484.0" fitWidth="394.0" layoutX="304.0" layoutY="54.0" onKeyPressed="#bigPosterKeyPressed" pickOnBounds="true" preserveRatio="true" style="-fx-border-radius: 10 10 10 10;" styleClass="ivBigPoster">
+      <ImageView fx:id="imageViewBigPoster" fitHeight="484.0" fitWidth="394.0" layoutX="304.0" layoutY="54.0" onKeyPressed="#bigPosterKeyPressed" pickOnBounds="true" preserveRatio="true" styleClass="ivBigPoster">
          <image>
             <Image url="@resources/images/placeHolder.png" />
          </image>
