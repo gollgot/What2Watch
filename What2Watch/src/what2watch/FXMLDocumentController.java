@@ -16,7 +16,10 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.animation.FadeTransition;
+import javafx.animation.ParallelTransition;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -39,10 +42,14 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 /**
  *
@@ -98,10 +105,20 @@ public class FXMLDocumentController implements Initializable {
     private ProgressBar progressBarProcess;
     @FXML
     private Label lblNbFilesProcessed;
+    @FXML
+    private GridPane gridPane;
+    @FXML
+    private VBox vbxLeftContainer;
+    @FXML
+    private Label lblSearchBy;
 
     private UserPreferences prefs = new UserPreferences();
     private int activeSearchMode = 0;
     public static boolean exit = false; // Change if we close the application (see -> Main class)
+    private ImageView instructionHolder;
+    
+    
+    
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -139,7 +156,9 @@ public class FXMLDocumentController implements Initializable {
         lblNbFilesProcessed.setVisible(false);
 
         checkInternetConnection();
-
+        
+        // Display the instruction picture in the UI and sets up "this.instructionHolder" for later use
+        initInstructionPicture();
     }
 
     @FXML
@@ -154,6 +173,8 @@ public class FXMLDocumentController implements Initializable {
         settingStage.setTitle("Movie directory selection");
 
         Scene scene = new Scene(root);
+        Font.loadFont(getClass().getResourceAsStream("resources/fonts/SourceSansPro-Regular.otf"), 12);
+        scene.getStylesheets().add("what2watch/default.css");
         settingStage.setScene(scene);
 
         settingStage.getIcons().add(new Image("what2watch/resources/images/W2W_Logo.png"));
@@ -165,19 +186,18 @@ public class FXMLDocumentController implements Initializable {
         String movieFolderPath = this.prefs.getPath();
         if (Files.exists(Paths.get(movieFolderPath))) {
             FileBrowser.getMovieFileInfos();
-            
-            CacheDb cacheDb = new CacheDb();
-            // Update the cache db (add or remove movies on DB, it depend on the
-            // browser.getMovieFileNames) and get real titles of all the movies on 
-            // the DB.
-            ArrayList<String> rawFileNames = FileBrowser.getMovieFileNames();
-            ArrayList<String> cleanFileNames = ParsingFiles.parse(rawFileNames);
-            
-            DbHandler dbHandler = new DbHandler(cacheDb, cleanFileNames, rawFileNames);
-            listMovie.getItems().clear();
-            // Init progress indicator to 0 and display it
-            progressBarProcess.setProgress(0);
-            progressBarProcess.setVisible(true);
+        displayMovieInfos(false);
+        CacheDb cacheDb = new CacheDb();
+        // Update the cache db (add or remove movies on DB, it depend on the
+        // browser.getMovieFileNames) and get real titles of all the movies on 
+        // the DB.
+        ArrayList<String> fileNames = ParsingFiles.parse(FileBrowser.getMovieFileNames());
+        ArrayList<String> rawFileNames = FileBrowser.getMovieFileNames();
+        DbHandler dbHandler = new DbHandler(cacheDb, fileNames, rawFileNames);
+        listMovie.getItems().clear();
+        // Init progress indicator to 0 and display it
+        progressBarProcess.setProgress(0);
+        progressBarProcess.setVisible(true);
 
             this.disableSearchUI(true);
             // We pass the current instance of "FXMLDocumentController" class, because we have to access the "disableSearchUI" method 
@@ -287,6 +307,9 @@ public class FXMLDocumentController implements Initializable {
             }
             ivMovie.setImage(moviePoster);
             imageViewBigPoster.setImage(moviePoster);
+            
+            // Hide the instruction picture ; display the movie infos
+            displayMovieInfos(true);
         }
     }
 
@@ -327,11 +350,48 @@ public class FXMLDocumentController implements Initializable {
         imageViewBigPoster.setVisible(true);
         // We set the focus to the BigPoster (like that we can check if we presse the escape key or not)
         imageViewBigPoster.requestFocus();
+        
+        FadeTransition ft = new FadeTransition(Duration.millis(300), paneBlackOpacity);
+        ft.setFromValue(0.0);
+        ft.setToValue(0.8);
+        ft.setAutoReverse(true);
+        
+        FadeTransition ft2 = new FadeTransition(Duration.millis(300), imageViewBigPoster);
+        ft2.setFromValue(0.0);
+        ft2.setToValue(1.0);
+        ft2.setAutoReverse(true);
+
+        ParallelTransition pt = new ParallelTransition(ft, ft2);
+        pt.play();
     }
 
     private void closeBigPoster() {
-        paneBlackOpacity.setVisible(false);
-        imageViewBigPoster.setVisible(false);
+        paneBlackOpacity.setVisible(true);
+        imageViewBigPoster.setVisible(true);
+        // We set the focus to the BigPoster (like that we can check if we presse the escape key or not)
+        imageViewBigPoster.requestFocus();
+        
+        FadeTransition ft = new FadeTransition(Duration.millis(300), paneBlackOpacity);
+        ft.setFromValue(0.8);
+        ft.setToValue(0.0);
+        ft.setAutoReverse(true);
+        
+        FadeTransition ft2 = new FadeTransition(Duration.millis(300), imageViewBigPoster);
+        ft2.setFromValue(1.0);
+        ft2.setToValue(0.0);
+        ft2.setAutoReverse(true);
+        
+        ParallelTransition pt = new ParallelTransition(ft, ft2);
+        
+        pt.setOnFinished(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                paneBlackOpacity.setVisible(false);
+                imageViewBigPoster.setVisible(false);
+            }
+        });
+        
+        pt.play();
     }
 
     // Close the bigPoster when we clicked on the black opac pane
@@ -352,6 +412,7 @@ public class FXMLDocumentController implements Initializable {
         this.disableSearchBars(toggleValue);
         this.cbxSearchCriterias.setDisable(toggleValue);
         this.listMovie.setDisable(toggleValue);
+        this.lblSearchBy.setDisable(toggleValue);
     }
 
     @FXML
@@ -477,4 +538,27 @@ public class FXMLDocumentController implements Initializable {
             }
         });
     }
+    
+    // Sets up the instruction picture for later use at startup
+    // This will place the instruction picture at the right spot so that the app is able to show or hide it
+    private void initInstructionPicture() {
+        this.instructionHolder = new ImageView();
+
+        Image instructions = new Image("what2watch/resources/images/instructions.png");
+        this.instructionHolder.setImage(instructions);
+        
+        gridPane.add(this.instructionHolder, 1, 0, 1, 4);
+        
+        this.instructionHolder.setTranslateX(15);
+        
+        this.vbxLeftContainer.setVisible(false);
+    }
+    
+    // Either displays or hides the UI movie informations to draw the instruction
+    // picture instead, depending on the value passed by parameter
+    public void displayMovieInfos(boolean display) {
+        this.vbxLeftContainer.setVisible(display);
+        this.instructionHolder.setVisible(!display);
+    }
+    
 }

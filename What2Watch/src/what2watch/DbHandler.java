@@ -59,7 +59,7 @@ public class DbHandler {
                         @Override
                         public void run() {
                             int nb = n+1;
-                            lblNbFilesProcessed.setText("Fichier(s) traité(s) : "+nb+" / "+originalMovieNames.size());
+                            lblNbFilesProcessed.setText("Loading movie "+nb+" / "+originalMovieNames.size());
                         }
                     });
                     
