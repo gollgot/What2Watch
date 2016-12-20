@@ -1,6 +1,6 @@
 # What 2 Watch - Documentation technique
 
-[Repository GitHub] (https://github.com/raph-u/What2Watch/)
+Liens vers notre repository : [What2Watch - GitHub](https://github.com/raph-u/What2Watch/)
 
 
 **OU METTRE UI ? Raph**
@@ -8,6 +8,10 @@
 ## Sommaire
 
 1. Architecture
+
+    1.1 Schéma de communication
+
+    1.2 Base de données (MLD)
 
 2. Language
 
@@ -53,7 +57,24 @@
 
 ## 1. Architecture
 
+#### 1.1 Schéma de communication
+
 À compléter
+
+#### 1.2 Base de données (MLD)
+
+![MLD](screenshots/MLD.png "W2W - MLD")
+
+Détail des tables :
+
+ - **movie :** On y retrouve toutes les informations propre à chaque film.
+ - **actor, director :** On y retrouve, respectivement, le noms des acteurs et des directeurs présent dans un minimum un film. Pour le noms nous avons volontairement mis le nom et le prénom dans le même champ, car l'API nous retourne par exemple le nom "John Carl Buechler". Il est donc très difficile de savoir quel est le nom et le prénom (ce n'est pas toujours les "deux premières parties qui sont le prénoms").
+ - **genre :** On y retrouve les genres présents dans au minimum un film.
+ - **movie_has_actor, movie_has_director, movie_has_genre :** Ce sont les tables intermédiaires qui permettent de faire la liaison entre la table movie et genre, director, actor. Comme cela nous avons l'ensemble des personnes / genres présentent dans tous les films.
+
+L'ensemble de ces tables suffisent amplements à structurer et stocker les données dont nous avons besoin pour notre application. De plus nous devont interroger notre base de données lors des recherches spécifiques faites par l'utilisateur et ces tables répondent à notre demande.
+
+*Note : Dans notre projet, vous pouvez retrouver la base de données (SQLite) qui est à l'emplacement : `cache/cache.db`. Nous avons décider de l'appelée ainsi, car elle fait vaiment office de cache, l'utilisateur peut la supprimer si elle serait corrompue, ou même par inadvertance et lors du lancement de l'application elle sera recrée automatiquement dans le dossier cache.*
 
 ---
 
@@ -82,9 +103,7 @@ De plus, SQLite est une bibliothèque open source et extrêmement légère. C'es
 
 SQLite nous paraît donc très adapté pour ce genre de projet qui de plus ne demandera pas une gestion d'une immense quantité de films.
 
-Dans notre projet, vous pouvez retrouver la base de données qui est à l'emplacement : `cache/cache.db`. Nous avons décider de l'appelée ainsi, car elle fait vaiment office de cache, l'utilisateur peut la supprimer si elle serait corrompue, ou même par inadvertance et lors du lancement de l'application elle sera recrée automatiquement dans le dossier cache.
-
-Liens vers la bibliothèque : [SQLite] (https://bitbucket.org/xerial/sqlite-jdbc)
+Liens vers la bibliothèque : [SQLite](https://bitbucket.org/xerial/sqlite-jdbc)
 
 #### 3.2 JSON-java
 
@@ -94,7 +113,7 @@ Nous avons choisi d'intégrer cette bibliothèque car elle est très légère et
 
 Dans notre programme, nous devons décoder à plusieurs reprises des fichier JSON qui nous sont retournés par l'API, de ce fait nous avons pensé utile de l'utiliser.
 
-Liens vers la bibliothèque : [JSON-java] (https://github.com/stleary/JSON-java)
+Liens vers la bibliothèque : [JSON-java](https://github.com/stleary/JSON-java)
 
 ---
 
@@ -162,22 +181,22 @@ Voici toutes les étapes à suivre pour installer notre application sur votre or
 
 Pour pouvoir exécuter des programmes Java (.jar) vous êtes obligé d'installer le JRE (Java SE Runtime Environment). Il vous faut obligatoirement le JRE 8u111.
 
-*Note : Si vous avaz déjà Java 8 d'installer vu pouvez sauter cette étape.*
+*Note : Si vous avez déjà Java 8 d'installer vu pouvez sauter cette étape.*
 
 Pour voir la version de java installer :
 
-- Sous Windows : Aller dans le panneau de configuration -> Programmes -> Programmes et fonctionnalités. Puis rechercher Java et vous allez voir la version installée.
-- Sous Unix : Ouvrez un terminal puis tapper la commande : `java -version`. Si vous avez un message d'erreur c'est que java n'est pas installé, sinon il faut que vous ayez un message : "Java version 1.8.x".
+- **Sous Windows :** Aller dans le panneau de configuration -> Programmes -> Programmes et fonctionnalités. Puis rechercher Java et vous allez voir la version installée.
+- **Sous Unix :** Ouvrez un terminal puis tapper la commande : `java -version`. Si vous avez un message d'erreur c'est que java n'est pas installé, sinon il faut que vous ayez un message : "Java version 1.8.x".
 
 Téléchargement du JRE : 
 
-Voici le lien de téléchargement : [JRE 8u111] (http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html) 
+Voici le lien de téléchargement : [JRE 8u111](http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html) 
 
 Il suffit de télécharger et installer le JRE 8u111 prévu pour l'OS de votre choix.
 
 Pour l'installation en ligne de commande via Linux Ubuntu et Linux Debian, voici deux très bon tutoriels (c'est pour installer le JDK 8, qui intègre lui-même le JRE 8):
-- [Ubuntu] (http://www.webupd8.org/2012/09/install-oracle-java-8-in-ubuntu-via-ppa.html)
-- [Debian] (http://www.webupd8.org/2014/03/how-to-install-oracle-java-8-in-debian.html)
+- [JDK8 - Ubuntu](http://www.webupd8.org/2012/09/install-oracle-java-8-in-ubuntu-via-ppa.html)
+- [JDK8 - Debian](http://www.webupd8.org/2014/03/how-to-install-oracle-java-8-in-debian.html)
 
 #### 5.2 Application What2Watch
 
@@ -205,7 +224,7 @@ Nous avons découpé la reprise du projet en plusieurs étapes, pour pouvoir les
 
 #### 6.1 GitHub
 
-L'ensemble du projet est disponible sur GitHub : [What2Watch] (https://github.com/raph-u/What2Watch)
+L'ensemble du projet est disponible sur GitHub : [What2Watch](https://github.com/raph-u/What2Watch)
 
 Vous pouvez donc récupérer l'ensemble du repository et par exemple l'ouvrir avec un outil de versionning (nous avons utilisé GitKraken).
 
@@ -213,9 +232,9 @@ Ou récupérer la branche de votre choix, pour ensuite en modifier le contenu.
 
 Voici comment notre système de branches fonctionne :
 
-- **Master** : Cette branche contient uniquement des versions livrables du projet.
-- **Develop** : Cette branche contient des versions stables du projet, mais toujours en cours de développement.
-- **Toutes les autres branches** : Pour chaque grande fonctionnalité (généralement plus de un ou deux commits) nous avons créé une branche spécifique à celle-ci et travaillions dessus jusqu'à avoir une version stable et ensuite faire un merge sur la branche develop.
+- **Master :** Cette branche contient uniquement des versions livrables du projet.
+- **Develop :** Cette branche contient des versions stables du projet, mais toujours en cours de développement.
+- **Toutes les autres branches :** Pour chaque grande fonctionnalité (généralement plus de un ou deux commits) nous avons créé une branche spécifique à celle-ci et travaillions dessus jusqu'à avoir une version stable et ensuite faire un merge sur la branche develop.
 
 #### 6.2 JDK
 
@@ -224,14 +243,14 @@ Nous avons utilisé le JDK 8u111 pour complilé notre application. Il est donc i
 Il suffit de télécharger et installer le JDK 8u111 prévu pour l'OS de votre choix.
 
 Pour l'installation en ligne de commande via Linux Ubuntu et Linux Debian, voici deux très bon tutoriels :
-- [Ubuntu] (http://www.webupd8.org/2012/09/install-oracle-java-8-in-ubuntu-via-ppa.html)
-- [Debian] (http://www.webupd8.org/2014/03/how-to-install-oracle-java-8-in-debian.html)
+- [Ubuntu](http://www.webupd8.org/2012/09/install-oracle-java-8-in-ubuntu-via-ppa.html)
+- [Debian](http://www.webupd8.org/2014/03/how-to-install-oracle-java-8-in-debian.html)
 
 #### 6.3 IDE
 
 Vous pouvez utiliser n'importe quel IDE qui permet de reprendre un projet Java, mais nous vous recommandons tout de même d'utiliser le même que nous qui est Netbeans (version 8.2 ).
 
-Liens de téléchargement : [Netbeans] (https://netbeans.org/downloads/)
+Liens de téléchargement : [Netbeans](https://netbeans.org/downloads/)
 
 *Note : Ne pas oublié d'indiquer le chemin vers le JDK installé au point "6.2 JDK" lors de l'installation*
 
