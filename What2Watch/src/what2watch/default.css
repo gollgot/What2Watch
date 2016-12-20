@@ -41,7 +41,7 @@ This file holds the default style of the app
 /* textArea content background*/
 .taSynopsis .content,
 .taSynopsis .content:focused {
-    -fx-background-color: #181818;
+    -fx-background-color: #343434;
 }
 
 
@@ -58,12 +58,12 @@ This file holds the default style of the app
  ******************************************************************************/
 
 .tfSearch, .tfStartingYear, .tfEndingYear, .tfPath {
-    -fx-control-inner-background: #181818;
+    -fx-control-inner-background: #343434;
     -fx-text-fill: #9c9c9c;
     -fx-text-box-border: transparent;
     -fx-highlight-fill: #6d6d6d;
     -fx-highlight-text-fill: rgb(250, 250, 250);
-    -fx-prompt-text-fill: #404040;
+    -fx-prompt-text-fill: #585858;
 }
 
 
@@ -75,7 +75,7 @@ This file holds the default style of the app
 
 .listMovie,
 .listMovie:focused {
-    -fx-background-color: #181818;
+    -fx-background-color: #343434;
 }
 
 .listMovie .list-cell:odd:selected,
@@ -83,23 +83,22 @@ This file holds the default style of the app
     -fx-background-color: #404040;
 }
 
-/*.listMovie .list-cell:odd,
+.listMovie .list-cell:odd,
 .listMovie .list-cell:even {
-    -fx-background-color: #f7f7f7;
+/*    -fx-background-color: #f7f7f7;*/
     -fx-border-width: 0 0 1 0;
-    -fx-border-color: #c8c8c8;
-}*/
+    -fx-border-color: #404040;
+}
 
 .listMovie .list-cell:odd {
-    -fx-background-color: #181818;
+    -fx-background-color: #343434;
     -fx-text-fill: #9c9c9c;
 }
 
 .listMovie .list-cell:even {
-    -fx-background-color: #181818; /*#1a1a1a*/
+    -fx-background-color: #343434; /*#1a1a1a*/
     -fx-text-fill: #9c9c9c;
 }
-
 
 /*Out of focus style (listView unfocused)*/
 .listMovie .list-cell:filled:selected {
@@ -107,11 +106,11 @@ This file holds the default style of the app
 }
 
 .listMovie .scroll-bar{
- -fx-background-color: #1d1d1d;
+ -fx-background-color: #2f2f2f;
 }
 
 .listMovie .thumb {
-    -fx-background-color: #404040;
+    -fx-background-color: #777777;
 }
 
 .scroll-bar:horizontal .track ,
@@ -119,7 +118,6 @@ This file holds the default style of the app
      -fx-background-color: transparent;
      -fx-background-radius: 0em;
 }
-
 
 
 /*******************************************************************************
@@ -132,12 +130,12 @@ This file holds the default style of the app
 .cbxSearchCriterias:disabled,
 .cbxSearchCriterias .arrow-button,
 .cbxSearchCriterias .cell:selected {
-    -fx-background-color: #181818;
+    -fx-background-color: #343434;
     -fx-text-fill: #9c9c9c;
 }
 
 .cbxSearchCriterias .cell:hover {
-    -fx-background-color: #ababab;
+    -fx-background-color: #404040;
     -fx-text-fill: rgb(250, 250, 250);
 }
 
@@ -147,7 +145,7 @@ This file holds the default style of the app
 }
 
 .cbxSearchCriterias .list-cell {
-    -fx-background-color: #202020;
+    -fx-background-color: #303030;
     -fx-text-fill: #9c9c9c;
 }
 
@@ -168,12 +166,16 @@ This file holds the default style of the app
  ******************************************************************************/
 
 .progressBar .bar {
-    -fx-background-color: #00ff00;
+    -fx-background-color: #777777;
 }
 
-.progress-bar .bar { 
-    -fx-padding: 6px; 
-    -fx-background-insets: 0; 
+.progress-bar > .bar { 
+    -fx-padding: 10px; 
+}
+
+.progress-bar > .track {
+  -fx-control-inner-background: #343434;
+   -fx-text-box-border: #777777;
 }
 
 
@@ -184,14 +186,21 @@ This file holds the default style of the app
  ******************************************************************************/
 
 .settingButton  {
-    -fx-background-color: #1e1e1e;
+    -fx-background-color: #454545;
     -fx-text-fill: #9c9c9c;
 }
 
 .settingButton:hover  {
-    -fx-background-color: #282828;
+    -fx-background-color: #505050;
     -fx-text-fill: rgb(250, 250, 250);
 }
+
+
+/*******************************************************************************
+ *                                                                             *
+ * Label                                                                      *
+ *                                                                             *
+ ******************************************************************************/
 
 .lblPlay:hover {
     -fx-text-fill: #c0c0c0;
