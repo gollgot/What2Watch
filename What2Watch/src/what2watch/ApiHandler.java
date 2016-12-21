@@ -38,6 +38,12 @@ public class ApiHandler {
      * @param   progressBarProcess The ProgressBar object, for update it.
      * 
      * @return  A Movie object contains all movie's data.
+     * 
+     * @see     InternetConnection#isEnable
+     * @see     ApiHandler#getMovieId
+     * @see     ApiHandler#getMovieDetails
+     * @see     ApiHandler#getMovieActorsDirectors
+     * @see     ApiHandler#updateProgressBar
      */
     public static Movie getAllMovieInfos(String movieName, String rawMovieName, float oneStepPourcent, ProgressBar progressBarProcess){
         // We have 3 big process, so 33% of the oneStepPourcent.
@@ -82,9 +88,9 @@ public class ApiHandler {
      * 
      * @param   pourcentToAdd pourcent you want to add to the current progress value.
      * 
-     * @see     ApiHandler#getAllMovieInfos(java.lang.String, java.lang.String, float, javafx.scene.control.ProgressBar)
-     *          
+     * @see     ApiHandler#getAllMovieInfos
      * @see     Platform#runLater
+     * @see     ProgressBar#setProgress
      */
     private static void updateProgressBar(ProgressBar progressBarProcess, float pourcentToAdd){
         Platform.runLater(new Runnable() {
@@ -101,8 +107,7 @@ public class ApiHandler {
      * 
      * @param   movieName The movie name you want to fetch the ID.
      * 
-     * @see     ApiHandler#getAllMovieInfos(java.lang.String, java.lang.String, float, javafx.scene.control.ProgressBar)
-     *          
+     * @see     ApiHandler#getAllMovieInfos   
      * @see     Platform#runLater
      */
     private static String getMovieId(String movieName) {

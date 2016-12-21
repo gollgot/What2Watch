@@ -63,6 +63,12 @@ public class DbHandler {
      * 
      * @param   lblNbFilesProcessed  The label(above the progress bar) you have to update.
      * 
+     * @see     Platform#runLater
+     * @see     InternetConnection#isEnable
+     * @see     ApiHandler#getAllMovieInfos
+     * @see     DbHandler#insertMovieOnDb
+     * @see     DbHandler#deleteMovieOnDb
+     * 
      */
     public void update(FXMLDocumentController controller, ListView movieListView, ProgressBar progressBarProcess, Label lblNbFilesProcessed) {
         lblNbFilesProcessed.setVisible(true);
@@ -186,6 +192,8 @@ public class DbHandler {
      * 
      * @return  True if the movie already exists on the DB;
      *          False if the movie doesn't exists on the DB;
+     * 
+     * @see     CacheDb#doSelectQuery
      */
     private boolean movieExistsOnDb(String rawMovieName) {
         String query = "SELECT raw_title FROM movie WHERE raw_title = \"" + rawMovieName + "\"";
@@ -202,6 +210,9 @@ public class DbHandler {
      * Insert a movie on the DB
      * 
      * @param   movie   The Movie object you want to insert
+     * 
+     * @see     CacheDb#doSelectQuery
+     * @see     CacheDb#doNoReturnQuery
      */
     void insertMovieOnDb(Movie movie) {
         // BE CAREFUL -> we have to replace replace ' with " for keep ' on all text
@@ -294,6 +305,8 @@ public class DbHandler {
      * Delete movie from the DB who doesn't exists on the user's directory.
      * Example : If we have 10 movies on our folder and, further, we'll have only 5,
      * so we have to delete the 5 non-existant movie from the DB
+     * 
+     * @see     CacheDb#doSelectQuery
      */
     private void deleteMovieOnDb() {
         UserPreferences prefs = new UserPreferences();
@@ -350,6 +363,8 @@ public class DbHandler {
      * @param   realTitles All titles of movie we want
      * 
      * @return  All Movies object
+     * 
+     * @see     CacheDb#doSelectQuery
      */
     public ArrayList<Movie> getMovies(String[] realTitles) {
         ArrayList<Movie> movies = new ArrayList<Movie>();
@@ -410,6 +425,8 @@ public class DbHandler {
     
     /** 
      * @return  all titles of film that we have on the DB
+     * 
+     * @see     CacheDb#doSelectQuery
      */
     public String[] getAllTitles() {
         String query = "SELECT title FROM movie";
@@ -425,6 +442,8 @@ public class DbHandler {
      * @param   title The title of the movie that you want.
      * 
      * @return  The Movie object corresponds to the title.
+     * 
+     * @see     CacheDb#doSelectQuery
      */
     public static Movie getMovie(String title){
         Movie movie = new Movie();
@@ -467,6 +486,8 @@ public class DbHandler {
      * @param   title The title of the movie that you want.
      * 
      * @return  The raw title corresponds to the title.
+     * 
+     * @see     CacheDb#doSelectQuery
      */
     public static String getRawTitle(String title){
         String query = "SELECT raw_title FROM movie WHERE title = \""+title+"\";";
