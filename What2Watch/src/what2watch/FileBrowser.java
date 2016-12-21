@@ -44,8 +44,9 @@ public class FileBrowser{
     }
     
     /** 
-     * Creates a FileFinder instance that will fetch movie file names and paths.
-     * Those informations are to be fetched using methods provided in FileBrowser.
+     * Creates a FileFinder instance which will gather movie file names and paths.
+     * Those informations are to be fetched using  both "getMovieFileNames"
+     * and "getFilePath" methods provided in FileBrowser.
      * 
      * @see     FileBrowser#getMovieFileNames 
      * 

@@ -5,15 +5,6 @@
  */
 package what2watch;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -24,8 +15,6 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  *
@@ -35,14 +24,10 @@ public class Main extends Application {
     
     @Override
     public void start(Stage stage) throws Exception {
-        // According to http://stackoverflow.com/a/39261303
-        
-        //Set up FXMLloaders
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource("FXMLDocument.fxml"));
         Parent root = loader.load();
         
-        //Get an instance of the home controller
         FXMLDocumentController controller = loader.getController();
         
         Scene scene = new Scene(root);

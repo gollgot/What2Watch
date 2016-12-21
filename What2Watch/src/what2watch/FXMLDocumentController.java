@@ -5,7 +5,6 @@
  */
 package what2watch;
 
-import com.sun.org.apache.bcel.internal.generic.F2D;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
@@ -34,7 +33,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;

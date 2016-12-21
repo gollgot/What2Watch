@@ -13,6 +13,7 @@ import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -44,21 +45,31 @@ public class FXMLSettingsController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        
-        // For test purposes only 
-        // this.prefs.removePath();
-
         // Filling the textfield with the saved movie folder path
         if(! this.prefs.getPath().equals("")) {
             this.tfPath.setText(this.prefs.getPath());
         }
     }    
 
+    /** 
+     * Closes the settings window. This method uses the event that triggers it
+     * in order to fetch the scene in which the event started and close the window.
+     * 
+     * @param event the event that triggers this method
+     */
     @FXML
     private void closeWindow(ActionEvent event) {
-        closeStage(btnCancel);
+        Node  source = (Node)  event.getSource(); 
+        Stage stage  = (Stage) source.getScene().getWindow();
+        stage.close();
     }
 
+    /** 
+     * Saves the path specified in the settings window path textfield (tfPath) as a preferences.
+     * This will ensure its persistence and make it available at anytime in the application.
+     * 
+     * @param event the event that triggers this method
+     */
     @FXML
     private void setPath(ActionEvent event) {
         // Making sure the user specified a path for his movie folder
@@ -66,13 +77,18 @@ public class FXMLSettingsController implements Initializable {
             this.prefs.savePath(this.tfPath.getText());
             this.setLblErrorMode(false);
             
-            // Closing the settings window
-            closeStage(btnPathDefiner);
+            closeWindow(event);
         } else {
             this.setLblErrorMode(true);
         }
     }
 
+    /** 
+     * Opens up a dialog window allowing the user to browse through the file system
+     * and select a folder
+     * 
+     * @param event the event that triggers this method
+     */
     @FXML
     private void browseFolders(ActionEvent event) {
         final DirectoryChooser directoryChooser = new DirectoryChooser();
@@ -88,6 +104,14 @@ public class FXMLSettingsController implements Initializable {
         }
     }
     
+    /** 
+     * Defines an initial folder to start browsing from as well as a window title.
+     * If the user saved a path in the preferences, then this path is used as a the initial folder.
+     * If no path has been saved, the directory chooser opens up the default user directory 
+     * depending on the operating system the app is running on.
+     * 
+     * @param directoryChooser the DirectoryChooser instance to configure
+     */
     private static void configureDirectoryChooser(final DirectoryChooser directoryChooser) {      
         String initialDirectory = System.getProperty("user.home");
         directoryChooser.setTitle("What 2 Watch - Select a directory");
@@ -104,12 +128,16 @@ public class FXMLSettingsController implements Initializable {
         directoryChooser.setInitialDirectory(new File(initialDirectory));
     }
     
-    private static void closeStage(Button button) {
-        // Getting a reference to the settings window and closing it
-        Stage stage = (Stage) button.getScene().getWindow();
-        stage.close();
-    }
-    
+    /** 
+     * Toggles the instruction label of the settings window between two modes.
+     * The normal mode displays a regular label indicating what the user should do.
+     * The error mode updates the very same label with a red color and a text warning.
+     * 
+     * This method is called whenever the user clicks the save button prior to selecting a path.
+     * 
+     * @param errorMode the boolean value specifying whether or not the label should be displayed
+     * in its error mode
+     */
     private void setLblErrorMode(boolean errorMode) {
         if (!errorMode) {
             this.lblInstruction.setStyle("-fx-text-fill: #9c9c9c;");
