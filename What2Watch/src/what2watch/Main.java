@@ -35,13 +35,27 @@ public class Main extends Application {
     
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("FXMLDocument.fxml"));
+        // According to http://stackoverflow.com/a/39261303
+        
+        //Set up FXMLloaders
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("FXMLDocument.fxml"));
+        Parent root = loader.load();
+        
+        //Get an instance of the home controller
+        FXMLDocumentController controller = loader.getController();
         
         Scene scene = new Scene(root);
         
         Font.loadFont(getClass().getResourceAsStream("resources/fonts/SourceSansPro-Regular.otf"), 12);
         Font.loadFont(getClass().getResourceAsStream("resources/fonts/Montserrat-Bold.ttf"), 12);
         scene.getStylesheets().add("what2watch/default.css");
+        
+        stage.setOnShown(new EventHandler<WindowEvent>() {
+            public void handle(WindowEvent e) {
+                controller.viewDidLoad();
+            }
+        });
         
         // StageStyle.UNIFIED is for remove the basic blue border of the windows
         stage.initStyle(StageStyle.UNIFIED);

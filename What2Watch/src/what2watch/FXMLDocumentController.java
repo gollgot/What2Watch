@@ -119,21 +119,9 @@ public class FXMLDocumentController implements Initializable {
     
     
     
-
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // Displaying the settings window before the main one if no path has been saved in the app
-        String movieFolderPath = this.prefs.getPath();
-        if (movieFolderPath.equals("")) {
-            try {
-                showSettings(null);
-            } catch (IOException ex) {
-                Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        } else if (!Files.exists(Paths.get(movieFolderPath))) {
-            displayMissingFolderError();
-        }
-
         // Combobox search criterias configuration
         // those values have to match the switch case statement in the updateSearchMode method below
         this.cbxSearchCriterias.getItems().addAll(
@@ -170,8 +158,8 @@ public class FXMLDocumentController implements Initializable {
         // Window customization
         settingStage.setResizable(false);
         settingStage.initModality(Modality.APPLICATION_MODAL);
-        settingStage.setTitle("Movie directory selection");
-
+        settingStage.setTitle("What 2 Watch - Movie directory selection");
+        
         Scene scene = new Scene(root);
         Font.loadFont(getClass().getResourceAsStream("resources/fonts/SourceSansPro-Regular.otf"), 12);
         scene.getStylesheets().add("what2watch/default.css");
@@ -559,6 +547,19 @@ public class FXMLDocumentController implements Initializable {
     public void displayMovieInfos(boolean display) {
         this.vbxLeftContainer.setVisible(display);
         this.instructionHolder.setVisible(!display);
+    }
+    
+    public void viewDidLoad() {
+        String movieFolderPath = this.prefs.getPath();
+        if (movieFolderPath.equals("")) {
+            try {
+                showSettings(null);
+            } catch (IOException ex) {
+                Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else if (!Files.exists(Paths.get(movieFolderPath))) {
+            displayMissingFolderError();
+        }
     }
     
 }

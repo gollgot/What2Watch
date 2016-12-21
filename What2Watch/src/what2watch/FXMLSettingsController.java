@@ -92,7 +92,7 @@ public class FXMLSettingsController implements Initializable {
     
     private static void configureDirectoryChooser(final DirectoryChooser directoryChooser) {      
         String initialDirectory = System.getProperty("user.home");
-        directoryChooser.setTitle("Select directory");
+        directoryChooser.setTitle("What 2 Watch - Select a directory");
         
         String movieFolderPath = prefs.getPath();
         
