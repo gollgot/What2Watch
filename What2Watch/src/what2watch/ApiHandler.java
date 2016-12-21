@@ -30,7 +30,7 @@ public class ApiHandler {
      * @param   movieName The name of the movie, after passed to the 
      *          ParsingFiles class (need for ask the API).
      * 
-     * @param   rawMovieName The raw name of the movie (need because it's a movie's data).
+     * @param   rawMovieName The raw name of the movie.
      * 
      * @param   oneStepPourcent The step value (between 0 and 1) to add
      *          when one movie finished to fetch data from the API.
@@ -109,11 +109,9 @@ public class ApiHandler {
         String movieNameUrlFormat = movieName.replaceAll(" ", "%20");
         String id = "Unknown";
 
-        // Fetch the JSON and add data into movie object
         try {
             // Get a JSON from an URL
-            JSONObject json = ParsingJSON.readJsonFromUrl("https://api.themoviedb.org/3/search/movie?api_key=" + apiKey + "&language=en-US&query=" + movieNameUrlFormat);
-            // Get the array data "results"
+            JSONObject json = ParsingJSON.readJsonFromUrl("https://api.themoviedb.org/3/search/movie?api_key="+ apiKey + "&language=en-US&query=" + movieNameUrlFormat);
             JSONArray jsonArray = json.getJSONArray("results");
             
             // If there is no infos for the film
@@ -124,11 +122,9 @@ public class ApiHandler {
                 JSONObject jsonOject = jsonArray.getJSONObject(0);
                 id = String.valueOf(jsonOject.getInt("id"));
             }
-        
-        // Differents error (JSON / IO)
         } catch (JSONException ex) {
             System.out.println("ERROR on parsingJSON (JSON exception) : " + ex.getMessage());
-        } catch (IOException ex) { // InternetConnection lost 
+        } catch (IOException ex) { // Possibly InternetConnection lost 
             System.out.println("ERROR on parsingJSON (IO exception) : " + ex.getMessage() + "\nVeuillez vérifier votre connexion internet");
             id = "Unknown"; 
         }
@@ -137,6 +133,22 @@ public class ApiHandler {
         
     }
     
+    
+    /** 
+     * Return a Movie object who contains basics movie's data :
+     * title, year, synopsis, poster_link, genres.
+     * 
+     * (fetch data in the JSON file from the TMDB API)
+     * 
+     * @param   movieName The movie name you want to fetch data.
+     * 
+     * @param   rawMovieName The raw movie name, you need it because we need to set this data
+     *          to the Movie object.
+     * 
+     * @param   id The TMDB API's ID of the movie you want to fetch datas.
+     * 
+     * @return  Movie object
+     */
     private static Movie getMovieDetails(String movieName, String rawMovieName, String id){
         String originalTitle = movieName;
         String year = "Unknown";
@@ -146,7 +158,6 @@ public class ApiHandler {
         
         // If we have an id, we get the real data, else, we don't have data so we put "unknown"
         if(id != "Unknown"){
-            // Fetch the JSON and add data into movie object
             try {
                 // Get a JSON from an URL
                 JSONObject jsonObject = ParsingJSON.readJsonFromUrl("https://api.themoviedb.org/3/movie/" + id + "?api_key="+apiKey+"&language=en-US");
@@ -163,7 +174,7 @@ public class ApiHandler {
                     synopsis = "Unknown";
                 }else{
                     synopsis = jsonObject.getString("overview");
-                    // Replace " with `
+                    // Replace " with ` because we can have an error later with query on DB
                     synopsis = synopsis.replaceAll("\\\"", "`");
                 }
                 
@@ -200,9 +211,6 @@ public class ApiHandler {
                         // Like that we have : "Fantasy;Action;Comedy"
                     }
                 }
-                
-                
-                // Differents error (JSON / IO)
             } catch (JSONException ex) {
                 System.out.println("ERROR on parsingJSON (JSON exception) : " + ex.getMessage());
             } catch (IOException ex) { // Internet connection lost 
@@ -229,26 +237,34 @@ public class ApiHandler {
         movie.setGenre(genres);
         
         return movie;
-        
     }
     
+    
+    /** 
+     * Return a Movie object who contains all movie's data we needs
+     * 
+     * (fetch Actors and Directors data in the JSON file from the TMDB API)
+     * 
+     * @param   movie The current movie that we add data on it.
+     * 
+     * @param   id The TMDB API's ID of the movie you want to fetch datas.
+     * 
+     * @return  Movie object
+     */
     private static Movie getMovieActorsDirectors(Movie movie, String id){
        String actors = "";
        String directors = "";
        
        if(id != "Unknown"){
-            // Fetch the JSON and add data into movie object
             try {
                 // Get a JSON from an URL
                 JSONObject json = ParsingJSON.readJsonFromUrl("https://api.themoviedb.org/3/movie/"+id+"/credits?api_key="+apiKey);
 
                 /* CASTING */
                 JSONArray jsonArrayCast = json.getJSONArray("cast");      
-                // If there is one or more people on the casting
                 if(jsonArrayCast.isNull(0)){
                     actors = "Unknown";
                 }else{
-                    // We get all peoples
                     for (int i = 0; i < jsonArrayCast.length(); i++) {
                         JSONObject jsonObject = jsonArrayCast.getJSONObject(i);
                         // If this is the last actor listed (i < total-1), we display just the name, else a ;
@@ -264,7 +280,6 @@ public class ApiHandler {
 
                 /* CREW */
                 JSONArray jsonArrayCrew = json.getJSONArray("crew");      
-                // If there is one or more people on the casting
                 if(jsonArrayCrew.isNull(0)){
                     directors = "Unknown";
                 }else{
@@ -284,8 +299,6 @@ public class ApiHandler {
                         directors = directors.substring(0, directors.length()-1);
                     }
                 }
-
-            // Differents error (JSON / IO)
             } catch (JSONException ex) {
                 System.out.println("ERROR on parsingJSON (JSON exception) : " + ex.getMessage());
             } catch (IOException ex) { // Internet connection lost 
@@ -293,7 +306,6 @@ public class ApiHandler {
                 actors = "Unknown"; 
                 directors = "Unknown"; 
             }
-            
        }
        // If id == Unknown
        else{
@@ -303,12 +315,16 @@ public class ApiHandler {
         
         movie.setActors(actors);
         movie.setDirector(directors);
-
         
         return movie;
     }
     
-    // We put the key on an external file. This way, we don't have our key on the repo.
+    /** 
+     * Return the API KEY of TMDB API founded in a out of the project's sources file (.env).
+     * (We put the key on an external file. This way, we don't have our key on the repo.)
+     * 
+     * @return  The API KEY
+     */
     private static String getApiKey(){
         String envPath = ".env";
         String content = "";
