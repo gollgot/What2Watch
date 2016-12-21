@@ -52,7 +52,7 @@ import javafx.util.Duration;
 
 /**
  *
- * @author Raphael.BAZZARI
+ * @author Raphael.BAZZARI and Loïc Dessaules
  */
 public class FXMLDocumentController implements Initializable {
 
@@ -115,8 +115,6 @@ public class FXMLDocumentController implements Initializable {
     private int activeSearchMode = 0;
     public static boolean exit = false; // Change if we close the application (see -> Main class)
     private ImageView instructionHolder;
-    
-    
     
     
     @Override
@@ -538,7 +536,20 @@ public class FXMLDocumentController implements Initializable {
         }
         this.btnRefresh.setDisable(disabled);
     }
-
+    
+    /**
+    * If you are on a Windows or Mac OS platforme, and it supported the Desktop.open method, 
+    * We use the Desktop class for open the movie with the linked application launcher 
+    * on the OS. e.g: Our application launch the movie with VLC.  
+    * 
+    * @param event the event that triggers this method
+    * 
+    * @see Desktop#isDesktopSupported
+    * @see Desktop#open
+    * @see System#getProperty
+    * @see FXMLDocumentController#isWindows
+    * @see FXMLDocumentController#isMac
+    */
     @FXML
     private void imgPlayerClicked(MouseEvent event) {
         String title = txtTitle.getText();
@@ -576,14 +587,27 @@ public class FXMLDocumentController implements Initializable {
         }
     }
     
+    /**
+    * @param os the os that you use
+    * 
+    * @return True if you are on Windows; False otherwise;
+    */
     private boolean isWindows(String os) {
         return (os.indexOf("win") >= 0);
     }
-
+    
+    /**
+    * @param os the os that you use
+    * 
+    * @return True if you are on Mac OS; False otherwise;
+    */
     private boolean isMac(String os) {
         return (os.indexOf("mac") >= 0);
     }
     
+    /**
+    *   Display an error box if your OS cannot open the file.
+    */
     private void showErrorOS(){
         Alert alert = new Alert(AlertType.ERROR);
         alert.setTitle("Error");
@@ -596,9 +620,14 @@ public class FXMLDocumentController implements Initializable {
             }
         });
     }
-
+    
+    /**
+    * This is a Thread who check every second if we have an internet connection or not.
+    * if we have a connection, we display a green circle, else a red circle.
+    * 
+    * @see  InternetConnection#isEnable
+    */
     private void checkInternetConnection() {
-
         Thread checkInternetConnection = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -622,7 +651,6 @@ public class FXMLDocumentController implements Initializable {
         });
 
         checkInternetConnection.start();
-
     }
 
     /**
