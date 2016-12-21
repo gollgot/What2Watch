@@ -68,13 +68,13 @@ Liens vers notre repository : [What2Watch - GitHub](https://github.com/raph-u/Wh
 Détail des tables :
 
  - **movie :** On y retrouve toutes les informations propre à chaque film.
- - **actor, director :** On y retrouve, respectivement, le noms des acteurs et des directeurs présent dans un minimum un film. Pour le noms nous avons volontairement mis le nom et le prénom dans le même champ, car l'API nous retourne par exemple le nom "John Carl Buechler". Il est donc très difficile de savoir quel est le nom et le prénom (ce n'est pas toujours les "deux premières parties qui sont le prénoms").
- - **genre :** On y retrouve les genres présents dans au minimum un film.
- - **movie_has_actor, movie_has_director, movie_has_genre :** Ce sont les tables intermédiaires qui permettent de faire la liaison entre la table movie et genre, director, actor. Comme cela nous avons l'ensemble des personnes / genres présentent dans tous les films.
+ - **actor, director :** On y retrouve, respectivement, le noms des acteurs et des directeurs présent dans au minimum un film. Pour le nom nous avons volontairement mis le nom et le prénom dans le même champ, car l'API nous retourne par exemple le nom "John Carl Buechler". Il est donc très difficile de savoir quel est le nom et le prénom (ce n'est pas toujours les "deux premières parties qui sont le prénoms").
+ - **genre :** On y retrouve les genres présent dans au minimum un film.
+ - **movie_has_actor, movie_has_director, movie_has_genre :** Ce sont les tables intermédiaires qui permettent de faire la liaison entre la table movie et les tables: genre, director et actor. Car ce sont à chaque fois des liaison de N à N.
 
-L'ensemble de ces tables suffisent amplements à structurer et stocker les données dont nous avons besoin pour notre application. De plus nous devont interroger notre base de données lors des recherches spécifiques faites par l'utilisateur et ces tables répondent à notre demande.
+L'ensemble de ces tables suffisent amplements à structurer et stocker les données dont nous avons besoin pour notre application. De plus nous devont interroger notre base de données lors des recherches spécifiques faites par l'utilisateur et ces tables répondent entièrement à notre demande.
 
-*Note : Dans notre projet, vous pouvez retrouver la base de données (SQLite) qui est à l'emplacement : `cache/cache.db`. Nous avons décider de l'appelée ainsi, car elle fait vaiment office de cache, l'utilisateur peut la supprimer si elle serait corrompue, ou même par inadvertance et lors du lancement de l'application elle sera recrée automatiquement dans le dossier cache.*
+*Note : Dans notre projet, vous pouvez retrouver la base de données (SQLite) qui est à l'emplacement : `cache/cache.db`. Nous avons décidé de l'appelée ainsi, car elle fait vaiment office de cache, l'utilisateur peut la supprimer si elle serait corrompue, ou même par inadvertance et lors du lancement de l'application elle sera recréée automatiquement dans le dossier cache.*
 
 ---
 
@@ -97,7 +97,7 @@ Nous avons choisi d'utiliser deux bibliothèques externes, voici lesquelles ont 
 
 Sqlite est une bibliothèque écrite en C qui propose un moteur de base de données relationnelle accessible par le langage SQL.
 
-Nous avons choisi d'intégrer cette bibliothèque car elle permet de ne pas reproduire un schéma habituel de client - serveur, mais d'être directement intégrée au programme où l'intégralité de la base de données est stockés dans un fichier indépendant de la plateforme. Ce qui permet d'une part de pouvoir la consulter et d'y faire des opération sans avoir besoin d'une connexion internet et d'une autre part de profiter de son fonctionnement multiplateforme.
+Nous avons choisi d'intégrer cette bibliothèque car elle permet de ne pas reproduire un schéma habituel de client - serveur, mais d'être directement intégrée au programme où l'intégralité de la base de données est stocké dans un fichier indépendant de la plateforme. Ce qui permet d'une part de pouvoir la consulter et d'y faire des opérations sans avoir besoin d'une connexion internet et d'une autre part de profiter de son fonctionnement multiplateforme.
 
 De plus, SQLite est une bibliothèque open source et extrêmement légère. C'est pour cela que c'est le moteur de base de données le plus utilisé au monde, surtout dans des logiciels grand public ou des systèmes embarqués.
 
@@ -130,7 +130,7 @@ Plusieurs API différentes sont disponibles afin de parcourir le contenu de doss
 
 Nous avons dans un premier temps choisi d'implémenter X. X a l'avantage d'être la méthode la plus performante en terme de temps nécessaire au parcours de dossiers comme le démontre ce bench: <insert link>.
 
-Néanmoins, nous avons par la suite décidé de "faire marche arrière" et d'utiliser une autre méthode. FILE WALK TREE. Nous avons pris cette décision car FWT est tout aussi performante que X mais surtout car elle est plus flexible. Elle permet de manipuler les fichier et les gérer les différents types de dossier analysés plus plus simplement. De plus, elle a le potentielle d'être plus facilement adaptable pour de futurs ajouts ou modifications.
+Néanmoins, nous avons par la suite décidé de "faire marche arrière" et d'utiliser une autre méthode. FILE WALK TREE. Nous avons pris cette décision car FWT est tout aussi performante que X mais surtout car elle est plus flexible. Elle permet de manipuler les fichiers et les gérer les différents types de dossier analysés plus plus simplement. De plus, elle a le potentielle d'être plus facilement adaptable pour de futurs ajouts ou modifications.
 
 #### 4.2 Magic Numbers
 
@@ -152,19 +152,19 @@ Nous avons une première fonction qui va faire un remplacement par un espace de 
 
 Une seconde fonction va permettre de remplacer les possibles dates qu'elle trouve, par un espace.
 
-*Note : vu qu'il y a forcément un espace ou un caractère séparateur (qui sera transformer en espace) entre les divers mots de la chaine de caractère, au moment ou l'on remplace nos pattern trouvé par un espace, cela créera forcément au minimum 2 espaces.*
+*Note : vu qu'il y a forcément un espace ou un caractère séparateur (qui sera transformer en espace) entre les divers mots de la chaine de caractère, au moment ou l'on remplace nos patterns trouvé par un espace, cela créera forcément au minimum 2 espaces.*
 
-une dernière fonction, que nous pensons la plus intéressante, va découper l'ensemble de la chaîne de caractère (après le passage dans la fonction 1 et 2 par tranche de double espace, pour en faire un tableau. Nous allons ensuite parcourir ce tableau et quand on va trouvé une case du tableau qui contient des caractères, nous la gardons car cela sera normalement le titre du film. Avec cette fonction, il suffit donc de trouver les patterns critiques soit : devant le titre du film (si il y en a), ou un seul qui est juste derrière le titre du film, et tous les autres pattern qui suivent ne seront même pas pris en compte, ce qui est vraiment interessant.
+une dernière fonction, que nous pensons la plus intéressante, va découper l'ensemble de la chaîne de caractère (après le passage dans la fonction 1 et 2) par tranche de double espace, pour en faire un tableau. Nous allons ensuite parcourir ce tableau et quand on va trouver une case du tableau qui contient des caractères, nous la gardons car cela sera normalement le titre du film. Avec cette fonction, il suffit donc de trouver les patterns critiques soit : devant le titre du film (si il y en a), ou un seul qui est juste derrière le titre du film, et tous les autres patterns qui suivent ne seront même pas pris en compte, ce qui est vraiment interessant.
 
 *Exemple :
 Nous avons le film : Colt.45.2014.FRENCH.BRRiP.XviD-CARPEDIEM
-Après le passage dans la fonction 1 et 2, il restera : Colt 45 (4 espaces) BRRiP (3 espaces) CARPEDIEM. Donc =>
-tab[1] = "Colt 45", tab[2] = "", tab[3] = "BRRiP", tab[4] = " CARPEDIEM"
+Après le passage dans la fonction 1 et 2, il restera : Colt 45 (4 espaces) BRRiP (3 espaces) CARPEDIEM.
+Donc => tab[1] = "Colt 45", tab[2] = "", tab[3] = "BRRiP", tab[4] = " CARPEDIEM"
 Nous allons donc récupérer la première case non vide (donc le titre du film)*
 
 Si il y avait eu un pattern devant le titre du film, cela fonctionne toujours (du moment qu'il est transformé en espace par notre RegEx) car la première case du tableau aurait été vide et celle d'après serait le titre du film.
 
-Pour résumer, cette fonction est bien sûr dépendante de notre fonction 1 (RegEx), mais si l'on arrive à transformer un des patternes critique (ceux devant le titre [si il y en a] sinon, celui qui suit directement le titre), nous arrivons à récupérer le titre du film sans se soucier des autres patternes qui suivent.
+Pour résumer, cette fonction est bien sûr dépendante de notre fonction 1 (RegEx), mais si l'on arrive à transformer un des patterns critique (ceux devant le titre [si il y en a] sinon, celui qui suit directement le titre), nous arrivons à récupérer le titre du film sans se soucier des autres patterns qui suivent.
 
 #### 4.4 API: récupération des informations
 
@@ -188,7 +188,7 @@ Un point que nous trouvons très intéressant et important dans notre applicatio
 
 Avoir choisi d'utiliser une base de données en SQLite nous permet de pouvoir la consulter à n'importe quel moment, sans être dépendant d'une connection internet. De ce fait, du moment que l'utilisateur à lancé au moins une fois la recherche d'informations en ayant internet, il est possible de récupérer toutes les informations de ces films autant de fois qu'il le veut, sans avoir internet. Par contre il sera donc impossible de récupérer les informations de nouveaux films ajoutés dans son dossier sans avoir internet.
 
-Nous avons donc mis en place toute une gestion de la connection à internet. Nous avons une méthode qui permet d'ouvrir un socket vers le site "www.google.com" et qui nous retourne true ou false, respectivement: internet accessible ou non. Nous regardons donc à chaque début de scan si l'utilisateur à accès à internet ou non. Dans le cas ou il ne l'a pas, nous affichons on message d'alert. Notre application gère aussi le cas ou il serait possible que l'utilisateur perde la connection au milieu d'une recherche. Si cela arrive, toutes les données non-trouvées seront égale à "Unknown" et l'application affiche un message d'alert.
+Nous avons donc mis en place toute une gestion de la connection à internet. Nous avons une méthode qui permet d'ouvrir un socket vers le site "www.google.com" et qui nous retourne true ou false, respectivement: internet accessible ou non. Nous regardons donc à chaque début de scan si l'utilisateur à accès à internet ou non. Dans le cas ou il ne l'a pas, nous affichons un message d'alert. Notre application gère aussi le cas ou il serait possible que l'utilisateur perde la connection au milieu d'une recherche. Si cela arrive, toutes les données non-trouvées seront égale à "Unknown" et l'application affiche un message d'alert.
 
 Nous avons de plus intégré en bas à droite de l'application, un voyant vert ou rouge qui permet d'indiquer à l'utilisateur si il a une connection internet ou pas. Au niveau du code, c'est un thread lancé au lancement de l'application et qui vérifie chaque seconde si internet est accessible ou pas. Ce thread se ferme correctement lorsque l'application se ferme.
 
@@ -208,7 +208,7 @@ Pour pouvoir exécuter des programmes Java (.jar) vous êtes obligé d'installer
 Pour voir la version de java installer :
 
 - **Sous Windows :** Aller dans le panneau de configuration -> Programmes -> Programmes et fonctionnalités. Puis rechercher Java et vous allez voir la version installée.
-- **Sous Unix :** Ouvrez un terminal puis tapper la commande : `java -version`. Si vous avez un message d'erreur c'est que java n'est pas installé, sinon il faut que vous ayez un message : "Java version 1.8.x".
+- **Sous Unix :** Ouvrer un terminal puis tapper la commande : `java -version`. Si vous avez un message d'erreur c'est que java n'est pas installé, sinon il faut que vous ayez un message : "Java version 1.8.x".
 
 Téléchargement du JRE :
 
@@ -261,7 +261,7 @@ Voici comment notre système de branches fonctionne :
 
 #### 6.2 JDK
 
-Nous avons utilisé le JDK 8u111 pour complilé notre application. Il est donc impératif de prendre la même version. Voici le lien de téléchargement : [JDK 8u111](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
+Nous avons utilisé le JDK 8u111 pour compiler notre application. Il est donc impératif de prendre la même version. Voici le lien de téléchargement : [JDK 8u111](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
 
 Il suffit de télécharger et installer le JDK 8u111 prévu pour l'OS de votre choix.
 
@@ -271,7 +271,7 @@ Pour l'installation en ligne de commande via Linux Ubuntu et Linux Debian, voici
 
 #### 6.3 IDE
 
-Vous pouvez utiliser n'importe quel IDE qui permet de reprendre un projet Java, mais nous vous recommandons tout de même d'utiliser le même que nous qui est Netbeans (version 8.2 ).
+Vous pouvez utiliser n'importe quel IDE qui permet de reprendre un projet Java, mais nous vous recommandons tout de même d'utiliser le même que nous qui est Netbeans (version 8.2).
 
 Liens de téléchargement : [Netbeans](https://netbeans.org/downloads/)
 
