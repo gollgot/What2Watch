@@ -1,15 +1,10 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * The purpose of this class is to Handle the BD. This class prepare all query, things to
+ * do on the DB and the CacheDb class execute query.
  */
 package what2watch;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -18,42 +13,71 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.control.ProgressIndicator;
-import javafx.scene.image.Image;
 
 /**
  *
- * @author David.ROSAT & loic.dessaules
+ * @author David.ROSAT & Loïc Dessaules
  */
 public class DbHandler {
-
     private static CacheDb dataBase;
     private ArrayList<String> originalMovieNames;
     private ArrayList<String> rawMovieNames;
     private Thread updateThread;
-    // variable we have to call it on the "Platform.runLater" on the "updateThread"
+    // variable we have to call it on the "Platform.runLater" on the "updateThread" 
     private float pourcent;
     private int n;
 
+    /** 
+     * Constructor
+     * 
+     * @param   database The CacheDb object used for launch query.
+     * 
+     * @param   originalMovieNames All names of movie founded during the folder scan. 
+     * 
+     * @param   rawMovieNames All raw names of movie founded during the scan folder scan.
+     * 
+     */
     public DbHandler(CacheDb dataBase, ArrayList<String> originalMovieNames, ArrayList<String> rawMovieNames) {
         this.dataBase = dataBase;
         this.originalMovieNames = originalMovieNames;
         this.rawMovieNames = rawMovieNames;
     }
-
+    
+    /** 
+     * Update all datas inside the database. And display all movie on a List.
+     * 
+     * First : If the movie doesn't already exists, we call ApiHandler.getAllMovieInfos() Method
+     * to fetch all his datas and add them to the DB.
+     * 
+     * Second : At the end of the adding process, we delete all movie who are on the DB but not on the 
+     * user's folder. (Imagine the user move a movie from his folder but it is on the DB. We have to 
+     * delete it from the DB)
+     * 
+     * (Infos: There is a internet connection management) 
+     * 
+     * @param   controller The FXMLDocumentController object (Used for change states of UI fields)
+     * 
+     * @param   movieListView The list you have to fill and display at the and of all processes
+     * 
+     * @param   progressBarProcess  The progressbar you have to update.
+     * 
+     * @param   lblNbFilesProcessed  The label(above the progress bar) you have to update.
+     * 
+     */
     public void update(FXMLDocumentController controller, ListView movieListView, ProgressBar progressBarProcess, Label lblNbFilesProcessed) {
         lblNbFilesProcessed.setVisible(true);
         // Thread for update the database, because we have to get the datas from the
-        //API and wait x ms after each request (see method "getAllMovieInfos" in class "ApiHandler" for more infos
+        // API and wait x ms after each request (see method "getAllMovieInfos" in class "ApiHandler" for more infos
         updateThread = new Thread(new Runnable() {
             // I used a variable because we have to browse all movies, and if we loose 
-            // The connection on the loop, we switch it to true. This way, we can display only one alert box 
+            // The connection on the loop, we switch it to true. This way, we can display only one alert box at the end of process
             boolean noInternet = false; 
             @Override
             public void run() {
                 // if no movie founded
                 if(originalMovieNames.size() < 1){
-                    // Update UI on Platform main app thread because we are on a Thread
+                    // Update UI on Platform main app thread because we are on a
+                    // Thread and we have to separate the logical and the UI update
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
@@ -77,11 +101,8 @@ public class DbHandler {
                         float oneStepPourcent = 100 * (1) / originalMovieNames.size();
                         oneStepPourcent = oneStepPourcent / 100;
 
-                        // Check if the movie already exists on the DB, if not, we put on all the datas
-                        if (movieExistsOnDb(rawMovieNames.get(n))) {
-                            System.out.println(originalMovieNames.get(n) + " Existe !");
-                        } else {
-                            System.out.println(originalMovieNames.get(n) + " Existe pas !");
+                        if (!movieExistsOnDb(rawMovieNames.get(n))) {
+                            System.out.println("\nAdding "+originalMovieNames.get(n)+" on the DB...");
                             if(InternetConnection.isEnable()){ 
                                 Movie movie = ApiHandler.getAllMovieInfos(originalMovieNames.get(n), rawMovieNames.get(n), oneStepPourcent, progressBarProcess); 
                                 insertMovieOnDb(movie); 
@@ -91,7 +112,6 @@ public class DbHandler {
                         }
 
                         // We add this setProgress, because it's a round number, so it's a step with different progress number than before
-                        // (Pourcent is static, like that we can get it on the platform.runLater)
                         pourcent = 100 * (n+1) / originalMovieNames.size();
                         pourcent = pourcent / 100;
                         // For do an update Graphic on a "logical method" we have to do this on the Application Thread
@@ -102,11 +122,10 @@ public class DbHandler {
                                 progressBarProcess.setProgress(pourcent);
                             }
                         });
-
                     }
                 }
-                deleteMovieOnDb();
                 
+                deleteMovieOnDb();
                 lblNbFilesProcessed.setVisible(false);
 
                 if(noInternet){ 
@@ -130,8 +149,7 @@ public class DbHandler {
                      
                 }                 
                 
-                // For do an update Graphic on a "logical method" we have to do this on the Application Thread
-                // So, Platform.runLater is the Application Thread
+                // Updating is finished, We can fill the list and display it
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
@@ -160,30 +178,35 @@ public class DbHandler {
         updateThread.start();
     }
     
-    public Thread getUpdateThread(){
-        return updateThread;
-    }
-
+    /** 
+     * Return true or false if the movie already exists on the DB or not.
+     * 
+     * @param   rawMovieName  The raw movie name (The raw movie name in the only data
+     *          that is exactly the same, all the time, between the DB and the file in the user's directory)
+     * 
+     * @return  True if the movie already exists on the DB;
+     *          False if the movie doesn't exists on the DB;
+     */
     private boolean movieExistsOnDb(String rawMovieName) {
-
-        // The raw_title is the only data who is the same in the user directory and on the DB,
-        // so, if this is the same, the movie is already on the DB
         String query = "SELECT raw_title FROM movie WHERE raw_title = \"" + rawMovieName + "\"";
         String result = dataBase.doSelectQuery(query);
 
-        if (result.equals("")) {
+        if (result.equals("")) { // No results founded (so no movie on the DB)
             return false;
         } else {
             return true;
         }
     }
     
-
-    // BE CAREFUL -> we have to replace replace ' with " for keep ' on all text
-    // on query example : INSERT INTO('description') VALUES('i'm') => so => 
-    // INSERT INTO('description') VALUES("i'm")
+    /** 
+     * Insert a movie on the DB
+     * 
+     * @param   movie   The Movie object you want to insert
+     */
     void insertMovieOnDb(Movie movie) {
-        System.out.println("\n**** INSERT MOVIE *****");
+        // BE CAREFUL -> we have to replace replace ' with " for keep ' on all text
+        // on query example : INSERT INTO('description') VALUES('i'm') => so => 
+        // INSERT INTO('description') VALUES("i'm")
 
         /* Insert Movie */
         String queryInsertMovie = "INSERT INTO 'movie' "
@@ -207,9 +230,6 @@ public class DbHandler {
                     String queryInsertActor = "INSERT INTO 'actor' "
                             + "VALUES(NULL,\"" + actors[i] + "\")";
                     dataBase.doNoReturnQuery(queryInsertActor);
-                    //System.out.println(actors[i] + " ajouté");
-                } else {
-                    //System.out.println(actors[i] + " existe déjà");
                 }
                 /* Insert movie_has_actor*/
                 // For each actors on the movie, we get their id and insert the both of
@@ -220,7 +240,6 @@ public class DbHandler {
                         + "VALUES"
                         + "('" + idMovie + "','" + idActor + "')";
                 dataBase.doNoReturnQuery(queryInsertMovieHasActor);
-                //System.out.println("movie_has_actor add : " + idMovie + "," + idActor);
             }
         }
 
@@ -234,9 +253,6 @@ public class DbHandler {
                     String queryInsertGenre = "INSERT INTO 'genre' "
                             + "VALUES(NULL,'" + genres[i] + "')";
                     dataBase.doNoReturnQuery(queryInsertGenre);
-                    //System.out.println(genres[i] + " ajouté");
-                } else {
-                    //System.out.println(genres[i] + " existe déjà");
                 }
                 /* Insert movie_has_genre*/
                 // For each genre of the movie, we get their id and insert the both of
@@ -247,7 +263,6 @@ public class DbHandler {
                         + "VALUES"
                         + "('" + idMovie + "','" + idGenre + "')";
                 dataBase.doNoReturnQuery(queryInsertMovieHasGenre);
-                //System.out.println("movie_has_genre add : " + idMovie + "," + idGenre);
             }
         }
 
@@ -261,10 +276,6 @@ public class DbHandler {
                     String queryInsertDirector = "INSERT INTO 'director' "
                             + "VALUES(NULL,\"" + directors[i] + "\")";
                     dataBase.doNoReturnQuery(queryInsertDirector);
-                    //System.out.println(directors[i] + " ajouté");
-                } else {
-                    //System.out.println(directors[i] + " existe déjà");
-
                 }
                 /* Insert movie_has_director*/
                 // For each director of the movie, we get their id and insert the both of
@@ -275,16 +286,15 @@ public class DbHandler {
                         + "VALUES"
                         + "('" + idMovie + "','" + idDirector + "')";
                 dataBase.doNoReturnQuery(queryInsertMovieHasDirector);
-                //System.out.println("movie_has_director add : " + idMovie + "," + idDirector);
             }
         }
-
-        System.out.println("**** MOVIE INSERTED AND DATAS UPDATED *****\n");
-
     }
 
-    // If we have 10 movies on our folder and, further, we'll have only 5,
-    // so we have to delete the 5 non-existant movie from the DB
+    /** 
+     * Delete movie from the DB who doesn't exists on the user's directory.
+     * Example : If we have 10 movies on our folder and, further, we'll have only 5,
+     * so we have to delete the 5 non-existant movie from the DB
+     */
     private void deleteMovieOnDb() {
         UserPreferences prefs = new UserPreferences();
         String path = prefs.getPath();
@@ -312,31 +322,36 @@ public class DbHandler {
                 String query = "SELECT id FROM movie WHERE raw_title = \"" + rawTitleMoviesDb[i] + "\"";
                 String idMovie = dataBase.doSelectQuery(query).replace(";", "");
 
-                        // (We keep actors, directors and genres because they can be used by other movies)
-                        // Delete all row with foreign key and delete the movie
-                        query = "DELETE FROM movie_has_actor WHERE movie_id = \"" + idMovie + "\"";
-                        dataBase.doNoReturnQuery(query);
-                        query = "DELETE FROM movie_has_genre WHERE movie_id = \"" + idMovie + "\"";
-                        dataBase.doNoReturnQuery(query);
-                        query = "DELETE FROM movie_has_director WHERE movie_id = \"" + idMovie + "\"";
-                        dataBase.doNoReturnQuery(query);
+                // (We keep actors, directors and genres because they can be used by other movies)
+                // Delete all row with foreign key and delete the movie
+                query = "DELETE FROM movie_has_actor WHERE movie_id = \"" + idMovie + "\"";
+                dataBase.doNoReturnQuery(query);
+                query = "DELETE FROM movie_has_genre WHERE movie_id = \"" + idMovie + "\"";
+                dataBase.doNoReturnQuery(query);
+                query = "DELETE FROM movie_has_director WHERE movie_id = \"" + idMovie + "\"";
+                dataBase.doNoReturnQuery(query);
 
-                        //FOR DEBUG
-                        query = "SELECT title FROM movie WHERE id = \"" + idMovie + "\"";
-                        String title = dataBase.doSelectQuery(query).replace(";", "");
-                        // END DEBUG
+                //FOR DEBUG
+                query = "SELECT title FROM movie WHERE id = \"" + idMovie + "\"";
+                String title = dataBase.doSelectQuery(query).replace(";", "");
+                // END DEBUG
 
-                        query = "DELETE FROM movie WHERE id = \"" + idMovie + "\"";
-                        dataBase.doNoReturnQuery(query);
+                query = "DELETE FROM movie WHERE id = \"" + idMovie + "\"";
+                dataBase.doNoReturnQuery(query);
 
-                System.out.println("\"" + title + "\"" + " has been successfully deleted");
-                System.out.println("suppression d un film");
+                System.out.println("\"" + title + "\"" + " doesn't exists anymore on your movie directory.\n It has been successfully deleted from the DB");
             }
         }
     }
-
+    
+    /** 
+     * Return all Movies object from the DB we want
+     * 
+     * @param   realTitles All titles of movie we want
+     * 
+     * @return  All Movies object
+     */
     public ArrayList<Movie> getMovies(String[] realTitles) {
-        
         ArrayList<Movie> movies = new ArrayList<Movie>();
         int totalMovies = realTitles.length;
         
@@ -389,14 +404,14 @@ public class DbHandler {
             // Add the current movie to the movies ArrayList
             movies.add(movie);
         }
-        
-        
+
         return movies;
-    
     }
     
+    /** 
+     * @return  all titles of film that we have on the DB
+     */
     public String[] getAllTitles() {
-
         String query = "SELECT title FROM movie";
         String result = dataBase.doSelectQuery(query);
         String[] results = result.split(";");
@@ -404,6 +419,13 @@ public class DbHandler {
         return results;
     }
     
+    /** 
+     * Return one Movie object which corresponds to the title pass in params.
+     * 
+     * @param   title The title of the movie that you want.
+     * 
+     * @return  The Movie object corresponds to the title.
+     */
     public static Movie getMovie(String title){
         Movie movie = new Movie();
         String query = "SELECT raw_title, title, year, image_link, synopsis FROM movie WHERE title=\"" + title + "\"";
@@ -433,10 +455,6 @@ public class DbHandler {
                 + "INNER JOIN movie ON movie.id = movie_has_director.movie_id "
                 + "WHERE movie.title=\"" + title + "\"";
         String directors = dataBase.doSelectQuery(query).replaceAll("; $", "");
-
-        query = "SELECT image_link FROM movie WHERE movie.title=\"" + title + "\"";
-        String posterURL = dataBase.doSelectQuery(query).replaceAll("; $", "");
-
         
         movie.setActors(actors);
         movie.setGenre(genres);
@@ -445,10 +463,16 @@ public class DbHandler {
         return movie;
     }
     
+    /** 
+     * @param   title The title of the movie that you want.
+     * 
+     * @return  The raw title corresponds to the title.
+     */
     public static String getRawTitle(String title){
         String query = "SELECT raw_title FROM movie WHERE title = \""+title+"\";";
         String rawTitle = dataBase.doSelectQuery(query).replace(";", "");
+        
         return rawTitle;
     }
-
+    
 }
