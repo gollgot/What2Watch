@@ -3,8 +3,6 @@
 Liens vers notre repository : [What2Watch - GitHub](https://github.com/raph-u/What2Watch/)
 
 
-**OU METTRE UI ? Raph**
-
 ## Sommaire
 
 1. Architecture
@@ -31,7 +29,9 @@ Liens vers notre repository : [What2Watch - GitHub](https://github.com/raph-u/Wh
 
     4.4 API: récupération des informations
 
-    4.5 Utilisation "offline" de l'application
+    4.5 Interface utilisateur
+
+    4.6 Utilisation "offline" de l'application
 
 5. Installation de What2Watch
 
@@ -125,11 +125,22 @@ Les informations porteront plus sur la logique en elle-même et non l'explicatio
 
 #### 4.1 Recherche de fichiers
 
-À compléter
+[TODO: Fix this]
+Plusieurs API différentes sont disponibles afin de parcourir le contenu de dossiers de manière récursive. Dans le cadre de ce projet, c'est la réactivité et les performances qui ont guidé nos recherches.
+
+Nous avons dans un premier temps choisi d'implémenter X. X a l'avantage d'être la méthode la plus performante en terme de temps nécessaire au parcours de dossiers comme le démontre ce bench: <insert link>.
+
+Néanmoins, nous avons par la suite décidé de "faire marche arrière" et d'utiliser une autre méthode. FILE WALK TREE. Nous avons pris cette décision car FWT est tout aussi performante que X mais surtout car elle est plus flexible. Elle permet de manipuler les fichier et les gérer les différents types de dossier analysés plus plus simplement. De plus, elle a le potentielle d'être plus facilement adaptable pour de futurs ajouts ou modifications.
 
 #### 4.2 Magic Numbers
 
-À compléter
+Dans un premier temps, l'application se contentait de ne traiter que les fichiers disposant d'une extension. Or, en se basant sur le dossier de films fictifs qui nous a été fournis pour nous aider dans le projet, nous avons réalisé qu'il était nécessaire de traiter les fichiers dépourvus d'extension également.
+
+Afin de prendre en compte un maximum de fichiers différents, nous avons décider d'intégrer un système de reconnaissance de magic numbers (signature de fichier).
+
+Lors du parcours de dossier, l'application va bien évidemment récupérer tous les fichiers videos reconnus, c'est a dire, les fichiers disposant d'une extension que notre application prend en charge (avi,mkv,mpeg,wmv,m4v,mp4,flv,mov). Si un fichier ne possède pas d'extension, l'application lis les 4 premiers bytes du fichier afin de comparer sa signature avec un liste de signatures connues et stockée dans notre application.
+
+Si la signature d'un fichier correspond à l'une de la liste, le fichier en question est alors une video et notre application le prendre dorénavent en charge.
 
 #### 4.3 Analyse des fichiers, récupération du titre du film
 
@@ -164,7 +175,14 @@ Pour utiliser cette API nous devons utiliser une clef, nous avons donc stocké c
 
 Nous somme également limité au niveau du nombre de requête par seconde, ce qui implique une certaine attente supérieure à celle que nous aurions voulu au départ. Mais nous avons quand même décidé d'utiliser cette API car elle apporte tous ce que nous cherchons. Nous lui envoyons le titre du film (autant en Français qu'en Anglais) dont nous recherchons les informations, et l'API nous retourne tous ce dont nous avons besoin, en format JSON et dans la langue souhaitée. Il nous reste donc plus qu'à parser le tout et à l'afficher dans notre application.
 
-#### 4.5 Utilisation "offline" de l'application
+#### 4.5 Interface utilisateur
+
+[TODO: fix]
+Dans un premier temps, l'interface a été pensée de manière à faire le lien entre ce que l'utilisateur voit initialement lorsqu'il télécharge ses films, c'est à dire leur noms, et les les informations associées à ces films.
+
+Une liste contenant les noms de films a donc été intégrée. Ce choix nous a notemment permis d'avoir une interface utilisable très rapidement. La liste a également l'avantage de pouvoir afficher plus de films en une fois que si l'application les affichait sous forme de pochette.
+
+#### 4.6 Utilisation "offline" de l'application
 
 Un point que nous trouvons très intéressant et important dans notre application, est le fait qu'elle soit utilisable sans avoir de connection internet.
 
@@ -192,9 +210,9 @@ Pour voir la version de java installer :
 - **Sous Windows :** Aller dans le panneau de configuration -> Programmes -> Programmes et fonctionnalités. Puis rechercher Java et vous allez voir la version installée.
 - **Sous Unix :** Ouvrez un terminal puis tapper la commande : `java -version`. Si vous avez un message d'erreur c'est que java n'est pas installé, sinon il faut que vous ayez un message : "Java version 1.8.x".
 
-Téléchargement du JRE : 
+Téléchargement du JRE :
 
-Voici le lien de téléchargement : [JRE 8u111](http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html) 
+Voici le lien de téléchargement : [JRE 8u111](http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html)
 
 Il suffit de télécharger et installer le JRE 8u111 prévu pour l'OS de votre choix.
 
@@ -204,7 +222,7 @@ Pour l'installation en ligne de commande via Linux Ubuntu et Linux Debian, voici
 
 #### 5.2 Application What2Watch
 
-Pour installer notre application sur votre ordinateur, que vous ayez Windows, Mac OS ou Linux, c'est le même procédé. Il faut télécharger l'archive "What2Watch-deployment.zip" qui se trouve sur [GitHub](https://github.com/raph-u/What2Watch/tree/deployment). Pour cela cliquez simplement sur le bouton "Clone or download" et choisir "Download ZIP". 
+Pour installer notre application sur votre ordinateur, que vous ayez Windows, Mac OS ou Linux, c'est le même procédé. Il faut télécharger l'archive "What2Watch-deployment.zip" qui se trouve sur [GitHub](https://github.com/raph-u/What2Watch/tree/deployment). Pour cela cliquez simplement sur le bouton "Clone or download" et choisir "Download ZIP".
 
 Une fois l'archive extraite, vous trouverez à l'intérieur un dossier "What2Watch" vous pouvez le placer ou vous le voulez (par exemple dans votre dossier de programmes).
 
@@ -214,7 +232,7 @@ L'ensemble des fichiers / dossiers présent dans le dossier What2Watch doivent y
 
 #### 5.2 Lancement de l'application
 
-Si vous avez une interface graphique : 
+Si vous avez une interface graphique :
 - Ouvrez le fichier "What2Watch.jar" en double cliquant dessus. (Si le fichier s'ouvre pas, veuillez l'ouvrir avec le programme : "Java(TM) Platform SE binary").
 
 Si vous utilisez un terminal :
@@ -243,7 +261,7 @@ Voici comment notre système de branches fonctionne :
 
 #### 6.2 JDK
 
-Nous avons utilisé le JDK 8u111 pour complilé notre application. Il est donc impératif de prendre la même version. Voici le lien de téléchargement : [JDK 8u111](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) 
+Nous avons utilisé le JDK 8u111 pour complilé notre application. Il est donc impératif de prendre la même version. Voici le lien de téléchargement : [JDK 8u111](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
 
 Il suffit de télécharger et installer le JDK 8u111 prévu pour l'OS de votre choix.
 
@@ -280,7 +298,7 @@ Pour finir, il faut que vous sachiez encore une chose, aller dans le code source
 
 ### 7. Conclusion
 
-À compléter 
+À compléter
 
 ---
 
