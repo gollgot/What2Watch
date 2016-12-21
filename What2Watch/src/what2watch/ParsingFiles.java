@@ -108,14 +108,6 @@ public class ParsingFiles {
         return results;
     }
     
-<<<<<<< HEAD
-    /**
-     * @param   videoFileName  the movie name you want to check
-     * 
-     * @return  True if the videoFileName is a TV Show; False otherwise
-     */
-=======
-    
     /**
     * Checks whether a video file name contains patterns of a TV show.
     * 
