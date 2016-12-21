@@ -355,7 +355,7 @@ public class FXMLDocumentController implements Initializable {
         
         FadeTransition ft = new FadeTransition(Duration.millis(300), paneBlackOpacity);
         ft.setFromValue(0.0);
-        ft.setToValue(0.8);
+        ft.setToValue(0.5);
         ft.setAutoReverse(true);
         
         FadeTransition ft2 = new FadeTransition(Duration.millis(300), imageViewBigPoster);
@@ -374,7 +374,7 @@ public class FXMLDocumentController implements Initializable {
         imageViewBigPoster.requestFocus();
         
         FadeTransition ft = new FadeTransition(Duration.millis(300), paneBlackOpacity);
-        ft.setFromValue(0.8);
+        ft.setFromValue(0.5);
         ft.setToValue(0.0);
         ft.setAutoReverse(true);
         

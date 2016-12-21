@@ -1,5 +1,5 @@
 /*
- * This class is responsible for reacting upon receiving events in the file tree browsing process
+ * This class is responsible for reacting upon receiving events in the file tree walking process
  * Its main tasks are to find and store movie file names and their respective paths
  * This class is based on https://docs.oracle.com/javase/tutorial/displayCode.html?code=https://docs.oracle.com/javase/tutorial/essential/io/examples/Find.java
  */
@@ -20,7 +20,7 @@ import java.util.ArrayList;
 
 /**
  *
- * @author untoten
+ * @author Raphael.BAZZARI
  */
 public class FileFinder extends SimpleFileVisitor<Path> {
     private Path initialDirectory;
@@ -69,14 +69,13 @@ public class FileFinder extends SimpleFileVisitor<Path> {
 
     @Override
     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-        // Skippding folders that aren't readable
+        // Skipping folders that aren't readable
         if (!Files.isReadable(dir)) {
             System.out.println("==============================");
             System.out.println(dir + "\n has been skipped because it's not readable");
             return SKIP_SUBTREE;
         }
         
-        // Skipping system folders | TODO: handle C:\ like starting points
         if (dir != this.initialDirectory) {
             try {
                 DosFileAttributes attr = Files.readAttributes(dir, DosFileAttributes.class);
@@ -88,7 +87,7 @@ public class FileFinder extends SimpleFileVisitor<Path> {
             }
         }
 
-        return super.preVisitDirectory(dir, attrs); //To change body of generated methods, choose Tools | Templates.
+        return super.preVisitDirectory(dir, attrs);
     }
     
     @Override
@@ -99,7 +98,6 @@ public class FileFinder extends SimpleFileVisitor<Path> {
 
     @Override
     public FileVisitResult postVisitDirectory(Path dir, IOException exc) {
-        //System.out.format("Directory: %s%n", dir);
         return CONTINUE;
     }
 
@@ -111,22 +109,34 @@ public class FileFinder extends SimpleFileVisitor<Path> {
     
     // Custom methods
     
-    // Compares the glob pattern against the file or directory name.
+    /** 
+     * Retrieves the movie file names and paths of any file that matches 
+     * the pattern specified in FileFinder's "pattern" property.
+     * 
+     * Those informations are then stored into FileFinder's
+     * "movieFileNames" and "movieFilePaths" properties
+     *  
+     */
     void find(Path file) {
         Path fileName = file.getFileName();
         if (fileName != null && this.matcher.matches(fileName)) {
             if (!ParsingFiles.containsTVShowPattern(fileName.toString())) {
                 this.movieFileNames.add(fileName.toString());
                 this.movieFilePaths.add(file.toString());
-//                System.out.println("==============================");
-//                System.out.println(file.getFileName());
-//                System.out.println(file);
             }
         }
     }
     
-    // Compare the raw movie file name against the list movie file paths
-    // Returns the movie file path that contains the raw movie file name specified by parameter
+    
+    /** 
+     * Finds the path of the raw movie file name by comparing it with the list
+     * of movie file paths stored in FileFinder's "movieFilePaths" property
+     * 
+     * @param   rawMovieName the raw movie name for which to find a path
+     *  
+     * @return  the movie file path or an empty string if no
+     * path has been found
+     */
     public String findPathOf(String rawMovieName) {
         for (int i = 0; i < this.movieFilePaths.size(); i++) {
             if (this.movieFilePaths.get(i).contains(rawMovieName)) {
