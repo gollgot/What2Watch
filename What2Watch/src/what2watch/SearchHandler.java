@@ -49,6 +49,7 @@ public class SearchHandler {
 
     public static void findMovieByTitle(String searchTerm) {
         if (!searchTerm.equals("")) {
+            searchTerm = escapeChars(searchTerm);
             String query = "SELECT title from movie "
                     + "WHERE title like '%" + searchTerm + "%'";
             findMoviesFromQuery(query);
@@ -59,6 +60,7 @@ public class SearchHandler {
 
     public static void findMovieByGenre(String searchTerm) {
         if (!searchTerm.equals("")) {
+            searchTerm = escapeChars(searchTerm);
             String query = "SELECT DISTINCT title from movie "
                     + "INNER JOIN movie_has_genre ON movie.id = movie_has_genre.movie_id "
                     + "INNER JOIN genre ON movie_has_genre.genre_id = genre.id "
@@ -71,6 +73,7 @@ public class SearchHandler {
 
     public static void findMovieByDirector(String searchTerm) {
         if (!searchTerm.equals("")) {
+            searchTerm = escapeChars(searchTerm);
             String query = "SELECT DISTINCT title from movie "
                     + "INNER JOIN movie_has_director ON movie.id = movie_has_director.movie_id "
                     + "INNER JOIN director ON movie_has_director.director_id = director.id "
@@ -82,9 +85,15 @@ public class SearchHandler {
     }
 
     public static void findMovieByYearRange(String startingYear, String endingYear) {
-        if (!startingYear.equals("") || !endingYear.equals("")) {
+        // Handles ex: from 1990 to 2000 and from 1990 to nothing
+        if ((!startingYear.equals("") && !endingYear.equals("")) ||
+                ((!startingYear.equals("") && endingYear.equals(""))) ) {
             String query = "SELECT title from movie "
                     + "WHERE year BETWEEN '" + startingYear + "' AND '" + endingYear + "'";
+            findMoviesFromQuery(query);
+            // Handles ex: from nothing to 2016
+        } else if (startingYear.equals("") && !endingYear.equals("")) {
+            String query = "SELECT title from movie WHERE year <= " + endingYear;
             findMoviesFromQuery(query);
         } else {
             movieListView.setItems(originalMovieList);
@@ -92,6 +101,7 @@ public class SearchHandler {
     }
 
     public static void findMovieByActor(String searchTerm) {
+        searchTerm = escapeChars(searchTerm);
         if (!searchTerm.equals("")) {
             String query = "SELECT DISTINCT movie.title FROM movie "
                     + "INNER JOIN movie_has_actor ON movie.id = movie_has_actor.movie_id "
@@ -101,5 +111,13 @@ public class SearchHandler {
         } else {
             movieListView.setItems(originalMovieList);
         }
+    }
+    
+    private static String escapeChars(String searchTerm) {
+        String singleQuoteFree = searchTerm.replace("'", "''");
+        String doubleQuoteFree = singleQuoteFree.replace("\"", "\"");
+        String underScoreFree = doubleQuoteFree.replace("_", "");
+        String percentFree = underScoreFree.replace("%", "");
+        return percentFree;
     }
 }
