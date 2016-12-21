@@ -85,8 +85,19 @@ public class ParsingFiles {
     }
     
     
-    // Checks whether a video file name contains patterns of a TV show
-    // Returns a boolean indicating if it does or not
+    /**
+    * Checks whether a video file name contains patterns of a TV show.
+    * 
+    * This method performs a check for the following patterns:<br>
+    * "s03e9" kind of pattern<br>
+    * "1x05" kind of pattern<br>
+    * "- 03 -" kind of pattern
+    * 
+    * @param videoFileName the String representing the video file name
+    * 
+    * @return  {@code true} if the file name contains a TV show pattern; 
+    *          {@code false} otherwise 
+    */
     public static boolean containsTVShowPattern(String videoFileName) {
         boolean containsPattern = false;
         
