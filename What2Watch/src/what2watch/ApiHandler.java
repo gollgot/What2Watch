@@ -1,46 +1,52 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ *  The purpose of this class is to manage all datas / functions in like to
+ *  the API.
  */
 package what2watch;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.control.ProgressIndicator;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
  *
- * @author loic.dessaules
+ * @author Loïc Dessaules
  */
 public class ApiHandler {
-    
     private static String apiKey = getApiKey();
     
-    // We get all movie datas, and between each request, we wait 180ms, because we have a limit with the API...
+    /** 
+     * Return a Movie object contains all datas of the movieName passed
+     * in parameter.
+     * 
+     * @param   movieName The name of the movie, after passed to the 
+     *          ParsingFiles class (need for ask the API).
+     * 
+     * @param   rawMovieName The raw name of the movie (need because it's a movie's data).
+     * 
+     * @param   oneStepPourcent The step value (between 0 and 1) to add
+     *          when one movie finished to fetch data from the API.
+     * 
+     * @param   progressBarProcess The ProgressBar object, for update it.
+     * 
+     * @return  A Movie object contains all movie's data.
+     */
     public static Movie getAllMovieInfos(String movieName, String rawMovieName, float oneStepPourcent, ProgressBar progressBarProcess){
-        
         // We have 3 big process, so 33% of the oneStepPourcent.
         float pourcentToAdd = 33 * oneStepPourcent / 100;
             
         Movie movie = new Movie();
         try {
-            // Each time, we add this pourcentToAdd to the current progressNumber
-            // Beacause we add all the time the same value to each step
-            
             if(InternetConnection.isEnable()){ 
-                
+                //between each request, we wait 180ms, because we have a limit with the API...
                 String id = getMovieId(movieName); 
                 updateProgressBar(progressBarProcess, pourcentToAdd);
                 Thread.sleep(200);           
@@ -50,8 +56,7 @@ public class ApiHandler {
                 Thread.sleep(200); 
  
                 movie = getMovieActorsDirectors(movie, id); 
-                updateProgressBar(progressBarProcess, pourcentToAdd);
-                
+                updateProgressBar(progressBarProcess, pourcentToAdd);    
             }else{ 
                 movie.setActors("Unknown"); 
                 movie.setDirector("Unknown"); 
@@ -62,16 +67,26 @@ public class ApiHandler {
                 movie.setTitle(movieName); 
                 movie.setYear("Unknown"); 
             } 
-
         } catch (InterruptedException ex) {
             Logger.getLogger(ApiHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
         return movie;
     }
     
+    /** 
+     * Update the progressBar passed in parameter of ApiHandler.getAllMovieInfos().
+     * We have to do that in the JavaFX Main Thread, because we have to separate 
+     * logical from graphical things.
+     * 
+     * @param   progressBarProcess The ProgressBar object you want to update.
+     * 
+     * @param   pourcentToAdd pourcent you want to add to the current progress value.
+     * 
+     * @see     ApiHandler#getAllMovieInfos(java.lang.String, java.lang.String, float, javafx.scene.control.ProgressBar)
+     *          
+     * @see     Platform#runLater
+     */
     private static void updateProgressBar(ProgressBar progressBarProcess, float pourcentToAdd){
-        // For do an update Graphic on a "logical method" we have to do this on the Application Thread
-        // So, Platform.runLater is the Application Thread
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
@@ -80,7 +95,16 @@ public class ApiHandler {
         });
     }
     
-    
+    /** 
+     * Return the ID of the movie stocked in "The Movie DataBase API".
+     * (Used JSON)
+     * 
+     * @param   movieName The movie name you want to fetch the ID.
+     * 
+     * @see     ApiHandler#getAllMovieInfos(java.lang.String, java.lang.String, float, javafx.scene.control.ProgressBar)
+     *          
+     * @see     Platform#runLater
+     */
     private static String getMovieId(String movieName) {
         String movieNameUrlFormat = movieName.replaceAll(" ", "%20");
         String id = "Unknown";
