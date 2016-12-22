@@ -68,17 +68,24 @@ Liens vers notre repository : [What2Watch - GitHub](https://github.com/raph-u/Wh
 Détail des tables :
 
  - **movie :** On y retrouve toutes les informations propre à chaque film.
- - **actor, director :** On y retrouve, respectivement, le noms des acteurs et des directeurs présent dans au minimum un film. Pour le nom nous avons volontairement mis le nom et le prénom dans le même champ, car l'API nous retourne par exemple le nom "John Carl Buechler". Il est donc très difficile de savoir quel est le nom et le prénom (ce n'est pas toujours les "deux premières parties qui sont le prénoms").
- - **genre :** On y retrouve les genres présent dans au minimum un film.
- - **movie_has_actor, movie_has_director, movie_has_genre :** Ce sont les tables intermédiaires qui permettent de faire la liaison entre la table movie et les tables: genre, director et actor. Car ce sont à chaque fois des liaison de N à N.
+ - **actor, director :** On y retrouve, respectivement, le noms des acteurs et des directeurs présent dans un minimum un film. Pour le noms nous avons volontairement mis le nom et le prénom dans le même champ, car l'API nous retourne par exemple le nom "John Carl Buechler". Il est donc très difficile de savoir quel est le nom et le prénom (ce n'est pas toujours les "deux premières parties qui sont le prénoms").
+ - **genre :** On y retrouve les genres présents dans au minimum un film.
+ - **movie_has_actor, movie_has_director, movie_has_genre :** Ce sont les tables intermédiaires qui permettent de faire la liaison entre la table movie et genre, director, actor. Comme cela nous avons l'ensemble des personnes / genres présentent dans tous les films.
 
-L'ensemble de ces tables suffisent amplements à structurer et stocker les données dont nous avons besoin pour notre application. De plus nous devont interroger notre base de données lors des recherches spécifiques faites par l'utilisateur et ces tables répondent entièrement à notre demande.
+L'ensemble de ces tables suffisent amplements à structurer et stocker les données dont nous avons besoin pour notre application. De plus nous devont interroger notre base de données lors des recherches spécifiques faites par l'utilisateur et ces tables répondent à notre demande.
 
-*Note : Dans notre projet, vous pouvez retrouver la base de données (SQLite) qui est à l'emplacement : `cache/cache.db`. Nous avons décidé de l'appelée ainsi, car elle fait vaiment office de cache, l'utilisateur peut la supprimer si elle serait corrompue, ou même par inadvertance et lors du lancement de l'application elle sera recréée automatiquement dans le dossier cache.*
+*Note : Dans notre projet, vous pouvez retrouver la base de données (SQLite) qui est à l'emplacement : `cache/cache.db`. Nous avons décider de l'appelée ainsi, car elle fait vaiment office de cache, l'utilisateur peut la supprimer si elle serait corrompue, ou même par inadvertance et lors du lancement de l'application elle sera recrée automatiquement dans le dossier cache.*
 
 ---
 
 ## 2. Language
+
+Il y a beaucoup de raisons qui nous ont poussé à choisir Java dans le cadre de ce projet.
+Tout d'abord, nous avons déjà travaillé avec ce langage par le passé. Sachant cela, choisir une technologie qui ne nous ai pas inconnue nous a permis de nous focaliser sur l'élaboration du projet en lui-même plutôt que de devoir faire de la veille technologique et de consommer le temps à disposition pour réaliser le projet afin de nous former avant de pouvoir entrer dans le vif du sujet.
+
+En outre, Java est multi-plateforme se trouve déjà dans de nombreux systèmes. L'application résultante est donc beaucoup plus accessible, du point de vue de l'utilisateur, ce qui est un point non-négligeable.
+
+Pour une application de ce type, il va sans dire qu'une interface graphique est indispensable. Créer des interfaces graphiques en Java est une tâche, certes, chronophage mais il est possible de concevoir des interfaces de très bonne facture. Java intègre désormais JavaFx, successeur de Swing. JavaFx permet notemment d'utiliser des feuilles de style CSS. Le fait de pouvoir allier nos connaissances de Java et du CSS nous a conforter dans l'idée de choisir ce language pour réaliser ce projet.
 
 À compléter
 
@@ -97,7 +104,7 @@ Nous avons choisi d'utiliser deux bibliothèques externes, voici lesquelles ont 
 
 Sqlite est une bibliothèque écrite en C qui propose un moteur de base de données relationnelle accessible par le langage SQL.
 
-Nous avons choisi d'intégrer cette bibliothèque car elle permet de ne pas reproduire un schéma habituel de client - serveur, mais d'être directement intégrée au programme où l'intégralité de la base de données est stocké dans un fichier indépendant de la plateforme. Ce qui permet d'une part de pouvoir la consulter et d'y faire des opérations sans avoir besoin d'une connexion internet et d'une autre part de profiter de son fonctionnement multiplateforme.
+Nous avons choisi d'intégrer cette bibliothèque car elle permet de ne pas reproduire un schéma habituel de client - serveur, mais d'être directement intégrée au programme où l'intégralité de la base de données est stockés dans un fichier indépendant de la plateforme. Ce qui permet d'une part de pouvoir la consulter et d'y faire des opération sans avoir besoin d'une connexion internet et d'une autre part de profiter de son fonctionnement multiplateforme.
 
 De plus, SQLite est une bibliothèque open source et extrêmement légère. C'est pour cela que c'est le moteur de base de données le plus utilisé au monde, surtout dans des logiciels grand public ou des systèmes embarqués.
 
@@ -125,22 +132,49 @@ Les informations porteront plus sur la logique en elle-même et non l'explicatio
 
 #### 4.1 Recherche de fichiers
 
-[TODO: Fix this]
-Plusieurs API différentes sont disponibles afin de parcourir le contenu de dossiers de manière récursive. Dans le cadre de ce projet, c'est la réactivité et les performances qui ont guidé nos recherches.
+Plusieurs API différentes comprennent des outiles permettant de parcourir le contenu de dossiers de manière récursive. Dans le cadre de ce projet, c'est la réactivité et les performances qui ont guidé nos recherches.
 
-Nous avons dans un premier temps choisi d'implémenter X. X a l'avantage d'être la méthode la plus performante en terme de temps nécessaire au parcours de dossiers comme le démontre ce bench: <insert link>.
+| Test Name                | API      | Average Time |
+| ------------------------ |:--------:| -----:|
+| Java 8 Stream Parallel   | NIO      | 28.425S |
+| Walk File Tree           | NIO      | 28.4718S |
+| Java 8 Stream Sequential | NIO      | 29.62S |
+| File Walker              | I/O      | 32.5256S |
+| listFiles - Recursive    | I/O      | 32.5864S |
+| listFiles - Queue        | I/O      | 33.7566S |
+| commons-io - FileUtils   | I/O      | 1M5.413S |
 
-Néanmoins, nous avons par la suite décidé de "faire marche arrière" et d'utiliser une autre méthode. FILE WALK TREE. Nous avons pris cette décision car FWT est tout aussi performante que X mais surtout car elle est plus flexible. Elle permet de manipuler les fichiers et les gérer les différents types de dossier analysés plus plus simplement. De plus, elle a le potentielle d'être plus facilement adaptable pour de futurs ajouts ou modifications.
+
+Nous avons dans un premier temps choisi d'implémenter Java 8 Stream Parallel. Java 8 Stream Parallel a l'avantage d'être la méthode la plus performante en terme de temps nécessaire au parcours de dossiers comme le démontre ce benchmark: [io-recurse-tests](https://github.com/brettryan/io-recurse-tests#io-recurse-tests)
+
+Néanmoins, nous avons par la suite décidé de "faire marche arrière" et d'utiliser une autre méthode. Walk File Tree. Nous avons pris cette décision car Walk File Tree est tout aussi performante que Java 8 Stream Parallel mais surtout car elle est plus flexible.
+
+Elle permet de manipuler les fichier et les gérer les différents types de dossier analysés plus plus simplement. De plus, elle a le potentielle d'être plus facilement adaptable pour de futurs ajouts ou modifications.
+
+[insert fonctionnement? -> list events + citer delegation?]
+
+Le prix à payer était faible comparé aux avantages apportés par l'intégration de Walk File Tree.
+
+Plus d'informations sur Walk File Tree : [Walk File Tree](https://docs.oracle.com/javase/tutorial/essential/io/walk.html)
 
 #### 4.2 Magic Numbers
 
 Dans un premier temps, l'application se contentait de ne traiter que les fichiers disposant d'une extension. Or, en se basant sur le dossier de films fictifs qui nous a été fournis pour nous aider dans le projet, nous avons réalisé qu'il était nécessaire de traiter les fichiers dépourvus d'extension également.
 
-Afin de prendre en compte un maximum de fichiers différents, nous avons décider d'intégrer un système de reconnaissance de magic numbers (signature de fichier).
+Afin de prendre en compte un maximum de fichiers différents, nous avons décider d'intégrer un système de reconnaissance de magic numbers (signatures de fichier).
 
-Lors du parcours de dossier, l'application va bien évidemment récupérer tous les fichiers videos reconnus, c'est a dire, les fichiers disposant d'une extension que notre application prend en charge (avi,mkv,mpeg,wmv,m4v,mp4,flv,mov). Si un fichier ne possède pas d'extension, l'application lis les 4 premiers bytes du fichier afin de comparer sa signature avec un liste de signatures connues et stockée dans notre application.
+Lors du parcours de dossier, l'application va bien évidemment récupérer tous les fichiers videos reconnus, c'est a dire, les fichiers disposant d'une extension que notre application prend en charge (avi,mkv,mpeg,wmv,m4v,mp4,flv,mov).
 
-Si la signature d'un fichier correspond à l'une de la liste, le fichier en question est alors une video et notre application le prendre dorénavent en charge.
+Lorsqu'un fichier dépourvu d'extension est rencontré, l'application lis les 4 premiers bytes du fichier constituant sa signature afin de la comparer avec un liste de signatures connues qui a été intégrée dans notre application.
+
+Si la signature d'un fichier correspond à l'une des signatures de la liste, le fichier en question enferme alors du contenu video et notre application le prendra dorénavent en charge.
+
+La liste des signatures stockée dans l'application a été constituée d'après les signatures trouvées lors de tests mais également en puisant dans des bases de données de signatures telles que celles-ci : [garykessler.net](http://www.garykessler.net/library/file_sigs.html)
+
+En terme de performances, nos tests on démontrés que l'intégration d'une telle fonctionalité n'avait pas d'impact conséquent sur une machine équipé d'un SSD. En revanche, sur les machines à disque dur classiques, les délais d'attentes ajoutés lors de scans de dossier se ressentent réellement.
+
+Il n'est pas envisageable de partir du principe que tous les utilisateurs ont un SSD. Nous avons préféré ne pas intégrer la fonctionnalité dans la version finale de notre application par soucis de performance. La fonctionnalité reste néanmoins disponible sur la branche qui lui ai dédiée, à cette adresse : [feature-magic-numbers](https://github.com/raph-u/What2Watch/tree/feature-magic-numbers)
+
 
 #### 4.3 Analyse des fichiers, récupération du titre du film
 
@@ -152,19 +186,19 @@ Nous avons une première fonction qui va faire un remplacement par un espace de 
 
 Une seconde fonction va permettre de remplacer les possibles dates qu'elle trouve, par un espace.
 
-*Note : vu qu'il y a forcément un espace ou un caractère séparateur (qui sera transformer en espace) entre les divers mots de la chaine de caractère, au moment ou l'on remplace nos patterns trouvé par un espace, cela créera forcément au minimum 2 espaces.*
+*Note : vu qu'il y a forcément un espace ou un caractère séparateur (qui sera transformer en espace) entre les divers mots de la chaine de caractère, au moment ou l'on remplace nos pattern trouvé par un espace, cela créera forcément au minimum 2 espaces.*
 
-une dernière fonction, que nous pensons la plus intéressante, va découper l'ensemble de la chaîne de caractère (après le passage dans la fonction 1 et 2) par tranche de double espace, pour en faire un tableau. Nous allons ensuite parcourir ce tableau et quand on va trouver une case du tableau qui contient des caractères, nous la gardons car cela sera normalement le titre du film. Avec cette fonction, il suffit donc de trouver les patterns critiques soit : devant le titre du film (si il y en a), ou un seul qui est juste derrière le titre du film, et tous les autres patterns qui suivent ne seront même pas pris en compte, ce qui est vraiment interessant.
+une dernière fonction, que nous pensons la plus intéressante, va découper l'ensemble de la chaîne de caractère (après le passage dans la fonction 1 et 2 par tranche de double espace, pour en faire un tableau. Nous allons ensuite parcourir ce tableau et quand on va trouvé une case du tableau qui contient des caractères, nous la gardons car cela sera normalement le titre du film. Avec cette fonction, il suffit donc de trouver les patterns critiques soit : devant le titre du film (si il y en a), ou un seul qui est juste derrière le titre du film, et tous les autres pattern qui suivent ne seront même pas pris en compte, ce qui est vraiment interessant.
 
 *Exemple :
 Nous avons le film : Colt.45.2014.FRENCH.BRRiP.XviD-CARPEDIEM
-Après le passage dans la fonction 1 et 2, il restera : Colt 45 (4 espaces) BRRiP (3 espaces) CARPEDIEM.
-Donc => tab[1] = "Colt 45", tab[2] = "", tab[3] = "BRRiP", tab[4] = " CARPEDIEM"
+Après le passage dans la fonction 1 et 2, il restera : Colt 45 (4 espaces) BRRiP (3 espaces) CARPEDIEM. Donc =>
+tab[1] = "Colt 45", tab[2] = "", tab[3] = "BRRiP", tab[4] = " CARPEDIEM"
 Nous allons donc récupérer la première case non vide (donc le titre du film)*
 
 Si il y avait eu un pattern devant le titre du film, cela fonctionne toujours (du moment qu'il est transformé en espace par notre RegEx) car la première case du tableau aurait été vide et celle d'après serait le titre du film.
 
-Pour résumer, cette fonction est bien sûr dépendante de notre fonction 1 (RegEx), mais si l'on arrive à transformer un des patterns critique (ceux devant le titre [si il y en a] sinon, celui qui suit directement le titre), nous arrivons à récupérer le titre du film sans se soucier des autres patterns qui suivent.
+Pour résumer, cette fonction est bien sûr dépendante de notre fonction 1 (RegEx), mais si l'on arrive à transformer un des patternes critique (ceux devant le titre [si il y en a] sinon, celui qui suit directement le titre), nous arrivons à récupérer le titre du film sans se soucier des autres patternes qui suivent.
 
 #### 4.4 API: récupération des informations
 
@@ -177,10 +211,40 @@ Nous somme également limité au niveau du nombre de requête par seconde, ce qu
 
 #### 4.5 Interface utilisateur
 
-[TODO: fix]
-Dans un premier temps, l'interface a été pensée de manière à faire le lien entre ce que l'utilisateur voit initialement lorsqu'il télécharge ses films, c'est à dire leur noms, et les les informations associées à ces films.
+![UI](screenshots/Movie informations.png "W2W - UI")
 
-Une liste contenant les noms de films a donc été intégrée. Ce choix nous a notemment permis d'avoir une interface utilisable très rapidement. La liste a également l'avantage de pouvoir afficher plus de films en une fois que si l'application les affichait sous forme de pochette.
+L'interface a initialement été pensée de manière à faire le lien entre ce que l'utilisateur voit lorsqu'il télécharge ses films, c'est à dire leur noms, et les les informations associées à ces films.
+
+Mettre en avant dans l'interface une liste affichant les noms de films traités et exempts de caractères spéciaux nous a semblé être une bonne idée. Nous avons donc intégré cette liste dans l'application. Ce choix nous a notemment permis d'avoir une interface utilisable très rapidement et de faire plusieurs itérations afin d'obtenir une interface plaisante et fonctionnelle.
+
+En outre, l'intégration d'une liste de noms a également l'avantage de pouvoir afficher plus de films en une fois que si nous avions décidé d'afficher des pochettes.
+
+##### 4.5.1 Fenêtre de paramètres
+
+![Settings](screenshots/Settings.png "W2W - Settings")
+
+L'application dispose de deux fenêtres différentes. La première permet à l'utilisateur d'intéragir avec les films trouvés par l'application. La seconde, quant à elle, permet à l'utilisateur de définir dans quel dossier il souhaite que l'application récupère des films.
+
+Dans le cas où l'application est lancée pour la première fois, c'est la fenêtre des paramètres qui est présentée à l'utilisateur en premier lieu afin de lui permettre de choisir un dossier de films avant d'utiliser l'application. Si ce dossier est supprimé ou déplacé entre deux sessions d'utilisation de l'application, la fenêtre des paramètres est à nouveau présentée à l'utilisateur au prochain lancement.
+
+##### 4.5.2 Fenêtre principale
+
+A l'image d'un bon nombre d'application actuelles, lorsque l'utilisateur lance l'application, la vue principale présente des intructions qui lui permettent de se familiariser avec l'interface en lui expliquant les fonctionnalités offertes par les contrôles pricipaux. Ces instructions facilitent le premier contact entre l'utilisateur et l'application, lui évitant ainsi une mauvaise expérience.
+
+![Home](screenshots/Home.png "W2W - Home")
+
+Du point de vue des contrôles voici ce que nous avon décidé d'intégrer dans la vue principale:
+- Bouton de paramètres: ce bouton donne accès à la fenêtre des paramètres
+- Bouton de rafraichissement: permet à l'utilisateur de scaner un dossier pour récupérer la liste de films qui s'y trouvent ou mettre à jour une liste existante
+- combobox: permet de sélectionner un critère de recherche de film. La sélection d'un critère met à jour l'interface. Ex. lorsque l'utilisateur choisi de faire une recherche par année, l'application affiche deux nouveaux champs de texts dédiés à l'insertion d'une plage d'année de début et de fin
+- Textfields: tous les textfields de la vue principales sont "sensibilisés" à l'evenement "key released". En substance, lorsque l'utilisateur tape des termes de recherche, la liste de film se met à jour en temps réel et au fur et à mesur qu'il tape au clavier.
+- Poster de film: lorsque l'on click sur le poster d'un film, ce dernier passe en mode plein-écran
+- Bouton play: lance la lecture de film à l'aide du lecteur disponible sur l'OS de l'utilisateur
+
+Exemple de recherche par plage d'années:
+
+![Search](screenshots/Search.png "W2W - Search")
+
 
 #### 4.6 Utilisation "offline" de l'application
 
@@ -188,7 +252,7 @@ Un point que nous trouvons très intéressant et important dans notre applicatio
 
 Avoir choisi d'utiliser une base de données en SQLite nous permet de pouvoir la consulter à n'importe quel moment, sans être dépendant d'une connection internet. De ce fait, du moment que l'utilisateur à lancé au moins une fois la recherche d'informations en ayant internet, il est possible de récupérer toutes les informations de ces films autant de fois qu'il le veut, sans avoir internet. Par contre il sera donc impossible de récupérer les informations de nouveaux films ajoutés dans son dossier sans avoir internet.
 
-Nous avons donc mis en place toute une gestion de la connection à internet. Nous avons une méthode qui permet d'ouvrir un socket vers le site "www.google.com" et qui nous retourne true ou false, respectivement: internet accessible ou non. Nous regardons donc à chaque début de scan si l'utilisateur à accès à internet ou non. Dans le cas ou il ne l'a pas, nous affichons un message d'alert. Notre application gère aussi le cas ou il serait possible que l'utilisateur perde la connection au milieu d'une recherche. Si cela arrive, toutes les données non-trouvées seront égale à "Unknown" et l'application affiche un message d'alert.
+Nous avons donc mis en place toute une gestion de la connection à internet. Nous avons une méthode qui permet d'ouvrir un socket vers le site "www.google.com" et qui nous retourne true ou false, respectivement: internet accessible ou non. Nous regardons donc à chaque début de scan si l'utilisateur à accès à internet ou non. Dans le cas ou il ne l'a pas, nous affichons on message d'alert. Notre application gère aussi le cas ou il serait possible que l'utilisateur perde la connection au milieu d'une recherche. Si cela arrive, toutes les données non-trouvées seront égale à "Unknown" et l'application affiche un message d'alert.
 
 Nous avons de plus intégré en bas à droite de l'application, un voyant vert ou rouge qui permet d'indiquer à l'utilisateur si il a une connection internet ou pas. Au niveau du code, c'est un thread lancé au lancement de l'application et qui vérifie chaque seconde si internet est accessible ou pas. Ce thread se ferme correctement lorsque l'application se ferme.
 
@@ -208,7 +272,7 @@ Pour pouvoir exécuter des programmes Java (.jar) vous êtes obligé d'installer
 Pour voir la version de java installer :
 
 - **Sous Windows :** Aller dans le panneau de configuration -> Programmes -> Programmes et fonctionnalités. Puis rechercher Java et vous allez voir la version installée.
-- **Sous Unix :** Ouvrer un terminal puis tapper la commande : `java -version`. Si vous avez un message d'erreur c'est que java n'est pas installé, sinon il faut que vous ayez un message : "Java version 1.8.x".
+- **Sous Unix :** Ouvrez un terminal puis tapper la commande : `java -version`. Si vous avez un message d'erreur c'est que java n'est pas installé, sinon il faut que vous ayez un message : "Java version 1.8.x".
 
 Téléchargement du JRE :
 
@@ -261,7 +325,7 @@ Voici comment notre système de branches fonctionne :
 
 #### 6.2 JDK
 
-Nous avons utilisé le JDK 8u111 pour compiler notre application. Il est donc impératif de prendre la même version. Voici le lien de téléchargement : [JDK 8u111](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
+Nous avons utilisé le JDK 8u111 pour complilé notre application. Il est donc impératif de prendre la même version. Voici le lien de téléchargement : [JDK 8u111](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
 
 Il suffit de télécharger et installer le JDK 8u111 prévu pour l'OS de votre choix.
 
@@ -271,7 +335,7 @@ Pour l'installation en ligne de commande via Linux Ubuntu et Linux Debian, voici
 
 #### 6.3 IDE
 
-Vous pouvez utiliser n'importe quel IDE qui permet de reprendre un projet Java, mais nous vous recommandons tout de même d'utiliser le même que nous qui est Netbeans (version 8.2).
+Vous pouvez utiliser n'importe quel IDE qui permet de reprendre un projet Java, mais nous vous recommandons tout de même d'utiliser le même que nous qui est Netbeans (version 8.2 ).
 
 Liens de téléchargement : [Netbeans](https://netbeans.org/downloads/)
 
