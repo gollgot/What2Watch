@@ -131,8 +131,10 @@ Nous allons vous expliquer le fonctionnement des fonctionnalités que nous penso
 Les informations porteront plus sur la logique en elle-même et non l'explication du code. Pour voir le code source, vous pouvez le retrouver à l'emplacement : `What2Watch/src/what2watch`.
 
 #### 4.1 Recherche de fichiers
-
+[add location]
 Plusieurs API différentes comprennent des outiles permettant de parcourir le contenu de dossiers de manière récursive. Dans le cadre de ce projet, c'est la réactivité et les performances qui ont guidé nos recherches.
+
+Nous avons dans un premier temps choisi d'implémenter Java 8 Stream Parallel. Java 8 Stream Parallel a l'avantage d'être la méthode la plus performante en terme de temps nécessaire au parcours de dossiers comme le démontre ce benchmark:
 
 | Test Name                | API      | Average Time |
 | ------------------------ |:--------:| -----:|
@@ -144,8 +146,7 @@ Plusieurs API différentes comprennent des outiles permettant de parcourir le co
 | listFiles - Queue        | I/O      | 33.7566S |
 | commons-io - FileUtils   | I/O      | 1M5.413S |
 
-
-Nous avons dans un premier temps choisi d'implémenter Java 8 Stream Parallel. Java 8 Stream Parallel a l'avantage d'être la méthode la plus performante en terme de temps nécessaire au parcours de dossiers comme le démontre ce benchmark: [io-recurse-tests](https://github.com/brettryan/io-recurse-tests#io-recurse-tests)
+ Lien vers le benchmark complet :  [io-recurse-tests](https://github.com/brettryan/io-recurse-tests#io-recurse-tests)
 
 Néanmoins, nous avons par la suite décidé de "faire marche arrière" et d'utiliser une autre méthode. Walk File Tree. Nous avons pris cette décision car Walk File Tree est tout aussi performante que Java 8 Stream Parallel mais surtout car elle est plus flexible.
 
@@ -158,7 +159,7 @@ Le prix à payer était faible comparé aux avantages apportés par l'intégrati
 Plus d'informations sur Walk File Tree : [Walk File Tree](https://docs.oracle.com/javase/tutorial/essential/io/walk.html)
 
 #### 4.2 Magic Numbers
-
+[add location]
 Dans un premier temps, l'application se contentait de ne traiter que les fichiers disposant d'une extension. Or, en se basant sur le dossier de films fictifs qui nous a été fournis pour nous aider dans le projet, nous avons réalisé qu'il était nécessaire de traiter les fichiers dépourvus d'extension également.
 
 Afin de prendre en compte un maximum de fichiers différents, nous avons décider d'intégrer un système de reconnaissance de magic numbers (signatures de fichier).
@@ -210,7 +211,7 @@ Pour utiliser cette API nous devons utiliser une clef, nous avons donc stocké c
 Nous somme également limité au niveau du nombre de requête par seconde, ce qui implique une certaine attente supérieure à celle que nous aurions voulu au départ. Mais nous avons quand même décidé d'utiliser cette API car elle apporte tous ce que nous cherchons. Nous lui envoyons le titre du film (autant en Français qu'en Anglais) dont nous recherchons les informations, et l'API nous retourne tous ce dont nous avons besoin, en format JSON et dans la langue souhaitée. Il nous reste donc plus qu'à parser le tout et à l'afficher dans notre application.
 
 #### 4.5 Interface utilisateur
-
+[add jfx links / talk about jfoenix]
 ![UI](screenshots/Movie informations.png "W2W - UI")
 
 L'interface a initialement été pensée de manière à faire le lien entre ce que l'utilisateur voit lorsqu'il télécharge ses films, c'est à dire leur noms, et les les informations associées à ces films.
