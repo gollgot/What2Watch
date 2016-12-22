@@ -3,7 +3,7 @@
 - Auteurs: Loïc Dessaules, Raphaël Bazzari
 - Date: 22.12.2016
 - Language: Java
-- Liens vers notre repository : [What2Watch - GitHub](https://github.com/raph-u/What2Watch/)
+- Lien vers notre repository : [What2Watch - GitHub](https://github.com/raph-u/What2Watch/)
 
 
 ## Sommaire
@@ -38,7 +38,7 @@
 
 5. Installation de What2Watch
 
-    5.1 JDK
+    5.1 JRE
 
     5.2 Application What2Watch
 
@@ -75,8 +75,11 @@
 Détail des tables :
 
  - **movie :** On y retrouve toutes les informations propre à chaque film.
+
  - **actor, director :** On y retrouve, respectivement, le nom des acteurs et des directeurs présent dans un minimum un film. Pour le nom nous avons volontairement mis le nom et le prénom dans le même champ, car l'API nous retourne par exemple le nom "John Carl Buechler". Il est donc très difficile de savoir quel est le nom et le prénom (ce n'est pas toujours les "deux premières parties qui sont le prénoms").
+ 
  - **genre :** On y retrouve les genres présents dans au minimum un film.
+ 
  - **movie_has_actor, movie_has_director, movie_has_genre :** Ce sont les tables intermédiaires qui permettent de faire la liaison entre la table movie et genre, director, actor. Comme cela nous avons l'ensemble des personnes / genres présentent dans tous les films.
 
 L'ensemble de ces tables suffisent amplements à structurer et stocker les données dont nous avons besoin pour notre application. De plus nous devont interroger notre base de données lors des recherches spécifiques faites par l'utilisateur et ces tables répondent à notre demande.
@@ -254,12 +257,18 @@ A l'image d'un bon nombre d'application actuelles, lorsque l'utilisateur lance l
 ![Home](screenshots/Home.png "W2W - Home")
 
 Du point de vue des contrôles voici ce que nous avon décidé d'intégrer dans la vue principale:
-- Bouton de paramètres: ce bouton donne accès à la fenêtre des paramètres
-- Bouton de rafraichissement: permet à l'utilisateur de scaner un dossier pour récupérer la liste de films qui s'y trouvent ou mettre à jour une liste existante
-- combobox: permet de sélectionner un critère de recherche de film. La sélection d'un critère met à jour l'interface. Ex. lorsque l'utilisateur choisi de faire une recherche par année, l'application affiche deux nouveaux champs de texts dédiés à l'insertion d'une plage d'année de début et de fin
-- Textfields: tous les textfields de la vue principales sont "sensibilisés" à l'evenement "key released". En substance, lorsque l'utilisateur tape des termes de recherche, la liste de film se met à jour en temps réel et au fur et à mesur qu'il tape au clavier.
-- Poster de film: lorsque l'on click sur le poster d'un film, ce dernier passe en mode plein-écran
-- Bouton play: lance la lecture de film à l'aide du lecteur disponible sur l'OS de l'utilisateur
+
+- **Bouton de paramètres:** ce bouton donne accès à la fenêtre des paramètres
+
+- **Bouton de rafraichissement:** permet à l'utilisateur de scaner un dossier pour récupérer la liste de films qui s'y trouvent ou mettre à jour une liste existante
+
+- **Combobox:** permet de sélectionner un critère de recherche de film. La sélection d'un critère met à jour l'interface. Ex. lorsque l'utilisateur choisi de faire une recherche par année, l'application affiche deux nouveaux champs de texts dédiés à l'insertion d'une plage d'année de début et de fin
+
+- **Textfields:** tous les textfields de la vue principales sont "sensibilisés" à l'evenement "key released". En substance, lorsque l'utilisateur tape des termes de recherche, la liste de film se met à jour en temps réel et au fur et à mesur qu'il tape au clavier.
+
+- **Poster de film:** lorsque l'on click sur le poster d'un film, ce dernier passe en mode plein-écran
+
+- **Bouton play:** lance la lecture de film à l'aide du lecteur disponible sur l'OS de l'utilisateur
 
 Exemple de recherche par plage d'années:
 
@@ -292,6 +301,7 @@ Pour pouvoir exécuter des programmes Java (.jar) vous êtes obligé d'installer
 Pour voir la version de java installer :
 
 - **Sous Windows :** Aller dans le panneau de configuration -> Programmes -> Programmes et fonctionnalités. Puis rechercher Java et vous allez voir la version installée.
+
 - **Sous Unix :** Ouvrez un terminal puis tapper la commande : `java -version`. Si vous avez un message d'erreur c'est que java n'est pas installé, sinon il faut que vous ayez un message : "Java version 1.8.x".
 
 Téléchargement du JRE :
@@ -339,8 +349,11 @@ Ou récupérer la branche de votre choix, pour ensuite en modifier le contenu.
 Voici comment notre système de branches fonctionne :
 
 - **Master :** Cette branche contient uniquement des versions livrables du projet.
+
 - **Develop :** Cette branche contient des versions stables du projet, mais toujours en cours de développement.
+
 - **Deployment :** Cette branche contient uniquement un dossier délivrable pour le client. Il contient donc le dossier lib et le fichier What2Watch.jar ("exécutable" de l'application). Ce dossier peut être généré automatiquement avec l'IDE Netbeans que nous utilisons. Avec cette branche nous pouvons donc télécharger facilement la version stable de notre choix que nous voulons lancer sur notre ordinateur.
+
 - **Toutes les autres branches :** Pour chaque grande fonctionnalité (généralement plus de un ou deux commits) nous avons créé une branche spécifique à celle-ci et travaillions dessus jusqu'à avoir une version stable et ensuite faire un merge sur la branche develop.
 
 #### 6.2 JDK
