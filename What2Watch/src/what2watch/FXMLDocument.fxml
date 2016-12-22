@@ -241,7 +241,7 @@
                   <ProgressBar fx:id="progressBarProcess" prefWidth="200.0" progress="0.0" styleClass="progressBar" />
                </children>
             </VBox>
-            <Label text="V 1.0.0" textFill="#bcbbbb" GridPane.rowIndex="4">
+            <Label text="Version 1.1.0" textFill="#bcbbbb" GridPane.rowIndex="4">
                <font>
                   <Font size="10.0" />
                </font>
