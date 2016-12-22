@@ -115,6 +115,8 @@ public class FileFinder extends SimpleFileVisitor<Path> {
      * 
      * Those informations are then stored into FileFinder's
      * "movieFileNames" and "movieFilePaths" properties
+     * 
+     * @param file the file that has to be compared
      *  
      */
     void find(Path file) {
