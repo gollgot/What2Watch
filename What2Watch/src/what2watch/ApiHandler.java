@@ -1,46 +1,58 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ *  The purpose of this class is to manage all datas / functions in like to
+ *  the API.
  */
 package what2watch;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.control.ProgressIndicator;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
  *
- * @author loic.dessaules
+ * @author Loïc Dessaules
  */
 public class ApiHandler {
-    
     private static String apiKey = getApiKey();
     
-    // We get all movie datas, and between each request, we wait 180ms, because we have a limit with the API...
+    /** 
+     * Return a Movie object contains all datas of the movieName passed
+     * in parameter.
+     * 
+     * @param   movieName The name of the movie, after passed to the 
+     *          ParsingFiles class (need for ask the API).
+     * 
+     * @param   rawMovieName The raw name of the movie.
+     * 
+     * @param   oneStepPourcent The step value (between 0 and 1) to add
+     *          when one movie finished to fetch data from the API.
+     * 
+     * @param   progressBarProcess The ProgressBar object, for update it.
+     * 
+     * @return  A Movie object contains all movie's data.
+     * 
+     * @see     InternetConnection#isEnable
+     * @see     ApiHandler#getMovieId
+     * @see     ApiHandler#getMovieDetails
+     * @see     ApiHandler#getMovieActorsDirectors
+     * @see     ApiHandler#updateProgressBar
+     */
     public static Movie getAllMovieInfos(String movieName, String rawMovieName, float oneStepPourcent, ProgressBar progressBarProcess){
-        
         // We have 3 big process, so 33% of the oneStepPourcent.
         float pourcentToAdd = 33 * oneStepPourcent / 100;
             
         Movie movie = new Movie();
         try {
-            // Each time, we add this pourcentToAdd to the current progressNumber
-            // Beacause we add all the time the same value to each step
-            
             if(InternetConnection.isEnable()){ 
-                
+                //between each request, we wait 180ms, because we have a limit with the API...
                 String id = getMovieId(movieName); 
                 updateProgressBar(progressBarProcess, pourcentToAdd);
                 Thread.sleep(200);           
@@ -50,8 +62,7 @@ public class ApiHandler {
                 Thread.sleep(200); 
  
                 movie = getMovieActorsDirectors(movie, id); 
-                updateProgressBar(progressBarProcess, pourcentToAdd);
-                
+                updateProgressBar(progressBarProcess, pourcentToAdd);    
             }else{ 
                 movie.setActors("Unknown"); 
                 movie.setDirector("Unknown"); 
@@ -62,16 +73,26 @@ public class ApiHandler {
                 movie.setTitle(movieName); 
                 movie.setYear("Unknown"); 
             } 
-
         } catch (InterruptedException ex) {
             Logger.getLogger(ApiHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
         return movie;
     }
     
+    /** 
+     * Update the progressBar passed in parameter of ApiHandler.getAllMovieInfos().
+     * We have to do that in the JavaFX Main Thread, because we have to separate 
+     * logical from graphical things.
+     * 
+     * @param   progressBarProcess The ProgressBar object you want to update.
+     * 
+     * @param   pourcentToAdd pourcent you want to add to the current progress value.
+     * 
+     * @see     ApiHandler#getAllMovieInfos
+     * @see     Platform#runLater
+     * @see     ProgressBar#setProgress
+     */
     private static void updateProgressBar(ProgressBar progressBarProcess, float pourcentToAdd){
-        // For do an update Graphic on a "logical method" we have to do this on the Application Thread
-        // So, Platform.runLater is the Application Thread
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
@@ -80,16 +101,22 @@ public class ApiHandler {
         });
     }
     
-    
+    /** 
+     * Return the ID of the movie stocked in "The Movie DataBase API".
+     * (Used JSON)
+     * 
+     * @param   movieName The movie name you want to fetch the ID.
+     * 
+     * @see     ApiHandler#getAllMovieInfos   
+     * @see     Platform#runLater
+     */
     private static String getMovieId(String movieName) {
         String movieNameUrlFormat = movieName.replaceAll(" ", "%20");
         String id = "Unknown";
 
-        // Fetch the JSON and add data into movie object
         try {
             // Get a JSON from an URL
-            JSONObject json = ParsingJSON.readJsonFromUrl("https://api.themoviedb.org/3/search/movie?api_key=" + apiKey + "&language=en-US&query=" + movieNameUrlFormat);
-            // Get the array data "results"
+            JSONObject json = ParsingJSON.readJsonFromUrl("https://api.themoviedb.org/3/search/movie?api_key="+ apiKey + "&language=en-US&query=" + movieNameUrlFormat);
             JSONArray jsonArray = json.getJSONArray("results");
             
             // If there is no infos for the film
@@ -100,11 +127,9 @@ public class ApiHandler {
                 JSONObject jsonOject = jsonArray.getJSONObject(0);
                 id = String.valueOf(jsonOject.getInt("id"));
             }
-        
-        // Differents error (JSON / IO)
         } catch (JSONException ex) {
             System.out.println("ERROR on parsingJSON (JSON exception) : " + ex.getMessage());
-        } catch (IOException ex) { // InternetConnection lost 
+        } catch (IOException ex) { // Possibly InternetConnection lost 
             System.out.println("ERROR on parsingJSON (IO exception) : " + ex.getMessage() + "\nVeuillez vérifier votre connexion internet");
             id = "Unknown"; 
         }
@@ -113,6 +138,22 @@ public class ApiHandler {
         
     }
     
+    
+    /** 
+     * Return a Movie object who contains basics movie's data :
+     * title, year, synopsis, poster_link, genres.
+     * 
+     * (fetch data in the JSON file from the TMDB API)
+     * 
+     * @param   movieName The movie name you want to fetch data.
+     * 
+     * @param   rawMovieName The raw movie name, you need it because we need to set this data
+     *          to the Movie object.
+     * 
+     * @param   id The TMDB API's ID of the movie you want to fetch datas.
+     * 
+     * @return  Movie object
+     */
     private static Movie getMovieDetails(String movieName, String rawMovieName, String id){
         String originalTitle = movieName;
         String year = "Unknown";
@@ -122,7 +163,6 @@ public class ApiHandler {
         
         // If we have an id, we get the real data, else, we don't have data so we put "unknown"
         if(id != "Unknown"){
-            // Fetch the JSON and add data into movie object
             try {
                 // Get a JSON from an URL
                 JSONObject jsonObject = ParsingJSON.readJsonFromUrl("https://api.themoviedb.org/3/movie/" + id + "?api_key="+apiKey+"&language=en-US");
@@ -139,7 +179,7 @@ public class ApiHandler {
                     synopsis = "Unknown";
                 }else{
                     synopsis = jsonObject.getString("overview");
-                    // Replace " with `
+                    // Replace " with ` because we can have an error later with query on DB
                     synopsis = synopsis.replaceAll("\\\"", "`");
                 }
                 
@@ -176,9 +216,6 @@ public class ApiHandler {
                         // Like that we have : "Fantasy;Action;Comedy"
                     }
                 }
-                
-                
-                // Differents error (JSON / IO)
             } catch (JSONException ex) {
                 System.out.println("ERROR on parsingJSON (JSON exception) : " + ex.getMessage());
             } catch (IOException ex) { // Internet connection lost 
@@ -205,26 +242,34 @@ public class ApiHandler {
         movie.setGenre(genres);
         
         return movie;
-        
     }
     
+    
+    /** 
+     * Return a Movie object who contains all movie's data we needs
+     * 
+     * (fetch Actors and Directors data in the JSON file from the TMDB API)
+     * 
+     * @param   movie The current movie that we add data on it.
+     * 
+     * @param   id The TMDB API's ID of the movie you want to fetch datas.
+     * 
+     * @return  Movie object
+     */
     private static Movie getMovieActorsDirectors(Movie movie, String id){
        String actors = "";
        String directors = "";
        
        if(id != "Unknown"){
-            // Fetch the JSON and add data into movie object
             try {
                 // Get a JSON from an URL
                 JSONObject json = ParsingJSON.readJsonFromUrl("https://api.themoviedb.org/3/movie/"+id+"/credits?api_key="+apiKey);
 
                 /* CASTING */
                 JSONArray jsonArrayCast = json.getJSONArray("cast");      
-                // If there is one or more people on the casting
                 if(jsonArrayCast.isNull(0)){
                     actors = "Unknown";
                 }else{
-                    // We get all peoples
                     for (int i = 0; i < jsonArrayCast.length(); i++) {
                         JSONObject jsonObject = jsonArrayCast.getJSONObject(i);
                         // If this is the last actor listed (i < total-1), we display just the name, else a ;
@@ -240,7 +285,6 @@ public class ApiHandler {
 
                 /* CREW */
                 JSONArray jsonArrayCrew = json.getJSONArray("crew");      
-                // If there is one or more people on the casting
                 if(jsonArrayCrew.isNull(0)){
                     directors = "Unknown";
                 }else{
@@ -260,8 +304,6 @@ public class ApiHandler {
                         directors = directors.substring(0, directors.length()-1);
                     }
                 }
-
-            // Differents error (JSON / IO)
             } catch (JSONException ex) {
                 System.out.println("ERROR on parsingJSON (JSON exception) : " + ex.getMessage());
             } catch (IOException ex) { // Internet connection lost 
@@ -269,7 +311,6 @@ public class ApiHandler {
                 actors = "Unknown"; 
                 directors = "Unknown"; 
             }
-            
        }
        // If id == Unknown
        else{
@@ -279,12 +320,16 @@ public class ApiHandler {
         
         movie.setActors(actors);
         movie.setDirector(directors);
-
         
         return movie;
     }
     
-    // We put the key on an external file. This way, we don't have our key on the repo.
+    /** 
+     * Return the API KEY of TMDB API founded in a out of the project's sources file (.env).
+     * (We put the key on an external file. This way, we don't have our key on the repo.)
+     * 
+     * @return  The API KEY
+     */
     private static String getApiKey(){
         String envPath = ".env";
         String content = "";

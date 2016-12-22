@@ -1,7 +1,6 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * This class contains methods for helping to read a JSON.
+ * I found it here : http://stackoverflow.com/questions/4308554/simplest-way-to-read-json-from-a-url-in-java
  */
 
 package what2watch;
@@ -19,12 +18,9 @@ import org.json.JSONObject;
 
 /**
  *
- * @author loic.dessaules
+ * @author Loïc Dessaules
  */
 public class ParsingJSON {
-    
-    
-    /* Two methods I found on stackoverflow : http://stackoverflow.com/questions/4308554/simplest-way-to-read-json-from-a-url-in-java*/
     
     private static String readAll(Reader rd) throws IOException {
         StringBuilder sb = new StringBuilder();
@@ -46,6 +42,5 @@ public class ParsingJSON {
             is.close();
         }
     }
-    
     
 }

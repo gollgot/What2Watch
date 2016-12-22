@@ -5,7 +5,6 @@
  */
 package what2watch;
 
-import com.sun.org.apache.bcel.internal.generic.F2D;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
@@ -34,7 +33,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -42,6 +40,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import static javafx.scene.input.MouseEvent.MOUSE_ENTERED;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -53,7 +52,7 @@ import javafx.util.Duration;
 
 /**
  *
- * @author Raphael.BAZZARI
+ * @author Raphael.BAZZARI and Loïc Dessaules
  */
 public class FXMLDocumentController implements Initializable {
 
@@ -118,22 +117,8 @@ public class FXMLDocumentController implements Initializable {
     private ImageView instructionHolder;
     
     
-    
-
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // Displaying the settings window before the main one if no path has been saved in the app
-        String movieFolderPath = this.prefs.getPath();
-        if (movieFolderPath.equals("")) {
-            try {
-                showSettings(null);
-            } catch (IOException ex) {
-                Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        } else if (!Files.exists(Paths.get(movieFolderPath))) {
-            displayMissingFolderError();
-        }
-
         // Combobox search criterias configuration
         // those values have to match the switch case statement in the updateSearchMode method below
         this.cbxSearchCriterias.getItems().addAll(
@@ -161,6 +146,14 @@ public class FXMLDocumentController implements Initializable {
         initInstructionPicture();
     }
 
+    
+    /**
+     * Opens up the settings window after setting up its title and icon.
+     *
+     * This method displays the settings window modal mode.
+     * 
+     * @param event the event that triggers this method
+     */
     @FXML
     private void showSettings(ActionEvent event) throws IOException {
         // Settings window creation
@@ -170,8 +163,8 @@ public class FXMLDocumentController implements Initializable {
         // Window customization
         settingStage.setResizable(false);
         settingStage.initModality(Modality.APPLICATION_MODAL);
-        settingStage.setTitle("Movie directory selection");
-
+        settingStage.setTitle("What 2 Watch - Movie directory selection");
+        
         Scene scene = new Scene(root);
         Font.loadFont(getClass().getResourceAsStream("resources/fonts/SourceSansPro-Regular.otf"), 12);
         scene.getStylesheets().add("what2watch/default.css");
@@ -181,6 +174,18 @@ public class FXMLDocumentController implements Initializable {
         settingStage.showAndWait();
     }
 
+    
+    /**
+     * This method is responsible for initiating the movie folder scan process and
+     * manage the UI appearance accordingly. Once the movie folder scan is started,
+     * this method displays a progressbar indicating the scan progression. It also disables
+     *the refresh button to prevent multiple scans from being triggered at
+     * once. Other UI elements such as the search textfield and the movie listView are
+     * disabled when a scan is occuring. When launching a scan, if the folder specified 
+     * by the path saved in the preferences no longer exists, an error dialog is displayed to the user.
+     *
+     * @param event the event that triggers this method
+     */
     @FXML
     private void browseFiles(ActionEvent event) throws IOException {
         String movieFolderPath = this.prefs.getPath();
@@ -199,7 +204,9 @@ public class FXMLDocumentController implements Initializable {
         progressBarProcess.setProgress(0);
         progressBarProcess.setVisible(true);
 
+            this.disableRefreshButton(true);
             this.disableSearchUI(true);
+            
             // We pass the current instance of "FXMLDocumentController" class, because we have to access the "disableSearchUI" method 
             dbHandler.update(this, listMovie, progressBarProcess, lblNbFilesProcessed);
         } else {
@@ -207,6 +214,19 @@ public class FXMLDocumentController implements Initializable {
         }
     }
 
+    /**
+    * This method is only invoked when the user choses a value from the search criteria combobox (cbxSearchCriterias).
+    * It is responsible for drawing / hiding UI components according to the active search mode.
+    * For instance. A different textfield placeholder is displayed depending on the value chosen from
+    * the search criteria combobox. Same goes with the different textfields used to search for a movie i.e. some may only be visible 
+    * when a certain search mode is active. Furthermore, the focus is always "passed" to the main textfield of the active search mode.
+    * In addition, a search will be triggered with the value of the active textfield(s) each time a combobox element is selected.
+    *
+    * @param event the event that triggers this method
+    * 
+    * @see FXMLDocumentController#setYearSearchMode
+    * @see FXMLDocumentController#searchForMatchingMovies
+    */
     @FXML
     private void updateSearchMode(ActionEvent event) {
         int boxIndex = this.cbxSearchCriterias.getSelectionModel().getSelectedIndex();
@@ -249,14 +269,32 @@ public class FXMLDocumentController implements Initializable {
         this.searchForMatchingMovies(null);
     }
 
-    // Disables search textfields and toggles the searchIsEnabled property
+    /**
+    * Disables search textfields depending on the value passed by parameter.
+    * This method is used within FXMLDocumentController.disableSearchUI.
+    *
+    * @param toggleValue boolean value indicating whether or not an element should be disabled
+    * 
+    * @see FXMLDocumentController#disableSearchUI
+    */
     public void disableSearchBars(boolean toggleValue) {
         this.tfSearch.setDisable(toggleValue);
         this.tfStartingYear.setDisable(toggleValue);
         this.tfEndingYear.setDisable(toggleValue);
     }
 
-    // Displays/hides textfields according to the selected combobox search criteria
+    /**
+    * Displays / hides textfields depending on the value passed by parameter.
+    * When the year mode is set to true, the UI only displays two labels and two textfields
+    * allowing the user to search for a movie by indicating year range. 
+    * When the year mode is set to false, only the basic search textfield is displayed.
+    * 
+    * This method is called in FLXMDocumentController.updateSearchMode
+    *
+    * @param on boolean value indicating whether or not an element should be visible
+    * 
+    * @see FXMLDocumentController#updateSearchMode
+    */
     private void setYearSearchMode(boolean on) {
         lblStartingYear.setVisible(on);
         tfStartingYear.setVisible(on);
@@ -265,7 +303,15 @@ public class FXMLDocumentController implements Initializable {
         tfSearch.setVisible(!on);
     }
 
-    // Clic on an items on the list
+    /**
+    * This method is responsible for reacting to click events occuring on the movie list view
+    * from the main window. When a click event occurs on a cell of the movie list, the title of the
+    * movie is fetched and used to retrieve all informations related to this movie. Those informations
+    * are then displayed using the labels and other UI components of the main window.
+    * 
+    * Movie posters are also fetched from the web service when a click occurs.
+    * Calling this method will always hide the instruction picture displayed in the main window
+    */
     @FXML
     private void getMovieInformations() {
         String movieTitle = listMovie.getSelectionModel().getSelectedItem();
@@ -313,6 +359,20 @@ public class FXMLDocumentController implements Initializable {
         }
     }
 
+    
+    /**
+    * Dispatches search terms contained in search textfields to the SearchHandler class depending on the active search mode.
+    * SearchHandler then processes the search using the search terms it recieves. For instance, if the active search mode 
+    * is "searches by actor", this method passes the search term to the right method within the SearchHandler class.
+    * 
+    * @param event the event that triggers this method
+    * 
+    * @see SearchHandler#findMovieByTitle
+    * @see SearchHandler#findMovieByGenre
+    * @see SearchHandler#findMovieByYearRange
+    * @see SearchHandler#findMovieByDirector
+    * @see SearchHandler#findMovieByActor
+    */
     @FXML
     private void searchForMatchingMovies(KeyEvent event) {
         // Calling the right search methods according to the active search mode
@@ -337,6 +397,14 @@ public class FXMLDocumentController implements Initializable {
         }
     }
 
+    /**
+    * Calls FXMLDocumentController.getMovieInformations in order update the informations displayed 
+    * in the movie listView upon receiving keyEvents from either the UP_KEY or the DOWN_KEY
+    * 
+    * @param event the event that triggers this method
+    * 
+    * @see FXMLDocumentController#getMovieInformations
+    */
     @FXML
     private void updateDisplayedInfos(KeyEvent event) {
         if (event.getCode().equals(KeyCode.UP) || event.getCode().equals(KeyCode.DOWN)) {
@@ -344,6 +412,17 @@ public class FXMLDocumentController implements Initializable {
         }
     }
 
+    /**
+    * Animates the appearance of the big movie poster with a fade in effect upon receiving click events
+    * from the poster thumbnail in the main window.
+    * 
+    * This method should be used along with FXMLDocumentController.closeBigPoster in order
+    * to manage the big poster visibility.
+    * 
+    * @param event the event that triggers this method
+    * 
+    * @see FXMLDocumentController#closeBigPoster
+    */
     @FXML
     private void displayBigPoster(MouseEvent event) {
         paneBlackOpacity.setVisible(true);
@@ -353,7 +432,7 @@ public class FXMLDocumentController implements Initializable {
         
         FadeTransition ft = new FadeTransition(Duration.millis(300), paneBlackOpacity);
         ft.setFromValue(0.0);
-        ft.setToValue(0.8);
+        ft.setToValue(0.5);
         ft.setAutoReverse(true);
         
         FadeTransition ft2 = new FadeTransition(Duration.millis(300), imageViewBigPoster);
@@ -365,6 +444,16 @@ public class FXMLDocumentController implements Initializable {
         pt.play();
     }
 
+    /**
+    * Animates the disappearance of the big movie poster with a fade out effect upon receiving click events
+    * from the black background pane surrounding the big poster.
+    * 
+    * This method should be used along with FXMLDocumentController.displayBigPoster in order
+    * to manage the big poster visibility.
+    * 
+    * @see FXMLDocumentController#displayBigPoster
+    */
+    @FXML
     private void closeBigPoster() {
         paneBlackOpacity.setVisible(true);
         imageViewBigPoster.setVisible(true);
@@ -372,7 +461,7 @@ public class FXMLDocumentController implements Initializable {
         imageViewBigPoster.requestFocus();
         
         FadeTransition ft = new FadeTransition(Duration.millis(300), paneBlackOpacity);
-        ft.setFromValue(0.8);
+        ft.setFromValue(0.5);
         ft.setToValue(0.0);
         ft.setAutoReverse(true);
         
@@ -394,13 +483,14 @@ public class FXMLDocumentController implements Initializable {
         pt.play();
     }
 
-    // Close the bigPoster when we clicked on the black opac pane
-    @FXML
-    private void paneBlackOpacityClicked(MouseEvent event) {
-        closeBigPoster();
-    }
-
-    // Close the bigPoster when we presse escape key
+    /**
+    * Calls FXMLDocumentController.closeBigPoster in order hide the big poster from the main
+    * window upon receiving keyEvents from ESCAPE_KEY
+    * 
+    * @param event the event that triggers this method
+    * 
+    * @see FXMLDocumentController#closeBigPoster
+    */
     @FXML
     private void bigPosterKeyPressed(KeyEvent event) {
         if (event.getCode() == KeyCode.ESCAPE) {
@@ -408,13 +498,58 @@ public class FXMLDocumentController implements Initializable {
         }
     }
 
+    /**
+    * Disables UI components that should not be used while a scan is in progress according to the passed parameter.
+    * Such elements include the search textfields, the search criteria combobox, the movie listView
+    * as well as the "search By" label.
+    * 
+    * This method is called from many different places including FXMLDocumentController.initialize,
+    * FXMLDocumentController.browseFiles and DbHandler.update.
+    * 
+    * @param toggleValue the boolean value indicating whether the UI components should be disabled or not
+    * 
+    * @see FXMLDocumentController#initialize
+    * @see FXMLDocumentController#browseFiles
+    * @see DbHandler#update
+    */
     public void disableSearchUI(boolean toggleValue) {
         this.disableSearchBars(toggleValue);
         this.cbxSearchCriterias.setDisable(toggleValue);
         this.listMovie.setDisable(toggleValue);
         this.lblSearchBy.setDisable(toggleValue);
     }
-
+    
+    /**
+    * Disables the refresh button to prevent users from triggering multiple folder scans at once.
+    * This method is called within FXMLDocumentController.browseFiles and DbHandler.update
+    * 
+    * @param disabled the boolean value indicating whether the refresh button should be disabled or not
+    * 
+    * 
+    * @see FXMLDocumentController#browseFiles
+    * @see DbHandler#update
+    */
+    public void disableRefreshButton(boolean disabled) {
+        if (!disabled) {
+            // Forcing the button opacity to its original value to prevent unwanted effects
+            this.btnRefresh.setOpacity(1.0);
+        }
+        this.btnRefresh.setDisable(disabled);
+    }
+    
+    /**
+    * If you are on a Windows or Mac OS platforme, and it supported the Desktop.open method, 
+    * We use the Desktop class for open the movie with the linked application launcher 
+    * on the OS. e.g: Our application launch the movie with VLC.  
+    * 
+    * @param event the event that triggers this method
+    * 
+    * @see Desktop#isDesktopSupported
+    * @see Desktop#open
+    * @see System#getProperty
+    * @see FXMLDocumentController#isWindows
+    * @see FXMLDocumentController#isMac
+    */
     @FXML
     private void imgPlayerClicked(MouseEvent event) {
         String title = txtTitle.getText();
@@ -452,14 +587,27 @@ public class FXMLDocumentController implements Initializable {
         }
     }
     
+    /**
+    * @param os the os that you use
+    * 
+    * @return True if you are on Windows; False otherwise;
+    */
     private boolean isWindows(String os) {
         return (os.indexOf("win") >= 0);
     }
-
+    
+    /**
+    * @param os the os that you use
+    * 
+    * @return True if you are on Mac OS; False otherwise;
+    */
     private boolean isMac(String os) {
         return (os.indexOf("mac") >= 0);
     }
     
+    /**
+    *   Display an error box if your OS cannot open the file.
+    */
     private void showErrorOS(){
         Alert alert = new Alert(AlertType.ERROR);
         alert.setTitle("Error");
@@ -472,9 +620,14 @@ public class FXMLDocumentController implements Initializable {
             }
         });
     }
-
+    
+    /**
+    * This is a Thread who check every second if we have an internet connection or not.
+    * if we have a connection, we display a green circle, else a red circle.
+    * 
+    * @see  InternetConnection#isEnable
+    */
     private void checkInternetConnection() {
-
         Thread checkInternetConnection = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -498,28 +651,57 @@ public class FXMLDocumentController implements Initializable {
         });
 
         checkInternetConnection.start();
-
     }
 
-    private void toggleHoveredIcon(MouseEvent event, String iconSuffix) {
+    /**
+    * Applies icons to node elements depending on their states i.e. hovered or not.
+    * For instance, if a Button is hovered, this method applies it the icon corresponding to the appearance the button should have once hovered.
+    * 
+    * To properly use this method, a node element HAS TO be set with a default picture named "elementid"."fileExtention". 
+    * An other picture, the one that the element should display once hovered, should be stored in a resources folder using 
+    * the following naming convention "elementidHovered"."fileExtension". This method will then handle the transition 
+    * between the two icons depending on the element being hovered or not.
+    * 
+    * Here is an exemple. Consider a button with an id of "myButton". This button default picture should be named "myButton.png".
+    * An other picture should be stored in a resource folder under the name of "myButtonHovered.png" 
+    * (notice the presence of the "Hovered" keyword in the file name).
+    * This method then sets the appropriate icon to the button according to its state (hovered or not)
+    * 
+    * Note that the element must be listenening for MOUSE_ENTERED and MOUSE_EXCITED events for this method to work properly
+    * 
+    * @param event the that triggers this method and helps it setting the right icon to the node element
+    * 
+    * @see MouseEvent#MOUSE_ENTERED
+    * @see MouseEvent#MOUSE_EXITED
+    */
+    @FXML
+    private void toggleHoveredIcon(MouseEvent event) {
+        String iconSuffix = "";
+        
+        // This method only responds to MOUSE_ENTERED and MOUSE_EXCITED 
+        // therefore, no need to check for the latter
+        if (event.getEventType() == MOUSE_ENTERED) {
+            iconSuffix = "Hovered";
+        }
+        
         String elementInfos = event.getSource().toString();
         String elementId = elementInfos.substring(elementInfos.indexOf("id=") + 3, elementInfos.indexOf(","));
         Node hoveredElement = (Node) event.getSource();
         hoveredElement.setStyle("-fx-background-color: null; -fx-graphic: url(\"what2watch/resources/images/" + elementId + iconSuffix + ".png\")");
     }
-
-    @FXML
-    private void disableHoveredIcon(MouseEvent event) {
-        String iconSuffix = "";
-        toggleHoveredIcon(event, iconSuffix);
-    }
-
-    @FXML
-    private void enableHoveredIcon(MouseEvent event) {
-        String iconSuffix = "Hovered";
-        toggleHoveredIcon(event, iconSuffix);
-    }
     
+    /**
+    * Displays an error popup letting the user know that the folder containing his / her
+    * movies no longer exists or that it has been moved somewhere else in the file system.
+    * 
+    * The user is then lead to the settings window to chose a new folder upon 
+    * clicking on the "OK" button of the popup.
+    * 
+    * This method is called within FXMLDocumentController.browseFiles and FXMLDocumentController.viewDidLoad
+    * 
+    * @see FXMLDocumentController#viewDidLoad
+    * @see FXMLDocumentController#browseFiles
+    */
     private void displayMissingFolderError() {
         Alert alert = new Alert(AlertType.ERROR);
         alert.setTitle("What 2 Watch - Error");
@@ -539,8 +721,19 @@ public class FXMLDocumentController implements Initializable {
         });
     }
     
-    // Sets up the instruction picture for later use at startup
-    // This will place the instruction picture at the right spot so that the app is able to show or hide it
+    
+    /**
+    * Inserts the instruction picture into the scene graph so that it is ready to be used.
+    * The instruction picture is loaded within FXMLDocumentController's property "this.instructionHolder"
+    * and then placed into the main window gridPane.
+    * 
+    * Once placed into the gridPane, the UI components responsible for displaying movie informations
+    * (labels, imageView etc.) are setVisible(false) to allow the instruction picture to fill up the space
+    * 
+    * This method is called within FXMLDocumentController.initialize
+    * 
+    * @see FXMLDocumentController#initialize
+    */
     private void initInstructionPicture() {
         this.instructionHolder = new ImageView();
 
@@ -554,11 +747,45 @@ public class FXMLDocumentController implements Initializable {
         this.vbxLeftContainer.setVisible(false);
     }
     
-    // Either displays or hides the UI movie informations to draw the instruction
-    // picture instead, depending on the value passed by parameter
+    /**
+    * Hides the UI movie informations components to draw the instruction picture instead. 
+    * Does exactly the opposite depending on the value that's been passed by parameter.
+    * 
+    * This method is called within FXMLDocumentController.browseFiles and FXMLDocumentController.getMovieInformations
+    * 
+    * @param display the boolean value indicating whether or not UI components should be hid
+    *
+    * @see FXMLDocumentController#browseFiles
+    * @see FXMLDocumentController#getMovieInformations
+    */
     public void displayMovieInfos(boolean display) {
         this.vbxLeftContainer.setVisible(display);
         this.instructionHolder.setVisible(!display);
     }
     
+    
+    /**
+    * This method is called right when the app is launched to handle the possibility
+    * that the movie folder no longer exists or that it doesn't even exist at all 
+    * if the app is launched for the first time. 
+    * 
+    * If the movie folder no longer exists, an error popup is presented using FXMLDocumentController.browseFiles.
+    * If the app is launched for the very first time, the settings window is presented to the user to allow him / her
+    * to define the path of his / her movie folder before using the app.
+    * 
+    * @see FXMLDocumentController#showSettings
+    * @see FXMLDocumentController#displayMissingFolderError
+    */
+    public void viewDidLoad() {
+        String movieFolderPath = this.prefs.getPath();
+        if (movieFolderPath.equals("")) {
+            try {
+                showSettings(null);
+            } catch (IOException ex) {
+                Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else if (!Files.exists(Paths.get(movieFolderPath))) {
+            displayMissingFolderError();
+        }
+    }
 }

@@ -1,14 +1,12 @@
 package what2watch;
 
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * This class is for stock all datas of a movie in only one object
  */
 
 /**
  *
- * @author loic.dessaules
+ * @author Loïc Dessaules
  */
 public class Movie {
     
@@ -20,8 +18,6 @@ public class Movie {
     private String poster;
     private String[] genre;
     private String synopsis;
-    
-
     
     public Movie() {
     }
@@ -59,11 +55,7 @@ public class Movie {
         return synopsis;
     }
     
-    
-    
-    
     // SETTERS
-
     public void setRawTitle(String rawTitle) {
         this.rawTitle = rawTitle;
     }
@@ -100,7 +92,5 @@ public class Movie {
     public String toString() {
         return title;
     }
-    
-    
     
 }

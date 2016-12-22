@@ -23,14 +23,35 @@ public class FileBrowser{
 
     // Custom methods
     
+    /** 
+     * Returns a list every movie file name 
+     *  
+     * @return  An array list of string containing every movie file name
+     */
     public static ArrayList<String> getMovieFileNames() {
         return finder.getMovieFileNames();
     }
     
+    /** 
+     * Returns the path that matches the raw movie name 
+     *  
+     * @param   rawMovieName the raw movie file name for which the path will be fetched
+     * 
+     * @return  The path associated with the rawMovieName
+     */
     public static String getFilePath(String rawMovieName) {
         return finder.findPathOf(rawMovieName);
     }
     
+    /** 
+     * Creates a FileFinder instance which will gather movie file names and paths.
+     * Those informations are to be fetched using  both "getMovieFileNames"
+     * and "getFilePath" methods provided in FileBrowser.
+     * 
+     * @see     FileBrowser#getMovieFileNames 
+     * 
+     * @see     FileBrowser#getFilePath 
+     */
     public static void getMovieFileInfos() {
         try {
             String path = prefs.getPath();

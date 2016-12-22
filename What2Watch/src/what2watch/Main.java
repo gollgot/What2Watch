@@ -1,19 +1,9 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * This is the Main class, used for init the FXML Stage, Scene, etc.
+ * And for create the Database if it doesn't already exists
  */
 package what2watch;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -24,24 +14,32 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  *
- * @author Raphael.BAZZARI
+ * @author Raphael.BAZZARI and Loïc Dessaules
  */
 public class Main extends Application {
     
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("FXMLDocument.fxml"));
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("FXMLDocument.fxml"));
+        Parent root = loader.load();
+        
+        FXMLDocumentController controller = loader.getController();
         
         Scene scene = new Scene(root);
         
         Font.loadFont(getClass().getResourceAsStream("resources/fonts/SourceSansPro-Regular.otf"), 12);
         Font.loadFont(getClass().getResourceAsStream("resources/fonts/Montserrat-Bold.ttf"), 12);
         scene.getStylesheets().add("what2watch/default.css");
+        
+        stage.setOnShown(new EventHandler<WindowEvent>() {
+            public void handle(WindowEvent e) {
+                controller.viewDidLoad();
+            }
+        });
         
         // StageStyle.UNIFIED is for remove the basic blue border of the windows
         stage.initStyle(StageStyle.UNIFIED);
@@ -68,44 +66,15 @@ public class Main extends Application {
      */
     public static void main(String[] args) {
         
-        /* First step : create the cache folder and file */
+        // Before all things, we create the DataBase if it doesn't exists
         CacheDb cacheDb = new CacheDb();
-        // If DB file (for cache) doesn't exists, we will create one
         if(!cacheDb.exists()) {
             cacheDb.create();
         }else{
             System.out.println("The cache file already exists.");
         }
-        
-         
-        /* TEST ParsingFiles */
-        /*UserPreferences userPref = new UserPreferences();
-        FileBrowser fileBrowser = new FileBrowser();
-        ArrayList<String> originalListFiles = new ArrayList<>(); 
-        
-        // get path saved on the UserPreferences
-        String path = userPref.getPath();
-        
-        try {
-            fileBrowser.fetchMoviesFileNames(path);
-            originalListFiles = fileBrowser.getMovieFileNames();
-        } catch (IOException ex) {
-            System.out.println("Error on Main : getFilesNames. Ex : "+ex);
-        }
-        ArrayList<String> finalListFiles = ParsingFiles.parse(originalListFiles);
-        
-        
-        
-        /* TEST IF MOVIE EXISTS OR NOT*/ 
-        // it's an updating of cache
-        /*for (int i = 0; i < finalListFiles.size(); i++) {
-            System.out.println("Nom : "+finalListFiles.get(i));
-        }*/
-       //DbHandler dbHandler = new DbHandler(cacheDb,finalListFiles);
-       
-        
-        
-        /* After : Launch the window */
+
+        // After : Launch the window
         launch(args);
     }
     
